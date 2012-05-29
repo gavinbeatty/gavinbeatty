@@ -1,0 +1,28 @@
+% C/C++ Coding Standard
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Constants on left of == comparisons
+
+    // yes
+    if(5 == current) { }
+    // no
+    if(current == 5) { }
+    // prevents (note missing =)
+    if(current = 5) { }
+
+## Never use bitwise ops (& | ~ ^ << >>) on signed data
+
+The C Standard doesn't specify signed impl (2's Compliment etc.) so the
+operation is undefined.
+
+## Never mix signed and unsigned types
+
+    uint8_t a = 6u;
+    int8_t b = -9;
+    if(a+b < 4) {
+       // meant to be executed but won't
+    } else {
+       // (0xFF - 9) + 6 = 252
+       // this is executed
+    }
+

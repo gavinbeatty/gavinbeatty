@@ -1,0 +1,38 @@
+% Git <-> SVN Workflow
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+
+Clone the SVN repo.
+
+    $ git svn clone -s svn+ssh://url/for/the/repo
+
+The -s flag indicates that you have a standard hierarchy:
+i.e., repo/
+        branches/
+        tags/
+        trunk/
+
+If you do not, use -s, you can use --trunk, --tags and --branches to indicate
+relative paths from the URL to each of these dirs.
+
+Note that `git svn clone` equals a `git svn init` and `git svn fetch`.
+
+    $ cd repo
+    $ git br
+    * master
+    $ git br -r
+      origin/trunk
+      origin/<branches in branches/ dir>
+    $ git tag -l
+    <tags in tags/ dir>
+
+    $ vim src/main.c
+    $ git add src/main.c
+    $ git commit
+
+Now our changes are in git, but they are not pushed to SVN yet.
+Rebase our commits onto latest SVN and commit to SVN.
+
+    $ git svn rebase
+    $ git svn dcommit
+

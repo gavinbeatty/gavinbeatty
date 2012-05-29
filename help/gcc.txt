@@ -1,0 +1,28 @@
+% GCC Help
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Profiling
+
+    gcc -p[g] -c main.c -o main.o
+    gcc -p[g] -c src1.c -o src1.o
+    gcc -p[g] src1.o main.o -o main
+    main
+    [g]prof main
+
+
+# Debugging
+
+    -ggdb: the most expressive format, only usable with gcc...
+    -ggdb3: the default level is 2 whereas 3 includes macro expansion info :)
+
+
+# Code Coverage
+
+    --coverage: synonym:
+        -fprofile-arcs -ftest-coverage (compile time)
+        -lgcov (link time)
+    -fprofile-arcs: generates dir/foo.gcda for -o dir/foo.o
+                    flow arcs
+    -ftest-coverage: generates dir/foo.gcno for -o dir/foo.o
+                     code coverage (needs -fprofile-arcs)
+

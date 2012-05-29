@@ -1,0 +1,2 @@
+todisc -files House010[1234].mpg -titles "Pilot" "Paternity" "Occam's Razor" "Maternity" -bgimage ~/HouseDVD.jpg -menu-title "House: Season 1: Episodes 1-4" -3dthumbs -seek "8 12 37 12" -playall -out House_01_01-04
+

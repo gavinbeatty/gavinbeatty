@@ -1,0 +1,29 @@
+% GPG Help
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+
+    # export key
+    gpg -o keyfile.gpg --export <keyid>
+    # import key
+    gpg --import keyfile.gpg
+
+    # export secret keys
+    gpg -o keyfile.gpg --export-secret-key <keyid>
+    # import secret key
+    gpg --allow-import-secret-key --import keyfile.gpg
+
+    # encrypt file.txt for gavinbeatty@gmail.com
+    gpg -o file.txt.gpg -er gavinbeatty@gmail.com file.txt
+
+    # encrypt and sign from gavinbt@maths.tcd.ie for gavinbeatty@gmail.com
+    gpg -o file.txt.gpg -esu gavinbt@maths.tcd.ie -r gavinbeatty@gmail.com
+
+    # plaintext encrypted/signed files with -a
+    gpg -o file.txt.gpg -aesu gavinbt@maths.tcd.ie -r gavinbeatty@gmail.com
+
+    # send keys to the default keyserver for each key
+    gpg --send-keys
+
+    # receive keys from default keyserver for each key
+    gpg --recv-keys
+

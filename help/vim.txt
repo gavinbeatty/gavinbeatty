@@ -1,0 +1,119 @@
+
+Handy things to remember for using vim:
+---------------------------------------
+
+gU                              uppercase selection
+gu                              lowercase selection
+
+<selection>gC-g                 word count and char count, etc.
+
+:DiffOrig                       difference between original file and newly recovered buffer
+]c                              next difference
+[c                              previous difference
+
+>                               indent (line or selection)
+<                               unindent (...)
+i_CTRL_i                        indent in insert mode
+i_CTRL_d                        unindent (...)
+
+=                               format selection
+
+gqap                            format current paragraph
+gqa{                            format current brace (in C etc.)
+
+:s/\<word\>/other/              replace 'word' only if it is a whole word. foreword won't match
+:s/\d\+/\= submatch(0) + 1/     \= interprets what follows as an expression!
+
+zf{motion}                      fold across the {motion} e.g., zf2j -> fold for 2 lines down
+zo                              open a fold
+zj                              move to next fold
+zk                              previous
+zM                              close all open folds
+
+"${register}y                   yank into ${register}
+"_x                             delete into the "black hole" regster, _
+"${register}p                   paste contents of ${register}
+:put ${register}                paste contents of ${register}
+
+*                               search forwards for current word
+#                               backwards
+
+zz                              centre the view on the current line
+zt                              current line at top
+zb                              current line at bottom
+
+:set spell                      spellcheck wavy line thingy
+]s                              next spelling mistake
+[s                              prev
+zg                              add current word to dictionary
+zug                             undo dictionary addition
+z=                              see list of suggestions
+
+:set invhlsearch                invert search highlighting
+
+"*y                             yank to <S-Insert> clipboard
+"*p                             paste from <S-Insert> and X clipboard
+
+No way to yank to X clipboard without :set mouse=a and right-click.
+
+
+Below is a sample modeline
+# vi: set expandtab shiftwidth=4 tabstop=4:
+
+,cc |NERDComComment|
+Comments out the current line or text selected in visual mode.
+
+,cn |NERDComNestedComment|
+Same as |NERDComComment| but forces nesting.
+
+,c<space> |NERDComToggleComment|
+Toggles the comment state of the selected line(s). If the topmost selected
+line is commented, all selected lines are uncommented and vice versa.
+
+,cm |NERDComMinimalComment|
+Comments the given lines using only one set of multipart delimiters if
+possible.
+
+,ci |NERDComInvertComment|
+Toggles the comment state of the selected line(s) individually. Each selected
+line that is commented is uncommented and vice versa.
+
+,cs |NERDComSexyComment|
+Comments out the selected lines ``sexily''
+
+,cy |NERDComYankComment|
+Same as |NERDComComment| except that the commented line(s) are yanked
+before commenting.
+
+,c$ |NERDComEOLComment|
+Comments the current line from the cursor to the end of line.
+
+,cA |NERDComAppendComment|
+Adds comment delimiters to the end of line and goes into insert mode between
+them.
+
+,cI |NERDComPrependComment|
+Adds comment delimiters to the start of line and goes into insert mode between
+them.
+
+|NERDComInsertComment|
+Adds comment delimiters at the current cursor position and inserts between.
+Disabled by default.
+
+,ca |NERDComAltDelim|
+Switches to the alternative set of delimiters.
+
+,cl OR ,cr OR ,cb |NERDComAlignedComment|
+Same as |NERDComComment| except that the delimiters are aligned down the
+left side (,cl), the right side (,cr) or both sides
+(,cb).
+
+,cu |NERDComUncommentLine|
+Uncomments the selected line(s).
+
+
+Compiling gvim 7.2
+------------------
+./configure --enable-gui=gtk2
+
+

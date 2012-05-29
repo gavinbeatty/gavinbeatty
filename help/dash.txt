@@ -1,0 +1,38 @@
+% Dash
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Figure Dash: ‒
+
+* Used in phone numbers etc. 01‒1234567
+
+## Vim
+
+C-K -F (non-standard)
+
+# En Dash: –
+
+* Ranges: 6–10 years
+* Relationships and Connections: McCain–Feingold (or use hyphen), Ireland lost 2–1
+* Compound adjectives: post–MS-DOS, non–San Francisco
+* Parenthetics: This is a sentence – though contrived – showing the use of en dashes.
+
+## Vim
+
+C-K -N
+
+# Em Dash: —
+
+* Parenthetics: A different sentence—thought equally contrived—this is.
+
+## Vim
+
+C-K -M
+
+# Quotation Dash: ―
+
+* After quotations
+
+## Vim
+
+C-K -Q (non-standard)
+

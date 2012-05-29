@@ -1,0 +1,8 @@
+% IRC
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+Register nickname
+-----------------
+
+    /msg nickserv identify <password>
+

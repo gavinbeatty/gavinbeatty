@@ -1,0 +1,6 @@
+% GDB
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+info locals
+info args
+

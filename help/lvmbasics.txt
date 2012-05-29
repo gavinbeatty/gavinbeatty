@@ -1,0 +1,38 @@
+
+# Create some physical volumes
+pvcreate /dev/hda1 /dev/hda3 /dev/sdb2            # don't use full hard disk for a PV - create a partition and make PV of that
+
+# Create a volume group from some/all of these PVs
+vgcreate groupname /dev/hda1 /dev/sdb2
+
+# Activate the VG
+vgchange -ay groupname
+
+# Remove a VG
+vgchange -an groupname_goner
+vgremove groupname_goner
+
+# Extend a VG
+vgextend groupname /dev/hda3                # added the PV on hda3 to groupname
+
+# Remove a PV from a VG
+pvdisplay /dev/goner1                    # check it's not being used by a VG
+vgreduce groupname /dev/goner1                # remove goner1 from groupname
+
+# Create a linearly striped logical volume of 1500 MB and called "lvname"
+lvcreate -L1500 -nlvname groupname
+
+# vgdisplay shows the full PE size so to create an LV that takes up all of a VG
+vgdisplay groupname | fgrep "Total PE" | gawk ' { print $2 } ' | xargs -i lvcreate -l '{}' groupname -nlvname2
+
+# You can specify for the LV to be created on a specific PV by specifying it after the groupname
+
+# Remove an LV
+umount /home/mnt/lvnamemount
+lvremove /dev/groupname/lvname
+-Really?: y
+-backing up
+-done
+
+# Look up http://tldp.org/HOWTO/LVM-HOWTO/ to do more complex shiznit
+

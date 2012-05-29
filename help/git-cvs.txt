@@ -1,0 +1,64 @@
+% Git <-> CVS Workflow
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+First, we set up a shared git repo that mirrors the CVS repo.
+
+    $ cd ~/repo
+    $ git cvsimport -vC <git_repo> -akmi -o master <cvs_module>
+    $ ln -s <git_repo>/.git <git_repo>.git
+    $ cd <git_repo>.git
+    $ git config core.sharedRepository true
+    $ git config core.bare true
+    $ git config receive.denyNonFastForwards true
+    $ cd ~/work
+    # add -o cvs if you want cvs as the remote instead of origin
+    $ git clone <git_repo>.git
+
+Now, <git_repo> is a local clone of <git_repo>.git. We'll update
+<git_repo>.git, our mirror of CVS, like so:
+
+    $ cd ~/repo
+    $ git cvsimport -vC <git_repo> -akmi -o master <cvs_module>
+
+Now, we update the clone.
+
+    $ cd ~/work/<git_repo>
+    $ git fetch
+    $ git checkout master
+    $ git pull
+    # or git fetch/pull cvs if you did git clone -o cvs above.
+    # similarly, replace origin with cvs from now on as needed.
+
+In our clone of <git_repo>.git, we make our changes on a work branch,
+gavinb/work.
+
+    $ git co -b gavinb/work master
+    $ <edit>
+    $ git commit
+
+Now we want to commit changes back from our work branch, gavinb/work.
+
+    # rebase on current cvshead
+    $ git checkout -b gavinb/rebase/work gavinb/work
+    $ git rebase origin/master
+    # create a for-cvs branch where we'll clean up the patch series
+    $ git checkout -b gavinb/for-cvs/work master
+    $ <clean up the commit series using git cherry and rediff etc>
+    # i.e., git cherry -v origin/master gavinb/rebase/work, pick patches
+    $ git commit
+
+Now we will commit the selected patches.
+
+    $ git cherry origin/master gavinb/for-cvs/work \
+        | sed -n 's/^+ //p' \
+        | xargs -rL1 git cvsexportcommit -vcw <cvs_wc>/<cvs_module>
+
+Remember that the -c option commits each patch in sequence automatically. This
+method is heavily dependent on having a rebase of actual cvshead being done.
+
+Now that CVSROOT has been updated, we must update our git mirror in
+<git_repo>.git using ~/repo/<git_repo> and git cvsimport again. Then push to
+<git_repo>.git.
+
+Now, <git_repo>.git should be up to date and we can git fetch again.
+

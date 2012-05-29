@@ -1,0 +1,14 @@
+% Debian package format
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# How to extract a .deb
+
+    # will give you control.tar.gz, data.tar.gz and debian-binary
+    $ ar vx file.deb
+    # extract the data section (which has /usr etc.)
+    $ ar p file.deb data.tar.gz | tar zxv
+
+# How to create a .deb
+
+    $ ar -r file.deb debian-binary control.tar.gz data.tar.gz
+

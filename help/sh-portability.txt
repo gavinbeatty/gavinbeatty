@@ -1,0 +1,22 @@
+% Shell Script Portability
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Commands to look out for and why
+
+## mktemp
+
+BSD: needs template
+GNU: template optional
+
+## stat
+
+BSD: -f for formatting, different formatting strings
+GNU: -c for formatting
+
+## seq, jot
+
+neither is nec available.
+BSD: likely has jot
+OTHER: likely has seq
+they are used differently also, seq 1 10 != jot 1 10
+

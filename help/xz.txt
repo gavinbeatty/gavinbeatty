@@ -1,0 +1,13 @@
+% XZ
+
+# Mac OS X
+
+Works on xz-4.999.9beta
+
+    old_CFLAGS_="$CFLAGS"
+    export CFLAGS=' -arch i386 -m32 '
+    ./configure
+    make
+    sudo make install
+    export CFLAGS="$old_CFLAGS_"
+

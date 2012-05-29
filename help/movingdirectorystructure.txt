@@ -1,0 +1,8 @@
+
+mount /dev/hda5 /newhome
+cd /home
+tar cvf - . | (cd /newhome;tar xvf - .)
+umount /newhome
+mount /dev/hda5 /home
+
+

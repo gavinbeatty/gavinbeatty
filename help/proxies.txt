@@ -1,0 +1,5 @@
+
+TCD accommodation: http://proxypac.tcd.ie/accelerated_pac_base.pac
+Maths:             http://wpad.maths.tcd.ie
+
+

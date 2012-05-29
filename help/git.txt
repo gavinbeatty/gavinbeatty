@@ -1,0 +1,135 @@
+% Helpful tips for git
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+
+find commits from one branch not in another
+-------------------------------------------
+
+    $ git cherry -v <one_branch> <another>
+
+
+commit only a subset of current changes
+---------------------------------------
+You have made several changes and would like to split them up into several commits.
+
+    $ git add --patch src/main.c
+
+Here, you can select which hunks should be staged. This is a specific usage of
+the more general, `git add --interactive`.
+
+Now, we should test the subset of changes we made. But our working copy has ALL
+the changes. So we stash the wc but keep the old index/staging area.
+
+    $ git stash save --keep-index
+    $ make test
+    $ git commit
+    $ git stash pop
+    $ # repeat git add --patch to git stash pop as necessary>
+
+
+tracking branches
+-----------------
+There is some confusion as to what a tracking branch is.
+
+Strictly speaking, the tracking branch is origin/mybranch and mybranch is the
+local branch to work on. This is made confusing by the --track option which
+actually creates the local branch to track the remote tracking branch...
+
+Here, I will refer to:
+
+ local branches:
+    standard branches created locally
+
+ remote tracking branches:
+    when one does `git fetch origin', they get the remote tracking branches
+    origin/master etc.
+
+ local tracking branches:
+    created solely by doing:
+        $ git branch --track <newbranch> [ <oldbranch> ]
+    or
+        $ git checkout --track -b <newbranch> [ <oldbranch> ]
+
+
+in cloned working copy, push a new branch to shared repo and track it
+---------------------------------------------------------------------
+repo.git (shared repo)
+repo1    (local clone - creates mybranch)
+repo2    (another clone that wants to get repo.git's mybranch later)
+
+    repo1$ git checkout -b mybranch master
+    repo1$ <edit>
+    repo1$ git add -v src/
+    repo1$ git commit
+    # push mybranch to the shared repo
+    repo1$ git push origin mybranch:mybranch
+    # get off of mybranch
+    repo1$ git checkout master
+    # delete the old local branch and set up our local tracking branch mybranch,
+    # which follow the remote tracking branch origin/mybranch
+    repo1$ git branch -d mybranch
+    repo1$ git branch --track mybranch refs/remotes/origin/mybranch
+
+    # download origin/mybranch
+    repo2$ git fetch
+    # create local tracking branch we can safely commit to
+    repo2$ git branch --track mybranch refs/remotes/origin/mybranch
+    # make some changes
+    repo2$ <edit>
+    repo2$ git add -v src/
+    repo2$ git commit
+    # merge to(/rebase on) latest and push to shared repo
+    repo2$ git pull [ --rebase ]
+    repo2$ git push
+
+    repo1$ git checkout mybranch
+    repo1$ git pull [ --rebase ]
+    repo1$ git push
+
+
+import from cvs repo
+--------------------
+
+    mkdir module.git
+    [ CVSROOT=<CVSROOT> ] git cvsimport -vC <module> -akmio master [ -d <CVSROOT> ]
+    # creates master as a mirror of the cvs repo's module
+    # NEVER commit to master - always use branches
+
+
+empty branches (for todo, website etc.)
+---------------------------------------
+
+    # create a new branch called todo (not based on any current branch)
+    git symbolic-ref HEAD refs/heads/todo
+    # note we're now on branch, todo
+    git status
+    # remove all contents from index
+    git rm -r --cached .
+    # remove all files from wc
+    rm -r *
+    # make sure the above worked
+    git status
+    ls
+    # commit to the new, empty branch, todo
+    git commit -m "initial commit" --allow-empty
+
+
+git init shared
+---------------
+
+    cd /path/to/project
+    git init
+    git add -v .
+    git commit
+    cd ../
+    mv project/.git project.git
+    rm -r project
+
+    git clone project.git
+
+
+find commit related to a certain string
+---------------------------------------
+
+    git log -S"string"
+

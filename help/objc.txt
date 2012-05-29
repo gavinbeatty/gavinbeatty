@@ -1,0 +1,9 @@
+% Objective C
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+Properties
+----------
+* delegates: assign
+* strings, paths, etc.: copy (must implement NSCopying)
+* retain: share the same object
+

@@ -1,0 +1,19 @@
+% CVS
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+* undo local mods on mod_file
+
+    cvs update -C mod_file
+
+* update file, removing sticky
+
+    cvs update -A file
+
+* update dir and checkout new subdirs if applicable
+
+    cvs update -d
+
+* remove now empty directories that no longer contain tracked content
+
+    cvs update -P
+

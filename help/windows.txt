@@ -1,0 +1,10 @@
+random windows problems:
+========================
+ping works: ICMP fine
+other services fail: check TCP/UDP
+if they fail, restart IP stack with:
+$ netsh reset ip
+and/or
+$ netsh winsock reset
+
+

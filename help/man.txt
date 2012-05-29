@@ -1,0 +1,18 @@
+
+.------------------------------------------------------------.
+|Section   | Description                                     |
+|------------------------------------------------------------|
+| 1        | user commands                                   |
+| 2        | system calls                                    |
+| 3        | C library functions                             |
+| 4        | devices and network interfaces                  |
+| 5        | file formats                                    |
+| 6        | games and demos                                 |
+| 7        | environments, tables and `troff' macros         |
+| 8        | system maintenance                              |
+'------------------------------------------------------------'
+
+Search in section 2 then 3 for `printf'
+ $ man -S 2,3 printf
+
+

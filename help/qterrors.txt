@@ -1,0 +1,12 @@
+
+vtable
+------
+If getting vtable not found etc. type errors, you should have the
+Q_OBJECT
+(no semicolon) macro used at the top of the header of the class and put
+#include "filename.moc"
+at the bottom of the cpp file. This is needed when not using qmake. i.e., whenever you compile a qt project :P
+
+
+
+

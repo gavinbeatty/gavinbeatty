@@ -1,0 +1,25 @@
+create tree object:
+http://progit.org/book/ch9-2.html
+
+first write an object to the repo
+git hash-object -w test.txt || git hash-object -w --stdin
+this returns the sha1
+
+next set up an index using git update-index
+git update-index --add --cacheinfo <mode> <object/sha1> <path>
+
+write the tree
+treesha1=$(git write-tree)
+
+create the commit object
+commitsha1=$(git commit-tree $treesha1)
+
+update the ref head
+git update-ref refs/heads/ento/master $commitsha1
+
+e.g.,
+sha1=$(git hash-object -w test.txt)
+git update-index --add --cacheinfo 100644 $sha1 test.txt
+treesha1=$(git write-tree)
+commitsha1=$(git commit-tree)
+
