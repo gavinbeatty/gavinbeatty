@@ -12,7 +12,6 @@ SOURCES = 7zipper.sh \
 abspath.py \
 addlicense.sh \
 asciitable.sh \
-backup.sh \
 bangcheck.sh \
 battery.sh \
 codepretty.py \
@@ -49,7 +48,7 @@ term.sh \
 tmpfile.sh \
 tune.sh \
 udevinfo.sh \
-whatdebsneeded.sh \
+whatdebsneeded.sh
 
 help:
 	@echo 'Targets: install'
