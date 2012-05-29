@@ -1,0 +1,176 @@
+\documentclass[12pt]{article}
+
+%% Might already be defined.
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%  \pdffalse
+%\else
+%  \ifnum\pdfoutput=1
+%    \pdftrue
+%  \else
+%    \pdffalse
+%  \fi
+%\fi
+
+% \usepackage{graphicx}                   % needed for including graphics e.g. EPS, PS
+% \usepackage{epsfig}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+% \usepackage{amsthm}
+\usepackage{array}
+% \setlength{\extrarowheight}{0.12cm}     % useful for long division prettiness
+\usepackage{enumerate}
+\usepackage{polynom}
+
+\usepackage[pdftex]{hyperref}
+% \hypersetup{
+%     bookmarks=true,           % show bookmarks bar?
+%     unicode=false,            % non-Latin characters in Acrobat’s bookmarks
+%     pdftoolbar=true,          % show Acrobat’s toolbar?
+%     pdfmenubar=true,          % show Acrobat’s menu?
+%     pdffitwindow=true,        % page fit to window when opened
+%     pdftitle={My title},      % title
+%     pdfauthor={Gavin Beatty}, % author
+%     pdfsubject={Subject},     % subject of the document
+%     pdfnewwindow=true,        % links in new window
+%     pdfkeywords={keywords},   % list of keywords
+%     colorlinks=false,         % false: boxed links; true: colored links
+%     linkcolor=red,            % color of internal links
+%     citecolor=green,          % color of links to bibliography
+%     filecolor=magenta,        % color of file links
+%     urlcolor=cyan             % color of external links
+% }
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+% \let\oldthedef\thedef         % Redefine thedef as oldthedef
+%                               % e.g., \let\oldsqrt\sqrt
+
+\newenvironment{proof}[1][Proof]{\begin{trivlist} %
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definition]{\begin{trivlist} %
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Example]{\begin{trivlist} %
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark]{\begin{trivlist} %
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
+\newcommand{\qed}{\nobreak \ifvmode \relax \else %
+      \ifdim\lastskip<1.5em \hskip-\lastskip %
+      \hskip1.5em plus0em minus0.5em \fi \nobreak %
+      \vrule height0.75em width0.5em depth0.25em\fi}
+
+% \pagestyle{empty}                       % no page numbers
+% \renewcommand{\baselinestretch}{1.5}    % 1.5 spacing between lines
+% \parindent 0pt                          % sets leading space for paragraphs
+
+\begin{document}
+
+\title{The Title}
+\author{Gavin Beatty}
+\date{3rd Edition\\[3pt]
+Copyright \copyright\ Gavin Beatty 2012}
+\maketitle
+
+\tableofcontents
+
+\ifpdf
+    Created with pdflatex command.
+\else
+    Created with latex command.
+\fi
+
+\begin{definition}
+Let $H$ be a subgroup of a group~$G$.  A \emph{left coset}
+of $H$ in $G$ is a subset of $G$ that is of the form $xH$,
+where $x \in G$ and $xH = \{ xh : h \in H \}$.
+Similarly a \emph{right coset} of $H$ in $G$ is a subset
+of $G$ that is of the form $Hx$, where
+$Hx = \{ hx : h \in H \}$
+\end{definition}
+
+Note that a subgroup~$H$ of a group $G$ is itself a
+left coset of $H$ in $G$.
+
+\begin{lemma}
+\label{LeftCosetsDisjoint}
+Let $H$ be a subgroup of a group $G$, and let $x$ and $y$ be
+elements of $G$.  Suppose that $xH \cap yH$ is non-empty.
+Then $xH = yH$.
+\end{lemma}
+
+\begin{proof}
+Let $z$ be some element of $xH \cap yH$.  Then $z = xa$
+for some $a \in H$, and $z = yb$ for some $b \in H$.
+If $h$ is any element of $H$ then $ah \in H$ and
+$a^{-1}h \in H$, since $H$ is a subgroup of $G$.
+But $zh = x(ah)$ and $xh = z(a^{-1}h)$ for all $h \in H$.
+Therefore $zH \subset xH$ and $xH \subset zH$, and thus
+$xH = zH$.  Similarly $yH = zH$, and thus $xH = yH$,
+as required.\qed
+\end{proof}
+
+\begin{lemma}
+\label{SizeOfLeftCoset}
+Let $H$ be a finite subgroup of a group $G$.  Then each left
+coset of $H$ in $G$ has the same number of elements as $H$.
+\end{lemma}
+
+\begin{proof}
+Let $H = \{ h_1, h_2,\ldots, h_m\}$, where
+$h_1, h_2,\ldots, h_m$ are distinct, and let $x$ be an
+element of $G$.  Then the left coset $xH$ consists of
+the elements $x h_j$ for $j = 1,2,\ldots,m$.
+Suppose that $j$ and $k$ are integers between
+$1$ and $m$ for which $x h_j = x h_k$.  Then
+$h_j = x^{-1} (x h_j) = x^{-1} (x h_k) = h_k$,
+and thus $j = k$, since $h_1, h_2,\ldots, h_m$
+are distinct.  It follows that the elements
+$x h_1, x h_2,\ldots, x h_m$ are distinct.
+We conclude that the subgroup~$H$ and the left
+coset $xH$ both have $m$ elements,
+as required.\qed
+\end{proof}
+
+\begin{theorem}
+\emph{(Lagrange's Theorem)}
+\label{Lagrange}
+Let $G$ be a finite group, and let $H$ be a subgroup
+of $G$.  Then the order of $H$ divides the order of $G$.
+\end{theorem}
+
+\begin{proof}
+Each element~$x$ of $G$ belongs to at least one left coset
+of $H$ in $G$ (namely the coset $xH$), and no element
+can belong to two distinct left cosets of $H$ in $G$
+(see Lemma~\ref{LeftCosetsDisjoint}).  Therefore every
+element of $G$ belongs to exactly one left coset of $H$.
+Moreover each left coset of $H$ contains $|H|$ elements
+(Lemma~\ref{SizeOfLeftCoset}).  Therefore $|G| = n |H|$,
+where $n$ is the number of left cosets of $H$ in $G$.
+The result follows.\qed
+\end{proof}
+
+Here lies some long division:
+
+\polylongdiv{2x^3-5x^2+x+2}{x-1}
+
+% \begin{equation*}
+%  \begin{array}{rc@{}c}
+%  & \multicolumn{2}{l}{\, \, \, 1+\frac{1}{2}x^2 +\frac{5}{24}x^4-\dotsb} \vspace*{0.12cm} \\ \cline{2-3}
+%  \multicolumn{1}{r}{1-\frac{1}{2!}x^2+\frac{1}{4!}x^4-\dotsb \hspace*{-4.8pt}} & \multicolumn{1}{l}{ \hspace*{-5.6pt} \Big) \hspace*{4.6pt} 1} \\
+%  & \multicolumn{2}{l}{\, \, \, 1-\frac{1}{2!}x^2+\frac{1}{4!}x^4-\dotsb} \vspace*{0.12cm} \\ \cline{2-3}
+%  & \multicolumn{2}{l}{\, \, \, \phantom{1{}-{}} \frac{1}{2!}x^2-\frac{1}{4!}x^4+\dotsb} \\
+%  & \multicolumn{2}{l}{\, \, \, \phantom{1{}-{}} \frac{1}{2!}x^2-\frac{1}{\left(2!\right)^2}x^4+\dotsb} \vspace*{0.12cm} \\ \cline{2-3}
+%  & \multicolumn{2}{l}{\, \, \, \phantom{1{}-{}\frac{1}{2!}x^2{}-{}} \frac{5}{24}x^4-\dotsb}
+%  \end{array}
+%  \end{equation*}
+
+
+\end{document}
+
