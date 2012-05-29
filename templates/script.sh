@@ -1,7 +1,7 @@
 #!/bin/sh
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
-# Copyright (c) 2011 Gavin Beatty
+# Copyright (c) 2012 Gavin Beatty
 # <gavinbeatty@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -25,6 +25,8 @@
 ###########################################################################
 set -e
 set -u
+trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
+trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 prog="$(basename -- "$0")"
 lf="
 "
@@ -70,6 +72,4 @@ main() {
     fi
     echo "XXX implementation missing" >&2
 }
-trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
-trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 main "$@"
