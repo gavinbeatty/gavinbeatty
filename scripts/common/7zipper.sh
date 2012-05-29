@@ -41,11 +41,11 @@ do_getopt() {
     fi
 }
 for z7 in "7zr" "7za" ; do
-    if type "$z7" >/dev/null 2>&1 ; then
+    if have "$z7" ; then
         break
     fi
 done
-test -z "$z7" && die "7zip not installed."
+test -n "$z7" || die "7zip not installed."
 
 opts="$(do_getopt -l "decompress,compress,help,version" -o "dzhv" -- "$@")"
 eval set -- "$opts"
@@ -77,5 +77,5 @@ d)
     "$z7" x -so "$archive"
     exit $? ;;
 *)
-    die "internal error: unknown \$cmd" ;;
+    die "internal error: unknown $cmd" ;;
 esac

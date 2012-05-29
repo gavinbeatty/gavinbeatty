@@ -14,12 +14,12 @@ if (! test -f "$stdin") && (! test -p "$stdin") ; then
 fi
 pageropts=""
 pager="${PAGER-}"
-if ! type "$pager" >/dev/null 2>&1 ; then
+if ! type -- "$pager" >/dev/null 2>&1 ; then
     pager=""
 fi
 if test -z "$pager" ; then
     for i in "more" "less" "cat"; do
-        if type "$i" >/dev/null 2>&1 ; then
+        if type -- "$i" >/dev/null 2>&1 ; then
             pager="$i"
             break
         fi
