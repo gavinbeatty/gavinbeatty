@@ -1,0 +1,409 @@
+
+source ~/.vimrc_options
+if !exists('g:gav_machine')
+    let g:gav_machine = 'unknown'
+endif
+if !exists('g:gav_mapleader')
+    let g:gav_mapleader = '\'
+endif
+if !exists('g:gav_textwidth')
+    let g:gav_textwidth = 79
+endif
+if !exists('g:gav_tabstop')
+    let g:gav_tabstop = 4
+endif
+if !exists('g:gav_expandtab')
+    let g:gav_expandtab = 1
+endif
+if !exists('g:gav_shiftwidth')
+    let g:gav_shiftwidth = 4
+endif
+
+if !exists('g:haddock_browser')
+    let g:haddock_browser = 'x-www-browser'
+endif
+
+" DON'T keep compatibility with vi
+set nocompatible
+
+" work around ugliness of omnicomplete default colors in terminals
+if v:version >= 700
+    hi Pmenu        guifg=#00ffff guibg=#000000            ctermbg=0 ctermfg=6
+    hi PmenuSel     guifg=#ffff00 guibg=#000000 gui=bold   cterm=bold ctermfg=3
+endif
+
+let mapleader = g:gav_mapleader
+
+" Turn filetype plugins on (for applying syntax etc.)
+filetype on
+filetype plugin on
+
+" .m files are objective c by default, not matlab
+augroup filetypedetect
+    au! BufRead,BufNewFile *.m setfiletype objc
+augroup end
+" .proto files for google protocol buffers
+augroup filetypedetect
+    au! BufRead,BufNewFile *.proto setfiletype proto
+augroup end
+
+" Syntax highlighting on
+if has('syntax')
+    syntax on
+endif
+"set background=dark
+colorscheme solarized
+
+if has('cmdline_info')
+    set ruler                  " show the ruler
+    " a ruler on steroids
+    set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%)
+    set showcmd                " show partial commands in status line and
+                               "   selected characters/lines in visual mode
+endif
+
+" Swap files all go into ~/.vim/swap if it exists
+set directory=~/.vim/swap,.
+
+" Keep 1000 file marks, 500 lines of registers max
+if version >= 700
+    set viminfo='1000,f1,<500
+endif
+
+" h,j,k,l and ~ will now walk across line breaks
+set whichwrap=h,l,~,[,]
+
+" Show matching brackets
+set showmatch
+
+" Match with % on <> pairs as well
+set matchpairs+=<:>
+
+" don't automatically format text as it's typed
+set formatoptions-=t
+
+" when formatting, use 'soft wrap', i.e., don't insert an eol into the buffer:
+set linebreak
+
+" Wrap lines at 79 chars
+exec 'set textwidth=' . g:gav_textwidth
+
+" Don't wrap lines by default
+set nowrap
+
+" Use 4space tabs intead of default 8
+exec 'set tabstop=' . g:gav_tabstop
+
+" Expand tabs into spaces
+if g:gav_expandtab
+    set expandtab
+else
+    set noexpandtab
+endif
+
+" When indenting text use 4 spaces
+exec 'set shiftwidth=' . g:gav_shiftwidth
+
+" Allow indenting automatically
+set autoindent
+
+" Turn off search highlighting
+" It can be toggled with <Leader>th
+set nohlsearch
+
+" Do incremental search
+set incsearch
+
+" Do smart case searching: case insensitive when all lowercase/uppercase,
+" sensitive otherwise
+set smartcase
+
+" 200 undos in buffer
+set undolevels=200
+
+" 100 length command history
+set history=100
+
+" Show what mode we're in at all times
+set showmode
+
+" Path/file matching in command mode like bash's
+set wildmode=list:longest
+" TAB is the next match key
+set wildchar=<TAB>
+
+" make c-u and c-w start a new change before running
+" http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
+inoremap <c-u> <c-g>u<c-u>
+inoremap <c-w> <c-g>u<c-w>
+
+" Have Y act analogously to D and C
+noremap Y y$
+
+" Format selection
+vnoremap Q gq
+" Format paragraph
+nnoremap Q gqap
+
+" redraw the screen
+nnoremap <Leader>rr :redraw!<CR>
+
+" ("toggle paste") toggle paste on/off and report the change, and
+" where possible also have <F12> do this both in normal and insert mode:
+nnoremap <Leader>tp :set invpaste paste?<CR>
+nmap <F12> <Leader>tp
+imap <F12> <C-O><Leader>tp
+set pastetoggle=<F12>
+
+" ("toggle wrap") toggle wrap on/off and report the change
+nnoremap <Leader>tw :set invwrap wrap?<CR>
+
+" ("toggle highlight") toggle highlighting of search matches, and
+" report the change:
+nnoremap <Leader>th :set invhls hls?<CR>
+
+" ("toggle format") toggle the automatic insertion of line breaks
+" during typing and report the change:
+nnoremap <Leader>tf :if &fo =~ 't' <Bar> set fo-=t <Bar> else <Bar> set fo+=t <Bar>
+  \ endif <Bar> set fo?<CR>
+
+" ("toggle list") toggle list on/off and report the change:
+nnoremap <Leader>tl :set invlist list?<CR>
+
+" ("toggle spell") toggle spellchecker on/off and report the change:
+nnoremap <Leader>ts :set invspell spell?<CR>
+
+" ("toggle wrap") toggle wrap on/off and report the change:
+nnoremap <Leader>tw :set invwrap wrap?<CR>
+
+" ("diff no") turn off diff mode and report the change:
+nnoremap <Leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
+
+" ("diff obtain") do :diffget on range and report the change:
+" use "diff obtain" as that's what Vim itself uses for the non-range command: do
+vnoremap <Leader>do :diffget <Bar> echo 'Left >>> Right'<CR>
+
+" ("diff put") do :diffput on range and report the change:
+vnoremap <Leader>dp :diffput <Bar> echo 'Left <<< Right'<CR>
+
+function! GavFound(toexist, tobefound, ...)
+    if exists(a:toexist)
+        if empty(a:000)
+            exec a:toexist
+        else
+            exec a:1
+        endif
+    else
+        echohl WarningMsg
+        echo a:tobefound . " was not found."
+        echohl None
+    endif
+endfunction
+" NERD tree explorer plugin macro
+nnoremap <Leader>nt :call GavFound(":NERDTreeToggle", "NERDTree")<CR>
+nnoremap <Leader>nn :call GavFound(":NERDTree", "NERDTree")<CR>
+
+" taglist plugin macro
+nnoremap <Leader>tt :call GavFound(":TlistToggle", "Tlist")<CR>
+
+" MultipleSearch plugin macros
+nnoremap <Leader>ss :if exists(":Search") <Bar> :Search <Bar> else <Bar> :call GavMultipleSearchNotFound()<CR> <Bar> endif<CR>
+nnoremap <Leader>sr :call GavFound(":Search", "MultipleSearch", ":SearchReset")<CR>
+nnoremap <Leader>sb :if exists(":Search") <Bar> :SearchBuffers <Bar> else <Bar> :call GavMultipleSearchNotFound()<CR> <Bar> endif<CR>
+nnoremap <Leader>sbr :call GavFound(":Search", "MultipleSearch", ":SearchBuffersReset")<CR>
+nnoremap <Leader>si :call GavFound(":Search", "MultipleSearch", ":SearchReinit")<CR>
+
+" fswitch plugin macro
+nnoremap <Leader>fs :call GavFound(":FSHere", "fswitch")<CR>
+nnoremap <Leader>fv :call GavFound(":FSSplitRight", "fswitch")<CR>
+
+" gnupg options
+let g:GPGPreferArmor = 1
+
+if has('multi_byte')
+    " en dash (built-in)
+    "digraphs -N 8211
+    " em dash (built-in)
+    "digraphs -M 8212
+    " quotation dash
+    digraphs -Q 8213
+    " figure dash
+    digraphs -F 8210
+endif
+
+" allow <BkSpc> to delete beyond the start of the current insertion, and over
+" indentations:
+set backspace=start,indent
+
+if has('statusline')
+    set laststatus=1           " show statusline only if there are > 1 windows
+    " a statusline, also on steroids
+    set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
+    set shortmess+=r
+endif
+
+" 0 := tab
+" 1 := buf
+let g:gav_switch_buf_move_mode = 0
+
+fun! Gav_SwitchToBufMoveMode()
+    let g:gav_switch_buf_move_mode = 1
+    nnoremap m, :next<CR>
+    nnoremap ,m :prev<CR>
+endfun
+if exists(':tabnext')
+    fun! Gav_SwitchToTabMoveMode()
+        let g:gav_switch_buf_move_mode = 0
+        nnoremap m, :tabnext<CR>
+        nnoremap ,m :tabprev<CR>
+    endfun
+else
+    fun! Gav_SwitchToTabMoveMode()
+        echohl WarningMsg
+        echo ":tabnew command does not exist."
+        echohl None
+    endfun
+endif
+if exists(':tabnext')
+    fun! Gav_SwitchBufMoveMode()
+        if g:gav_switch_buf_move_mode == 0
+            call Gav_SwitchToBufMoveMode()
+        else
+            call Gav_SwitchToTabMoveMode()
+        endif
+    endfun
+else
+    fun! Gav_SwitchBufMoveMode()
+        call Gav_SwitchToBufMoveMode()
+        echohl WarningMsg
+        echo ":tabnew command does not exist."
+        echohl None
+    endfun
+endif
+
+" toggle tab moving mode from tab to buf to tab
+nnoremap <Leader>tb :call Gav_SwitchBufMoveMode()<CR>
+call Gav_SwitchToBufMoveMode()
+
+if exists(':tabnew')
+    fun! Gav_BufExplorer_in_new_tab()
+        if exists(':BufExplorer')
+            tabnew +:BufExplorer
+        else
+            tabnew
+        endif
+    endfun
+    nnoremap <Leader>bt :call Gav_BufExplorer_in_new_tab()<CR>
+else
+    nnoremap <Leader>bt :echohl WarningMsg <Bar> echo ":tabnew command does not exist." <Bar> echohl None<CR>
+endif
+
+"
+" gvim- (here instead of .gvimrc)
+"
+if has('gui_running')
+    set guioptions-=T          " remove: T, the toolbar
+    set guioptions-=L          " remove: L, the left-hand toolbar in vsplit
+                               "         this fixes a bug where caret
+                               "         disappears in vsplit in 7.2
+    set lines=30               " 30 lines of text instead of 24,
+                               "   perfect for 1024x768
+    let g:gav_font = 'Bitstream\ Vera\ Sans\ Mono'
+    " an alternative great font
+    "let g:gav_font = 'Monospace'
+    let g:gav_fontpt = 10
+    function! IncrFontPt()
+        let g:gav_fontpt = g:gav_fontpt + 1
+        call SetFont()
+    endfun
+    function! DecrFontPt()
+        let g:gav_fontpt = g:gav_fontpt - 1
+        call SetFont()
+    endfun
+    function! SetFont()
+        execute ':set guifont=' . g:gav_font . '\ ' . g:gav_fontpt
+    endfun
+    call SetFont()
+    set mousemodel=popup       " hold right click for the usual kind of menu
+    nmap <F11> :call IncrFontPt()<CR>
+    nmap <F10> :call DecrFontPt()<CR>
+    call Gav_SwitchToTabMoveMode()
+    set novisualbell           " no visual bell
+    set noerrorbells           " no audio bell
+
+    vnoremap \y "+y
+" else
+    " doesn't detect os x because of extra newline
+    " if osys =~ 'Darwin\n$'
+    "     vnoremap <Leader>y y:call system("pbcopy", getreg"("\""))<CR>
+    " else
+    "     vnoremap <Leader>y y:call system("xclip -i -selection clipboard", getreg("\""))<CR>:call system("xclip -i", getreg("\""))<CR>
+    " endif
+endif
+
+" Flag problematic whitespace (trailing and spaces before tabs)
+" Note you get the same by doing let c_space_errors=1 but
+"  this rule really applys to everything.
+"highlight RedundantSpaces term=standout ctermbg=red guibg=red
+"match RedundantSpaces /\s\+$\| \+\ze\t/ "\ze sets end of match so only spaces highlighted
+" Use :set list! or \tl (below) to toggle visible whitespace on/off
+"set listchars=tab:→,trail:·,precedes:<,extends:>,eol:¶
+set listchars=tab:->,trail:.,precedes:<,extends:>
+
+" don't have files trying to override this .vimrc:
+"set nomodeline
+
+" Allow deleting selection without updating the clipboard (yank buffer)
+" vnoremap x "_x
+" vnoremap X "_X
+
+" Get rid of annoying beep and flash
+set novisualbell           " no visual bell
+set noerrorbells           " no audio bell
+
+
+if has("autocmd")
+    if exists("+omnifunc")
+        autocmd Filetype *
+            \   if &omnifunc == "" |
+            \       setlocal omnifunc=syntaxcomplete#Complete |
+            \   endif
+    endif
+    autocmd BufRead,BufNewFile .followup,.article,.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt* setlocal ft=mail spell
+    autocmd FileType markdown,text,txt,mail source ~/.vimrc_text
+    autocmd FileType c,cpp,objc source ~/.vimrc_cpp
+    autocmd FileType sh,bash    source ~/.vimrc_bash
+    autocmd FileType perl       setlocal smartindent
+    autocmd FileType make       setlocal noexpandtab shiftwidth=8
+endif
+
+set tags+=~/.tags_cpp
+
+so ~/.vimrc_unicodemacros
+
+
+" <HOME> toggles between start of line and start of text
+imap <khome> <home>
+nmap <khome> <home>
+inoremap <silent> <home> <C-O>:call Home()<CR>
+nnoremap <silent> <home> :call Home()<CR>
+function! Home()
+    let curcol = wincol()
+    normal 0
+    let newcol = wincol()
+    if newcol == curcol
+        normal ^
+    endif
+endfunction
+
+" DiffOrig makes a diff with swap file and current version
+if !exists(":DiffOrig")
+  command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+        \ | wincmd p | diffthis
+endif
+
+" Save folds on exit and reload on load (only on non-readonly files)
+"au BufWritePost * if !&readonly | mkview | endif
+"au BufReadPost  * if !&readonly | silent loadview | endif
+
+

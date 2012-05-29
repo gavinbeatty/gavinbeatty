@@ -1,0 +1,9 @@
+.*.sw?
+.sw?
+.DS_Store
+.directory
+*.o
+*.so
+*.out
+*.pyc
+

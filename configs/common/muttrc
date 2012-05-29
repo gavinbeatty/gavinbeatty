@@ -1,0 +1,99 @@
+
+#account-hook imap://192.168.0.250/ "source ~/.muttrc.work"
+account-hook imaps://imap.gmail.com:993/ "source ~/.muttrc.gmail"
+
+macro index <F11> "cimap://192.168.0.250/<enter>"
+macro index <F12> "cimaps://imap.gmail.com:993/<enter>"
+
+#source "~/.muttrc.gmail"
+
+# use very high $read_inc to speed up reading hcache'd maildirs
+folder-hook . 'set read_inc=1000'
+# use lower value for reading slower remote IMAP folders
+folder-hook ^imap 'set read_inc=100'
+# use even lower value for reading even slower remote POP folders
+folder-hook ^pop 'set read_inc=1'
+
+# tell mutt where to save new aliases
+set alias_file = "~/.muttrc.aliases"
+source "~/.muttrc.aliases"
+
+set sendmail = "/usr/local/bin/msmtp"
+
+set realname = "Gavin Beatty"
+
+# only works when built with --enable-ssl
+set certificate_file = ~/.mutt/certificates
+
+# never: mbox e-mails, delete from server
+set move = no
+
+# view as threads like in Gmail
+set sort = 'threads'
+set sort_aux = 'last-date-received'
+
+# Ignore all headers
+ignore *
+
+# Then un-ignore the ones I want to see
+unignore From:
+unignore To:
+unignore Reply-To:
+unignore Mail-Followup-To:
+unignore Subject:
+unignore Date:
+unignore Organization:
+unignore Newsgroups:
+unignore CC:
+unignore BCC:
+unignore Message-ID:
+unignore X-Mailer:
+unignore User-Agent:
+unignore X-Junked-Because:
+unignore X-SpamProbe:
+unignore X-Virus-hagbard:
+unignore List-Id:
+
+# Now order the visable header lines
+hdr_order Date: From: Subject: To: CC: BCC: Reply-To: Mail-Followup-To: Organization: User-Agent: X-Mailer: Authentication-Results: List-Id:
+
+# don't ask to open drafts for new messages
+set recall = no
+
+# include original e-mail in replies
+set include = yes
+
+# i want to be edit the headers when composing
+set edit_headers = yes
+# start vim with caret below subject line
+set editor = "vim +/^$ ++1"
+
+# address book support with rolo
+set query_command = "mutt_vc_query '%s'"
+
+# no beeps!
+set beep = no
+
+set smart_wrap = no
+
+#set asksubject = no
+set askcc = no
+set askbcc = no
+# don't ask for subject,recips in reply, for subject in fwd
+set fast_reply = yes
+# don't abort/ask abort when subject is empty
+set abort_nosubject = no
+
+
+# include messages in reply
+set include = yes
+
+set implicit_autoview
+alternative_order text/plain text/html
+
+# source /usr/share/doc/mutt/samples/gpg.rc
+# source /opt/local/share/doc/mutt/samples/gpg.rc
+source /usr/share/doc/mutt/examples/gpg.rc
+
+source ~/.muttrc.color-dark
+

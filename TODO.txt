@@ -1,0 +1,8 @@
+# scripts
+
+- get rid of commonscripts.sh entirely
+
+# repo
+
+- build and install: use Makefiles for simple stuff and C, Boost.Build for C++
+

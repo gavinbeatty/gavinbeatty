@@ -1,0 +1,27 @@
+[ui]
+username = Gavin Beatty <gavinbeatty@gmail.com>
+
+[extensions]
+# for hg email
+patchbomb =
+# for color output
+color =
+# paginate output like in git
+pager =
+
+[color]
+status.modified = magenta bold
+status.added = green bold
+status.removed = red bold
+status.deleted = cyan bold
+status.unknown = blue bold
+status.ignored = black bold
+diff.diffline = bold
+diff.extended = cyan bold
+diff.file_a = red bold
+diff.file_b = green bold
+diff.hunk = magenta
+diff.deleted = red
+diff.inserted = green
+diff.changed = white
+diff.trailingwhitespace = bold red_background

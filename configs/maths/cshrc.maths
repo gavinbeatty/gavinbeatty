@@ -1,0 +1,14 @@
+# WARNING!! :: if you found this file in ${HOME}, then DO NOT TOUCH!
+#               it will be overwritten!
+#              Instead look in ${GAV_GIT_BASE_DIR}/gavinbeatty/configs and edit
+#               there
+
+source /local/skel/cshrc
+
+# A default .cshrc is in /local/skel/cshrc;
+# this could be copied and adapted.
+
+setenv GAV_SCREEN_SHELL `which bash`
+
+alias scr "screen -d -RR -s $GAV_SCREEN_SHELL"
+

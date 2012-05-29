@@ -1,0 +1,5 @@
+
+# Debian package building stuff
+
+DEBSIGN_KEYID="6A7AC55D49DD695F"
+DEBUILD_DPKG_BUILDPACKAGE_OPTS="-i -ICVS -I.svn"

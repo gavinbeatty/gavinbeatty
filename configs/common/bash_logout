@@ -1,0 +1,17 @@
+# vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
+if test -n "${bash_logout_guard-}" ; then return 0 ; fi
+bash_logout_guard=1
+#iecho ".bash_logout"
+
+if (have keychain) \
+&& (have who) && (have wc) \
+&& (test "$(who | grep -F -- "$USER" | wc -l)" -eq 1) ; then
+    keychain --quiet -k all
+fi
+
+for bash_logout_i in $HOSTS ; do
+    if test -r "${HOME}/.bash_logout.${bash_logout_i}" ; then
+        . "${HOME}/.bash_logout.${bash_logout_i}"
+    fi
+done
+unset bash_logout_i

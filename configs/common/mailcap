@@ -1,0 +1,6 @@
+text/html;              mutt_bgrun firefox %s ; test=RunningX
+text/html;              lynx -dump %s ; copiousoutput
+application/pdf;        mutt_bgrun kpdf %s ; test=RunningX
+application/pdf;        mutt_bgrun evince %s ; test=RunningX
+application/pdf;        mutt_bgrun xpdf %s ; test=RunningX
+application/pdf;        mutt_bgrun pdftotext %s - ; copiousoutput

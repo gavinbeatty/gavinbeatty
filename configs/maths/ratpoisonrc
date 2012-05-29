@@ -1,0 +1,35 @@
+# Auto banish the mouse whenever we escape
+addhook key banish
+
+###Make prtscreen work, as long as in ratpoison mode; see long commands for
+###why snapshot works.
+bind Print exec import -window root png:${HOME}/xwd-`mydate.sh`.$$.png
+
+### get stuff from X about colours, fonts etc.
+exec xrdb -load ~/.Xresources
+
+###Set a background. image must currently be manually changed.
+#exec Esetroot -scale pics/gimpress.jpg
+###Set background to black instead
+#exec xsetroot -solid black
+#exec Esetroot -scale pics/back.png
+exec Esetroot -scale pics/backdot.png
+
+##Graphics tweaks
+###Not quite sure what these do, copied from Reactor Core.
+###Supposedly make borders take up less space.
+defborder 0
+defpadding 0 0 0 0
+defbarpadding 0 0 0 0
+
+
+
+bind c exec konsole
+bind f exec /u3/maths/2008/gavinbt/opt/firefox/firefox
+bind e exec kate
+bind x exec xscreensaver-command -lock
+bind k exec konqueror
+
+exec xscreensaver -no-splash &
+exec konsole
+

@@ -1,0 +1,63 @@
+# vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
+# make sure we include this after bashrc
+if test -z "${bashrc_guard-}" ; then return 0 ; fi
+if test -n "${bash_completion_guard-}" ; then return 0 ; fi
+bash_completion_guard=1
+iecho ".bash_completion"
+
+## see http://www.debian-administration.org/articles/317 for examples
+# have foo && {
+#     _foo() {
+#         local cur prev opts
+#         COMPREPLY=()
+#         cur="${COMP_WORDS[COMP_CWORD]}"
+#         prev="${COMP_WORDS[COMP_CWORD-1]}"
+#         opts="--help --verbose --version"
+#
+#         if [[ ${cur} == -* ]] ; then
+#             COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+#             return 0
+#         fi
+#     }
+#     complete -F _foo foo
+# }
+
+have cmaketool.sh && {
+    _cmaketooldotsh() {
+        local cur prev opts
+        COMPREPLY=()
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        prev="${COMP_WORDS[COMP_CWORD-1]}"
+        opts="install build config target test cacheclean clean purge purgeall run builddir srcdir help"
+
+        if [[ ${cur} == * ]] ; then
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+        fi
+    }
+    complete -F _cmaketooldotsh cmaketool.sh
+}
+
+have ncvs.sh && {
+    _ncvsdotsh() {
+        local cur prev opts
+        COMPREPLY=()
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        prev="${COMP_WORDS[COMP_CWORD-1]}"
+        opts="--verbose status diff -h --help"
+
+        if [[ ${cur} == * ]] ; then
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+        fi
+    }
+    complete -F _ncvsdotsh ncvs.sh
+}
+
+
+for bash_completion_i in $HOSTS ; do
+    if test -r "${HOME}/.bash_completion.${bash_completion_i}" ; then
+        . "${HOME}/.bash_completion.${bash_completion_i}"
+    fi
+done
+unset bash_completion_i

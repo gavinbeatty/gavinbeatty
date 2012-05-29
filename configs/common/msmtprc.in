@@ -1,0 +1,17 @@
+# Set default values for all following accounts.
+defaults
+tls on
+@TLS_TRUST_FILE@
+logfile ~/.msmtp.log
+
+# [gmail]
+account gmail
+host smtp.gmail.com
+port 587
+from gavinbeatty@gmail.com
+auth on
+user gavinbeatty@gmail.com
+
+# [default]
+account default : gmail
+

@@ -1,0 +1,8 @@
+# A default .xresources is in /local/skel/xresources;
+# this could be copied and adapted.  Adding stuff instead
+# of copying and adapting is unlikely to work well.
+
+include(`/local/skel/xresources')
+
+XTerm.vt100.allowSendEvents: true
+

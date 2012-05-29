@@ -1,0 +1,12 @@
+bin
+.DS_Store
+*.pyc
+*.o
+*.kate~
+.*.sw[a-z]
+CMakeFiles
+CMakeCache*
+cmake_install.cmake
+install_manifest.txt
+build
+tags

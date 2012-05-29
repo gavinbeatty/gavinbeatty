@@ -1,0 +1,54 @@
+Host kdesvn
+    Hostname svn.kde.org
+    User gavinbt
+Host netsoc
+    Hostname login.netsoc.tcd.ie
+    User gavinbt
+Host graham
+    Hostname graham.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host stokes
+    Hostname stokes.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host turing
+    Hostname turing.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host graves
+    Hostname graves.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host lanczos
+    Hostname lanczos.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host *.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host maths.tcd.ie
+    Hostname graham.maths.tcd.ie
+    User gavinbt
+    IdentityFile ~/.ssh/mathsgavinbt_rsa
+Host 86.90.141.94
+    User sophisti
+    IdentityFile ~/.ssh/sophisti_rsa
+Host sophserver
+    User sophisti
+    IdentityFile ~/.ssh/sophisti_rsa
+Host github
+    Hostname github.com
+    User git
+    IdentityFile ~/.ssh/github_rsa
+Host gitorious
+    Hostname gitorious.org
+    User git
+    IdentityFile ~/.ssh/github_rsa
+Host repo
+    Hostname repo.or.cz
+    IdentityFile ~/.ssh/github_rsa
+
+@OPENSSH_INCLUDE_SUPPORT_COMMENT@Include "~/.ssh/config.work"
+
+

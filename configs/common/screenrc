@@ -1,0 +1,14 @@
+
+vbell on
+
+defscrollback 4096
+altscreen on
+startup_message off
+
+bind -c selectHighs 0 select 10
+bind -c selectHighs 1 select 11
+bind -c selectHighs 2 select 12
+
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f %t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %Y-%m-%d %{W}%c %{g}]'
+

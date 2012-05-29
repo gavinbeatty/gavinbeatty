@@ -1,0 +1,49 @@
+# WARNING!! :: if you found this file in ${HOME}, then DO NOT TOUCH!
+# instead simply edit the correct ${thisfile}.${host} version of this file
+
+#/***************************************************************************
+# *   Copyright (C) 2007 by Gavin Beatty                                    *
+# *   gavinbeatty@gmail.com                                                 *
+# *                                                                         *
+# *   This program is free software; you can redistribute it and/or modify  *
+# *   it under the terms of the GNU General Public License as published by  *
+# *   the Free Software Foundation; either version 2 of the License, or     *
+# *   (at your option) any later version.                                   *
+# *                                                                         *
+# *   This program is distributed in the hope that it will be useful,       *
+# *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+# *   GNU General Public License for more details.                          *
+# *                                                                         *
+# *   You should have received a copy of the GNU General Public License     *
+# *   along with this program; if not, write to the                         *
+# *   Free Software Foundation, Inc.,                                       *
+# *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+# ***************************************************************************/
+
+# Author: Gavin Beatty <gavinbeatty@gmail.com>
+
+# Description: csh variables, aliases etc.
+
+# Requires: tcsh
+
+# Usage: . cshrc
+
+# set up the environment and source any necessary files
+
+setenv GAV_CSHRC_VERSION_MAJOR "1"
+setenv GAV_CSHRC_VERSION_MINOR "0"
+setenv GAV_CHSRC_VERSION "${GAV_CSHRC_VERSION_MAJOR}.${GAV_CSHRC_VERSION_MINOR}"
+
+
+alias ls 'ls --color=auto'
+alias sirkey "ssh-add $HOME/.ssh/sirgavin_rsa"
+
+
+foreach i (netsoc maths fsc polly sir kde-devel)
+    if (-f $HOME/.cshrc.$i) then
+        source $HOME/.cshrc.$i
+    endif
+end
+unset i
+

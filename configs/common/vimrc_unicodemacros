@@ -1,0 +1,467 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+" Unicode Macro Table
+" ===================
+"
+" Version 0.1-modified
+"
+" Copyright 2008 by Jakob Westhoff <jakob@php.net>
+" Modified by Gavin Beatty <gavinbeatty@gmail.com> 2008, 2009
+"
+" Provided under the GPLv3 (http://www.gnu.org/licenses/gpl.txt).
+"
+" This script provides the needed functionality to easily register insert mode
+" macros for useful Unicode characters as well as initial mapping tables for
+" a mostly math oriented background.
+"
+"
+" Instructions
+" ------------
+"
+" Simple source the script inside your .vimrc to register the needed macros.
+" You may then use any macro name listed below with a backslash in front of
+" it, Therefore just typing "\alpha \beta \gamma" in insert mode would give
+" you the following result: "α β γ".
+"
+" You may customize every mapping table to your linkings or add new ones. If
+" you create new tables or extend the ones already present I would be grateful
+" if you could send me a copy of your work, for everyone to benefit from.
+"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+if v:version >= 700
+
+"""""""""""""""""""""""""""""""""""""""
+" Configuration
+"""""""""""""""""""""""""""""""""""""""
+
+" You may specify a list of mappings to be loaded here. This might be useful,
+" if you do not want to take advantage of all mappings to avoid conflicts by
+" unwanted macro expansion.
+let g:UnicodeMappingGroups = [
+    \ "GreekAlphabet",
+    \ "Superscript",
+    \ "Subscript",
+    \ "MathOperators",
+    \ "MathSymbols",
+    \ "Punctuation",
+    \ "Currencies",
+    \ "Units",
+    \ "Legal",
+    \ "Technical",
+    \ "RomanNumerals",
+\]
+
+let g:Currencies = {
+    \ "euro":               "€",
+    \ "cent":               "¢",
+    \ "yen":                "¥",
+    \ "franc":              "₣",
+    \ "lira":               "₤",
+    \ "peseta":             "₧",
+    \ "philpeso":           "₱",
+    \ "mexpeso":            "$",
+    \ "rupee":              "₨",
+    \ "shekel":             "₪",
+    \ "dong":               "₫",
+    \ "drachma":            "₯",
+\}
+
+let g:Units = {
+    \ "celcius":            "℃",
+    \ "fahrenheit":         "℉",
+    \ "ounce":              "℥",
+    \ "ohm":                "Ω",
+    \ "invohm":             "℧",
+    \ "kelvin":             "K",
+    \ "angstrom":           "Å",
+\}
+
+let g:Legal = {
+    \ "information":        "ℹ",
+    \ "copyright":          "©",
+    \ "registered":         "®",
+    \ "trademark":          "™",
+    \ "soundcopyright":     "℗",
+    \ "account":            "℀",
+    \ "servicemark":        "℠",
+\}
+
+let g:Technical = {
+    \ "fax":                "℻",
+    \ "tel":                "℡",
+    \ "watch":              "⌚",
+    \ "hourglass":          "⌛",
+    \ "keyboard":           "⌨",
+    \ "return":             "⏎",
+    \ "eject":              "⏏",
+    \ "commandkey":         "⌘",
+    \ "electric":           "⌁",
+    \ "crosshair":          "⌖",
+    \ "optionkey":          "⌥",
+\}
+
+let g:RomanNumerals = {
+    \ "romani":             "ⅰ",
+    \ "romanii":            "ⅱ",
+    \ "romaniii":           "ⅲ",
+    \ "romaniv":            "ⅳ",
+    \ "romanv":             "ⅴ",
+    \ "romanvi":            "ⅵ",
+    \ "romanvii":           "ⅶ",
+    \ "romanviii":          "ⅷ",
+    \ "romanix":            "ⅸ",
+    \ "romanx":             "ⅹ",
+    \ "romanxi":            "ⅺ",
+    \ "romanxii":           "ⅻ",
+    \ "romanl":             "ⅼ",
+    \ "romanc":             "ⅽ",
+    \ "romand":             "ⅾ",
+    \ "romanm":             "ⅿ",
+    \ "Romani":             "Ⅰ",
+    \ "Romanii":            "Ⅱ",
+    \ "Romaniii":           "Ⅲ",
+    \ "Romaniv":            "Ⅳ",
+    \ "Romanv":             "Ⅴ",
+    \ "Romanvi":            "Ⅵ",
+    \ "Romanvii":           "Ⅶ",
+    \ "Romanviii":          "Ⅷ",
+    \ "Romanix":            "Ⅸ",
+    \ "Romanx":             "Ⅹ",
+    \ "Romanxi":            "Ⅺ",
+    \ "Romanxii":           "Ⅻ",
+    \ "Romanl":             "Ⅼ",
+    \ "Romanc":             "Ⅽ",
+    \ "Romand":             "Ⅾ",
+    \ "Romanm":             "Ⅿ",
+    \ "Romancd":            "ↀ",
+    \ "Romandd":            "ↁ",
+    \ "Romancdcd":          "ↂ",
+\}
+
+let g:Punctuation = {
+    \ "invbang":            "¡",
+    \ "invquestion":        "¿",
+    \ "interrobang":        "‽",
+    \ "interbang":          "‽",
+    \ "invinterrobang":     "⸘",
+    \ "revquestion":        "⸮",
+    \ "irony":              "⸮",
+    \ "degree":             "°",
+    \ "pilcrow":            "¶",
+    \ "section":            "§",
+    \ "ellipsis":           "…",
+    \ "ell":                "…",
+    \ "bullet":             "•",
+    \ "interpunct":         "·",
+    \ "mdot":               "·",
+    \ "lsg":                "‹",
+    \ "rsg":                "›",
+    \ "ldg":                "«",
+    \ "rdg":                "»",
+    \ "ldq":                "“",
+    \ "rdq":                "”",
+    \ "lsq":                "‘",
+    \ "rsq":                "’",
+    \ "larrow":             "←",
+    \ "uarrow":             "↑",
+    \ "rarrow":             "→",
+    \ "darrow":             "↓",
+    \ "bharrow":            "↔",
+    \ "bvarrow":            "↕",
+    \ "nwarrow":            "↖",
+    \ "nearrow":            "↗",
+    \ "searrow":            "↘",
+    \ "swarrow":            "↙",
+    \ "blarrow":            "↤",
+    \ "buarrow":            "↥",
+    \ "brarrow":            "↦",
+    \ "bdarrow":            "↧",
+    \ "cclockwise":         "↺",
+    \ "ccw":                "↺",
+    \ "clockwise":          "↻",
+    \ "cw":                 "↻",
+    \ "hyphen":             "-",
+    \ "hy":                 "-",
+    \ "fdash":              "‒",
+    \ "endash":             "–",
+    \ "emdash":             "—",
+    \ "qdash":              "―",
+\}
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" You should NOT change anything below this line, if you do not know what you
+" are doing.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""
+" Unicode mappings
+"""""""""""""""""""""""""""""""""""""""
+
+let g:GreekAlphabet = {
+    \ "alpha":   "α",
+    \ "beta":    "β",
+    \ "gamma":   "γ",
+    \ "delta":   "δ",
+    \ "epsilon": "ε",
+    \ "zeta":    "ζ",
+    \ "eta":     "η",
+    \ "theta":   "θ",
+    \ "iota":    "ι",
+    \ "kappa":   "κ",
+    \ "lambda":  "λ",
+    \ "mu":      "μ",
+    \ "nu":      "ν",
+    \ "xi":      "ξ",
+    \ "omicron": "ο",
+    \ "pi":      "π",
+    \ "rho":     "ρ",
+    \ "sigma":   "σ",
+    \ "tau":     "τ",
+    \ "upsilon": "υ",
+    \ "phi":     "ϕ",
+    \ "chi":     "χ",
+    \ "psi":     "ψ",
+    \ "omega":   "ω",
+    \ "Alpha":   "Α",
+    \ "Beta":    "Β",
+    \ "Gamma":   "Γ",
+    \ "Delta":   "Δ",
+    \ "Epsilon": "Ε",
+    \ "Zeta":    "Ζ",
+    \ "Eta":     "Η",
+    \ "Theta":   "Θ",
+    \ "Iota":    "Ι",
+    \ "Kappa":   "Κ",
+    \ "Lambda":  "Λ",
+    \ "Mu":      "Μ",
+    \ "Nu":      "Ν",
+    \ "Xi":      "Ξ",
+    \ "Omicron": "Ο",
+    \ "Pi":      "Π",
+    \ "Rho":     "Ρ",
+    \ "Sigma":   "Σ",
+    \ "Tau":     "Τ",
+    \ "Upsilon": "Υ",
+    \ "Phi":     "Φ",
+    \ "Chi":     "Χ",
+    \ "Psi":     "Ψ",
+    \ "Omega":   "Ω",
+\}
+
+let g:Superscript = {
+    \ "sup0": "⁰",
+    \ "sup1": "¹",
+    \ "sup2": "²",
+    \ "sup3": "³",
+    \ "sup4": "⁴",
+    \ "sup5": "⁵",
+    \ "sup6": "⁶",
+    \ "sup7": "⁷",
+    \ "sup8": "⁸",
+    \ "sup9": "⁹",
+    \ "sup+": "⁺",
+    \ "sup-": "⁻",
+    \ "sup=": "⁼",
+    \ "sup(": "⁽",
+    \ "sup)": "⁾",
+    \ "supn": "ⁿ",
+    \ "supi": "ⁱ",
+\}
+
+let g:Subscript = {
+    \ "sub0": "₀",
+    \ "sub1": "₁",
+    \ "sub2": "₂",
+    \ "sub3": "₃",
+    \ "sub4": "₄",
+    \ "sub5": "₅",
+    \ "sub6": "₆",
+    \ "sub7": "₇",
+    \ "sub8": "₈",
+    \ "sub9": "₉",
+    \ "sub+": "₊",
+    \ "sub-": "₋",
+    \ "sub=": "₌",
+    \ "sub(": "₍",
+    \ "sub)": "₎",
+\}
+
+let g:MathOperators = {
+    \ "therefore":                  "∴",
+    \ "because":                    "∵",
+    \ "universal_quantifier":       "∀",
+    \ "forall":                     "∀",
+    \ "complement":                 "∁",
+    \ "partial_differential":       "∂",
+    \ "pdiff":                      "∂",
+    \ "existential_quantifier":     "∃",
+    \ "exists":                     "∃",
+    \ "non_existential_quantifier": "∄",
+    \ "nexists":                    "∄",
+    \ "null_set":                   "∅",
+    \ "null":                       "∅",
+    \ "element_of":                 "∈",
+    \ "el":                         "∈",
+    \ "not_element_of":             "∉",
+    \ "nel":                        "∉",
+    \ "contains":                   "∋",
+    \ "does_not_contain":           "∌",
+    \ "ncontains":                  "∌",
+    \ "end_of_proof":               "∎",
+    \ "qed":                        "∎",
+    \ "product":                    "∏",
+    \ "prod":                       "∏",
+    \ "coproduct":                  "∐",
+    \ "coprod":                     "∐",
+    \ "summation":                  "∑",
+    \ "sum":                        "∑",
+    \ "minus":                      "−",
+    \ "div":                        "÷",
+    \ "mul":                        "×",
+    \ "plusmin":                    "±",
+    \ "minplus":                    "∓",
+    \ "division":                   "∕",
+    \ "set_minus":                  "∖",
+    \ "asterisk_op":                "∗",
+    \ "ring_op":                    "∘",
+    \ "square_root":                "√",
+    \ "sqrt":                       "√",
+    \ "cube_root":                  "∛",
+    \ "crt":                        "∛",
+    \ "fourth_root":                "∜",
+    \ "qrt":                        "∜",
+    \ "proportional":               "∝",
+    \ "prop":                       "∝",
+    \ "infinity":                   "∞",
+    \ "inf":                        "∞",
+    \ "divides":                    "∣",
+    \ "ndivides":                   "∤",
+    \ "does_not_divide":            "∤",
+    \ "and":                        "∧",
+    \ "or":                         "∨",
+    \ "intersection":               "∩",
+    \ "union":                      "∪",
+    \ "integral":                   "∫",
+    \ "int":                        "∫",
+    \ "double_integral":            "∬",
+    \ "iint":                       "∬",
+    \ "triple_integral":            "∭",
+    \ "iiint":                      "∭",
+    \ "colon_equals":               "≔",
+    \ "equals_colon":               "≕",
+    \ "estimates":                  "≙",
+    \ "equal_by_definition":        "≝",
+    \ "not_equal":                  "≠",
+    \ "identical":                  "≡",
+    \ "not_identical":              "≢",
+    \ "less_or_equal":              "≤",
+    \ "leq":                        "≤",
+    \ "greater_or_equal":           "≥",
+    \ "geq":                        "≥",
+    \ "much_less":                  "≪",
+    \ "much_greater":               "≫",
+    \ "not_less":                   "≮",
+    \ "nless":                      "≮",
+    \ "not_greater":                "≯",
+    \ "ngreater":                   "≯",
+    \ "not_less_or_equal":          "≰",
+    \ "nleq":                       "≰",
+    \ "not_greater_or_equal":       "≱",
+    \ "ngeq":                       "≱",
+    \ "precedes":                   "≺",
+    \ "succeeds":                   "≻",
+    \ "does_not_precede":           "⊀",
+    \ "nprecedes":                  "⊀",
+    \ "does_not_succeed":           "⊁",
+    \ "nsucceed":                   "⊁",
+    \ "precedes_or_equal":          "≼",
+    \ "succeeds_or_equal":          "≽",
+    \ "proper_subset":              "⊂",
+    \ "proper_superset":            "⊃",
+    \ "not_proper_subset":          "⊄",
+    \ "nproper_subset":             "⊄",
+    \ "not_proper_superset":        "⊅",
+    \ "nproper_superset":           "⊅",
+    \ "subset_or_equal":            "⊆",
+    \ "subset":                     "⊆",
+    \ "superset_or_equal":          "⊇",
+    \ "superset":                   "⊇",
+    \ "not_subset_or_equal":        "⊈",
+    \ "nsubset":                    "⊈",
+    \ "not_superset_or_equal":      "⊉",
+    \ "nsuperset":                  "⊉",
+    \ "circled_plus":               "⊕",
+    \ "circled_minus":              "⊖",
+    \ "circled_cross":              "⊗",
+    \ "circled_dot":                "⊙",
+    \ "circled_ring":               "⊚",
+    \ "circled_asterisk":           "⊛",
+    \ "circled_equals":             "⊜",
+    \ "circled_dash":               "⊝",
+    \ "implies":                    "⊢",
+    \ "is_implied":                 "⊣",
+    \ "true":                       "⊤",
+    \ "false":                      "⊥",
+    \ "models":                     "⊧",
+    \ "does_not_imply":             "⊬",
+    \ "nimplies":                   "⊬",
+    \ "original_of":                "⊶",
+    \ "image_of":                   "⊷",
+    \ "xor":                        "⊻",
+    \ "nand":                       "⊼",
+    \ "nor":                        "⊽",
+\}
+
+let g:MathSymbols = {
+    \ "complex_numbers":  "ℂ",
+    \ "complex":          "ℂ",
+    \ "natural_numbers":  "ℕ",
+    \ "naturals":         "ℕ",
+    \ "rational_numbers": "ℚ",
+    \ "rationals":        "ℚ",
+    \ "real_numbers":     "ℝ",
+    \ "reals":            "ℝ",
+    \ "integer_numbers":  "ℤ",
+    \ "integers":         "ℤ",
+    \ "permille":         "‰",
+    \ "permyriad":        "‱",
+    \ "hbar":             "ℏ"
+\}
+
+
+
+"""""""""""""""""""""""""""""""""""""""
+" Abbreviation registration
+"""""""""""""""""""""""""""""""""""""""
+
+" Register our escape char as valid keyword
+let s:EscapeChar = '\'
+execute 'set iskeyword+=' . s:EscapeChar
+"execute 'set iskeyword=' . escape( &iskeyword, '\' ) . ',\\'
+
+fun! RemoveUnicodeMappingGroup(dict)
+    for name in keys( a:dict )
+        execute 'iunab ' . s:EscapeChar . name
+    endfor
+endfun
+
+fun! AddUnicodeMappingGroup(dict)
+    for name in keys( a:dict )
+        execute 'iab ' . s:EscapeChar . name . ' ' . a:dict[name]
+    endfor
+endfun
+
+" Combine all selected mappings in one dictionary for registration
+let s:MacroMapping = {}
+for dict in g:UnicodeMappingGroups
+    execute 'call extend( s:MacroMapping, g:' . dict . ' )'
+endfor
+
+" Register every character mapping as abbreviation
+call AddUnicodeMappingGroup(s:MacroMapping)
+
+endif
+
