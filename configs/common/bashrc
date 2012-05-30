@@ -1,5 +1,5 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
-test -z "${bashrc_guard-}" || return 0
+test -z "${bashrc_guard:-}" || return 0
 bashrc_guard=1
 interactive=
 iecho() { true ; }
@@ -11,25 +11,27 @@ case $- in
 esac
 iecho ".bashrc"
 
+have() { type -- "$@" >/dev/null 2>&1 ; }
+
 # Use vi mode readline instead of emacs style
 #set -o vi
-# XXX to do with resizing and redrawing
+
+# To do with resizing and redrawing terminals XXX explain
 shopt -s checkwinsize
 
 # core dumps
 ulimit -c unlimited
 iecho "Set core dump limit to $(ulimit -c)."
 
-have() { type "$@" >/dev/null 2>&1 ; }
 
-HOSTS="redeye marrakesh netsoc maths work" ; export HOSTS
+HOSTS="redeye work marrakesh maths netsoc" ; export HOSTS
 
 GIT_BASE_DIR="${HOME}/work" ; export GIT_BASE_DIR
 
 ENCRYPTED_BASE_DIR="${HOME}/.encrypted" ; export ENCRYPTED_BASE_DIR
 ENCRYPTED_DIR="${HOME}/encrypted" ; export ENCRYPTED_DIR
 
-UNAME="$(uname)" ; export UNAME
+UNAME="$(uname 2>/dev/null || true)"
 
 # since i'm definitely setting options, start off with at least '-'
 LESS="${LESS--}"
@@ -38,29 +40,33 @@ if ! echo "$LESS" | grep -Fq 'X' ; then LESS="${LESS}X" ; fi
 if ! echo "$LESS" | grep -Fq 'R' ; then LESS="${LESS}R" ; fi
 export LESS
 
-if (test -d "${HOME}/bin") && (! echo "${PATH:-}" | grep -Fq "${HOME}/bin") ; then
-    PATH="${PATH:-}${PATH:+:}${HOME}/bin" ; export PATH
-fi
-
-if echo "$UNAME" | grep -Fiq 'darwin' ; then
-    if test -r "${HOME}/.bashrc.darwin" ; then
-        . "${HOME}/.bashrc.darwin"
+if test -n "$interactive" ; then
+    v_="${PATH:-}"
+    if ! echo "$v_" | grep -q '\(^\.:\|:\.:\|:\.$\|^\.$\)' ; then
+        PATH="${v_}${v_:+:}." ; export PATH
     fi
 fi
-
-PATH="${PATH:-}${PATH:+:}." ; export PATH
+v_="${PATH:-}"
+n_="${HOME}/bin"
+if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+    PATH="${v_}${v_:+:}$n_" ; export PATH
+fi
 
 HOME_PREFIX="${HOME}/.local/usr" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
-    if (test -d "${HOME_PREFIX}/bin") && (! echo "${PATH:-}" | grep -Fq "${HOME_PREFIX}/bin") ; then
-        PATH="${HOME_PREFIX}/bin${PATH:+:}${PATH:-}"
-        export PATH
+    v_="${PATH:-}"
+    n_="${HOME_PREFIX}/sbin"
+    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+        PATH="${n_}${v_:+:}${v_}" ; export PATH
     fi
-    if (test -d "${HOME_PREFIX}/sbin") && (! echo "${PATH:-}" | grep -Fq "${HOME_PREFIX}/sbin") ; then
-        PATH="${HOME_PREFIX}/sbin${PATH:+:}${PATH:-}"
-        export PATH
+    v_="${PATH:-}"
+    n_="${HOME_PREFIX}/bin"
+    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+        PATH="${n_}${v_:+:}${v_}" ; export PATH
     fi
 fi
+unset v_
+unset n_
 
 # XDG
 # http://standards.freedesktop.org/basedir-spec/
@@ -91,11 +97,10 @@ if (have ruby) && (test -d "${HOME}/.gem") \
         RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
         export RUBY_VERSION
     fi
-    v_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
-    if (test -d "$v_") && (! echo "${PATH:-}" | grep -Fq "$v_") ; then
-        v_="${PATH:-}"
-        PATH="${HOME}/.gem/ruby/${RUBY_VERSION}/bin${v_:+:}${v_}"
-        export PATH
+    n_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
+    v_="${PATH:-}"
+    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+        PATH="${n_}${v_:+:}${v_}" ; export PATH
     fi
     unset v_
 fi
@@ -129,27 +134,29 @@ fi
 
 SCREEN_SHELL="$(which bash)" ; export SCREEN_SHELL
 
-KEYCHAIN_DIR="${HOME}/.keychain" ; export KEYCHAIN_DIR
-if test ! -d "$KEYCHAIN_DIR" ; then
-    if test ! -e "$KEYCHAIN_DIR" ; then
-        mkdir -p "$KEYCHAIN_DIR"
+if test -n "$interactive" ; then
+    KEYCHAIN_DIR="${HOME}/.keychain" ; export KEYCHAIN_DIR
+    if test ! -d "$KEYCHAIN_DIR" ; then
+        if test ! -e "$KEYCHAIN_DIR" ; then
+            mkdir -p "$KEYCHAIN_DIR"
+        fi
     fi
-fi
-if test -d "$KEYCHAIN_DIR" ; then
-    if have keychain ; then
-        iecho "Starting keychain."
-        keychain --nogui --quiet --timeout 4800
-        for bashrc_key_type in "sh" "sh-gpg" ; do
-            if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}" ; then
-                iecho "Sourcing \"${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}\""
-                . "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
-            fi
-        done
-        unset bashrc_key_type
+    if test -d "$KEYCHAIN_DIR" ; then
+        if have keychain ; then
+            iecho "Starting keychain."
+            keychain --nogui --quiet --timeout 4800
+            for bashrc_key_type in "sh" "sh-gpg" ; do
+                if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}" ; then
+                    iecho "Sourcing \"${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}\""
+                    . "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
+                fi
+            done
+            unset bashrc_key_type
+        fi
     fi
-fi
-if have tty ; then
-    GPG_TTY=$(tty) ; export GPG_TTY
+    if have tty ; then
+        GPG_TTY=$(tty) ; export GPG_TTY
+    fi
 fi
 
 FULLNAME="Gavin Beatty" ; export FULLNAME
@@ -164,88 +171,90 @@ GIT_AUTHOR_NAME="${FULLNAME}" ; export GIT_AUTHOR_NAME
 GIT_AUTHOR_EMAIL="${EMAIL}" ; export GIT_AUTHOR_EMAIL
 BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
 
-if test -r "${HOME}/.git-completion.bash" ; then
-    . "${HOME}/.git-completion.bash"
-else
-# taken from git/contrib/completion/git-completion.bash
-#
-# __git_ps1 accepts 0 or 1 arguments (i.e., format string)
-# returns text to add to bash PS1 prompt (includes branch name)
-__git_ps1 () {
-	local g="$(git rev-parse --git-dir 2>/dev/null)"
-	if [ -n "$g" ]; then
-		local r
-		local b
-		if [ -d "$g/rebase-apply" ]
-		then
-			if test -f "$g/rebase-apply/rebasing"
-			then
-				r="|REBASE"
-			elif test -f "$g/rebase-apply/applying"
-			then
-				r="|AM"
-			else
-				r="|AM/REBASE"
-			fi
-			b="$(git symbolic-ref HEAD 2>/dev/null)"
-		elif [ -f "$g/rebase-merge/interactive" ]
-		then
-			r="|REBASE-i"
-			b="$(cat "$g/rebase-merge/head-name")"
-		elif [ -d "$g/rebase-merge" ]
-		then
-			r="|REBASE-m"
-			b="$(cat "$g/rebase-merge/head-name")"
-		elif [ -f "$g/MERGE_HEAD" ]
-		then
-			r="|MERGING"
-			b="$(git symbolic-ref HEAD 2>/dev/null)"
-		else
-			if [ -f "$g/BISECT_LOG" ]
-			then
-				r="|BISECTING"
-			fi
-			if ! b="$(git symbolic-ref HEAD 2>/dev/null)"
-			then
-				if ! b="$(git describe --exact-match HEAD 2>/dev/null)"
-				then
-					b="$(cut -c1-7 "$g/HEAD")..."
-				fi
-			fi
-		fi
-
-		local w
-		local i
-
-		if test -n "${GIT_PS1_SHOWDIRTYSTATE-}"; then
-			if test "$(git config --bool bash.showDirtyState)" != "false"; then
-				git diff --no-ext-diff --ignore-submodules \
-					--quiet --exit-code || w="*"
-				if git rev-parse --quiet --verify HEAD >/dev/null; then
-					git diff-index --cached --quiet \
-						--ignore-submodules HEAD -- || i="+"
-				else
-					i="#"
-				fi
-			fi
-		fi
-
-		if [ -n "${1-}" ]; then
-			printf "$1" "${b##refs/heads/}$w$i$r"
-		else
-			printf " (%s)" "${b##refs/heads/}$w$i$r"
-		fi
-	fi
-}
-fi
-
-if (test \! "x${TERM}" = 'xdumb') && (test -n "$BASH") && (test -n "$PS1") ; then
-    if test "x$(/usr/bin/id -u)" = 'x0' ; then
-        PS1='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
-        export PS1
+if test -n "$interactive" ; then
+    if test -r "${HOME}/.git-completion.bash" ; then
+        . "${HOME}/.git-completion.bash"
     else
-        PS1='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(__git_ps1 "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
-        export PS1
+    # taken from git/contrib/completion/git-completion.bash
+    #
+    # __git_ps1 accepts 0 or 1 arguments (i.e., format string)
+    # returns text to add to bash PS1 prompt (includes branch name)
+    __git_ps1 () {
+        local g="$(git rev-parse --git-dir 2>/dev/null)"
+        if [ -n "$g" ]; then
+            local r
+            local b
+            if [ -d "$g/rebase-apply" ]
+            then
+                if test -f "$g/rebase-apply/rebasing"
+                then
+                    r="|REBASE"
+                elif test -f "$g/rebase-apply/applying"
+                then
+                    r="|AM"
+                else
+                    r="|AM/REBASE"
+                fi
+                b="$(git symbolic-ref HEAD 2>/dev/null)"
+            elif [ -f "$g/rebase-merge/interactive" ]
+            then
+                r="|REBASE-i"
+                b="$(cat "$g/rebase-merge/head-name")"
+            elif [ -d "$g/rebase-merge" ]
+            then
+                r="|REBASE-m"
+                b="$(cat "$g/rebase-merge/head-name")"
+            elif [ -f "$g/MERGE_HEAD" ]
+            then
+                r="|MERGING"
+                b="$(git symbolic-ref HEAD 2>/dev/null)"
+            else
+                if [ -f "$g/BISECT_LOG" ]
+                then
+                    r="|BISECTING"
+                fi
+                if ! b="$(git symbolic-ref HEAD 2>/dev/null)"
+                then
+                    if ! b="$(git describe --exact-match HEAD 2>/dev/null)"
+                    then
+                        b="$(cut -c1-7 "$g/HEAD")..."
+                    fi
+                fi
+            fi
+
+            local w
+            local i
+
+            if test -n "${GIT_PS1_SHOWDIRTYSTATE-}"; then
+                if test "$(git config --bool bash.showDirtyState)" != "false"; then
+                    git diff --no-ext-diff --ignore-submodules \
+                        --quiet --exit-code || w="*"
+                    if git rev-parse --quiet --verify HEAD >/dev/null; then
+                        git diff-index --cached --quiet \
+                            --ignore-submodules HEAD -- || i="+"
+                    else
+                        i="#"
+                    fi
+                fi
+            fi
+
+            if [ -n "${1-}" ]; then
+                printf "$1" "${b##refs/heads/}$w$i$r"
+            else
+                printf " (%s)" "${b##refs/heads/}$w$i$r"
+            fi
+        fi
+    }
+    fi
+
+    if (test \! "x${TERM}" = 'xdumb') && (test -n "$BASH") && (test -n "$PS1") ; then
+        if test "x$(/usr/bin/id -u)" = 'x0' ; then
+            PS1='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
+            export PS1
+        else
+            PS1='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(__git_ps1 "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
+            export PS1
+        fi
     fi
 fi
 
@@ -258,33 +267,47 @@ if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*c +on' ; then
     MINICOM="${MINICOM}${MINICOM:+ }-c on" ; export MINICOM
 fi
 
+########################################################################
+# Per box
+########################################################################
 for i_ in $HOSTS ; do
     if test -r "${HOME}/.bashrc.${i_}" ; then
         . "${HOME}/.bashrc.${i_}"
     fi
 done
-for i_ in functions aliases ; do
-    if test -r "${HOME}/.bashrc.${i_}" ; then
-        . "${HOME}/.bashrc.${i_}"
-    fi
-done
 unset i_
-
-# /etc/bash_completion sources ${HOME}/.bash_completion for us
-if test -r /etc/bash_completion ; then
-    . /etc/bash_completion
+########################################################################
+# Per system
+########################################################################
+if echo "$UNAME" | grep -Fiq 'darwin' ; then
+    if test -r "${HOME}/.bashrc.darwin" ; then
+        . "${HOME}/.bashrc.darwin"
+    fi
 fi
-if test -z "${bash_completion_guard:-}" ; then
-    . "${HOME}/.bash_completion"
-fi
-
-if test -r "${HOME}/.cdargs.bash" ; then
-    . "${HOME}/.cdargs.bash"
-fi
-
 # XXX how to detect msys/mingw properly? what's the difference?
 if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
     if test -r "${HOME}/.bashrc.msys" ; then
         . "${HOME}/.bashrc.msys"
     fi
+fi
+
+########################################################################
+# Per interactive feature
+########################################################################
+if test -n "$interactive" ; then
+    if test -r /etc/bash_completion ; then
+        # /etc/bash_completion sources ${HOME}/.bash_completion for us
+        . /etc/bash_completion
+    else
+        . "${HOME}/.bash_completion"
+    fi
+
+    if test -r "${HOME}/.cdargs.bash" ; then
+        . "${HOME}/.cdargs.bash"
+    fi
+    for i_ in functions aliases ; do
+        if test -r "${HOME}/.bashrc.${i_}" ; then
+            . "${HOME}/.bashrc.${i_}"
+        fi
+    done
 fi
