@@ -24,7 +24,6 @@ ctags2.sh \
 ctags.sh \
 daemonize.sh \
 differ.sh \
-diff-svn-adaptor.sh \
 dnsnameexists.sh \
 doubleclick.sh \
 example-xml.sh \
@@ -33,7 +32,6 @@ findpid.sh \
 find-src2.sh \
 find-src.sh \
 findup.sh \
-gen-pegged-externals.sh \
 git-cvs-mirror.sh \
 git-release \
 giturl.sh \
@@ -65,8 +63,10 @@ run.sh \
 stripcolor.sh \
 svnaddcopyright.sh \
 svnblamefirst.sh \
+svndiffadaptor.sh \
 svnlastcommit.sh \
 svnlist.sh \
+svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
 svnswitch.sh \
