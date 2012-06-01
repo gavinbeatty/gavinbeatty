@@ -6,6 +6,8 @@ case $- in
 *) isinteractive=0 ; iecho() { true ; } ;;
 esac
 iecho ".bashrc"
+# XXX perhaps use this to add to PATH etc.
+regexelem() { echo "$2" | grep -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
 
 ########################################################################
 # Options
@@ -109,7 +111,7 @@ ENCRYPTED_DIR="${HOME}/encrypted" ; export ENCRYPTED_DIR
 ########################################################################
 if test "${isinteractive:-0}" -ne 0 ; then
     v_="${PATH:-}"
-    if ! echo "$v_" | grep -q '\(^\.:\|:\.:\|:\.$\|^\.$\)' ; then
+    if ! regexelem '\.' "$v_" ; then
         PATH="${v_}${v_:+:}." ; export PATH
     fi
 fi
