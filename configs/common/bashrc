@@ -1,17 +1,29 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 test -z "${bashrc_guard:-}" || return 0
 bashrc_guard=1
-interactive=
-iecho() { true ; }
 case $- in
-*i*)
-    interactive=1
-    iecho() { echo "$@" ; }
-    ;;
+*i*) isinteractive=1 ; iecho() { echo "$@" ; } ;;
+*) isinteractive=0 ; iecho() { true ; } ;;
 esac
 iecho ".bashrc"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+########################################################################
+# Options
+########################################################################
+if test -r ~/.bashrc.options ; then
+    . ~/.bashrc.options
+fi
+if test "${BASHRC_OPTION_ETC_BASHRC:-0}" -ne 0 ; then
+    if test -r /etc/bashrc ; then
+        . /etc/bashrc
+    fi
+fi
+if test -n "${BASHRC_OPTION_LC_ALL:-}" ; then
+    LC_ALL="$BASHRC_OPTION_LC_ALL" ; export LC_ALL
+fi
+if test -n "${BASHRC_OPTION_LANG:-}" ; then
+    LANG="$BASHRC_OPTION_LANG" ; export LANG
+fi
 
 # Use vi mode readline instead of emacs style
 #set -o vi
@@ -21,26 +33,81 @@ shopt -s checkwinsize
 
 # core dumps
 ulimit -c unlimited
-iecho "Set core dump limit to $(ulimit -c)."
+iecho "ulimit -c $(ulimit -c)"
+# get rid of nosy others
+# 0027 => 'u=rwx,g=rx,o='
+umask 0027
+iecho "umask $(umask)"
 
-
+########################################################################
+# Set variables that have no dependency on PATH etc.
+########################################################################
+UNAME="$(uname 2>/dev/null || true)"
 HOSTS="redeye work marrakesh maths netsoc" ; export HOSTS
+
+HISTSIZE="30" ; export HISTSIZE
+
+FULLNAME="Gavin Beatty" ; export FULLNAME
+EMAIL="gavinbeatty@gmail.com" ; export EMAIL
+DEBFULLNAME="${FULLNAME}" ; export DEBFULLNAME
+DEBEMAIL="${EMAIL}" ; export DEBEMAIL
+GIT_AUTHOR_NAME="${FULLNAME}" ; export GIT_AUTHOR_NAME
+GIT_AUTHOR_EMAIL="${EMAIL}" ; export GIT_AUTHOR_EMAIL
+BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
+GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
+
+# since i'm definitely setting options, start off with at least '-'
+LESS="${LESS:--}"
+if ! echo "$LESS" | grep -Fq 'F' ; then LESS="${LESS}F" ; fi
+if ! echo "$LESS" | grep -Fq 'X' ; then LESS="${LESS}X" ; fi
+if ! echo "$LESS" | grep -Fq 'R' ; then LESS="${LESS}R" ; fi
+if ! echo "$LESS" | grep -Fq 'S' ; then LESS="${LESS}S" ; fi
+export LESS
+
+# line-wrap minicom by default
+MINICOM="${MINICOM:-}"
+if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*w' ; then
+    MINICOM="${MINICOM}${MINICOM:+ }-w" ; export MINICOM
+fi
+if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*c +on' ; then
+    MINICOM="${MINICOM}${MINICOM:+ }-c on" ; export MINICOM
+fi
+
+# XDG
+# http://standards.freedesktop.org/basedir-spec/
+if ! test -f "/etc/SuSE-release" ; then
+    v_="${XDG_DATA_HOME:-}"
+    XDG_DATA_HOME="${v_}${v_:+:}${HOME}/.local/share"
+    export XDG_DATA_HOME
+    v_="${XDG_DATA_DIRS:-}"
+    XDG_DATA_DIRS="${v_}${v_:+:}/usr/local/share/:/usr/share/"
+    export XDG_DATA_DIRS
+    v_="${XDG_CONFIG_HOME:-}"
+    XDG_CONFIG_HOME="${v_}${v_:+:}${HOME}/.config"
+    export XDG_CONFIG_HOME
+    v_="${XDG_CONFIG_DIRS:-}"
+    XDG_CONFIG_DIRS="${v_}${v_:+:}/etc/xdg"
+    export XDG_CONFIG_DIRS
+    unset v_
+fi
+
+#v_="${PYTHONPATH:-}"
+#PYTHONPATH="${v_}${v_:+:}${HOME}/.local/usr/lib/python"
+#pyver_="$(python -V 2>&1 | cut -d' ' -f2 | perl -wne 's/(\d+\.\d+)\..*/$1/;print;')"
+#v_="${PYTHONPATH:-}"
+#PYTHONPATH="${v_}${v_:+:}${HOME}/.local/usr/lib/python${pyver_}"
+#export PYTHONPATH
+#unset v_
 
 GIT_BASE_DIR="${HOME}/work" ; export GIT_BASE_DIR
 
 ENCRYPTED_BASE_DIR="${HOME}/.encrypted" ; export ENCRYPTED_BASE_DIR
 ENCRYPTED_DIR="${HOME}/encrypted" ; export ENCRYPTED_DIR
 
-UNAME="$(uname 2>/dev/null || true)"
-
-# since i'm definitely setting options, start off with at least '-'
-LESS="${LESS--}"
-if ! echo "$LESS" | grep -Fq 'F' ; then LESS="${LESS}F" ; fi
-if ! echo "$LESS" | grep -Fq 'X' ; then LESS="${LESS}X" ; fi
-if ! echo "$LESS" | grep -Fq 'R' ; then LESS="${LESS}R" ; fi
-export LESS
-
-if test -n "$interactive" ; then
+########################################################################
+# Set PATH and associated variables
+########################################################################
+if test "${isinteractive:-0}" -ne 0 ; then
     v_="${PATH:-}"
     if ! echo "$v_" | grep -q '\(^\.:\|:\.:\|:\.$\|^\.$\)' ; then
         PATH="${v_}${v_:+:}." ; export PATH
@@ -65,37 +132,17 @@ if test -d "${HOME_PREFIX}" ; then
         PATH="${n_}${v_:+:}${v_}" ; export PATH
     fi
 fi
-unset v_
-unset n_
-
-# XDG
-# http://standards.freedesktop.org/basedir-spec/
-if ! test -f "/etc/SuSE-release" ; then
-    v_="${XDG_DATA_HOME:-}"
-    XDG_DATA_HOME="${v_}${v_:+:}${HOME}/.local/share"
-    export XDG_DATA_HOME
-    v_="${XDG_DATA_DIRS:-}"
-    XDG_DATA_DIRS="${v_}${v_:+:}/usr/local/share/:/usr/share/"
-    export XDG_DATA_DIRS
-    v_="${XDG_CONFIG_HOME:-}"
-    XDG_CONFIG_HOME="${v_}${v_:+:}${HOME}/.config"
-    export XDG_CONFIG_HOME
-    v_="${XDG_CONFIG_DIRS:-}"
-    XDG_CONFIG_DIRS="${v_}${v_:+:}/etc/xdg"
-    export XDG_CONFIG_DIRS
-    unset v_
+n_="${HOME}/.cabal/bin"
+v_=
+test -z "${PATH:-}" || v_=":$PATH"
+if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
+    PATH="${n_}${v_}" ; export PATH
 fi
 
-if (test -d "${HOME}/.cabal") && (! echo "${PATH:-}" | grep -Fq "${HOME}/.cabal/bin") ; then
-    PATH="${PATH:+${HOME}/.cabal/bin}${PATH:+:}${PATH:-}"
-    export PATH
-fi
-
-if (have ruby) && (test -d "${HOME}/.gem") \
-&& (have awk) && (have sed) ; then
+if (type -- ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
+&& (type -- awk >/dev/null 2>&1) && (type -- sed >/dev/null 2>&1) ; then
     if test -z "${RUBY_VERSION:-}" ; then
         RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
-        export RUBY_VERSION
     fi
     n_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
     v_="${PATH:-}"
@@ -104,74 +151,59 @@ if (have ruby) && (test -d "${HOME}/.gem") \
     fi
     unset v_
 fi
-v_="${PYTHONPATH:-}"
-PYTHONPATH="${v_}${v_:+:}${HOME}/share/python/lib/python"
-export PYTHONPATH
 unset v_
+unset n_
 
-unset HISTFILE
-HISTSIZE="30" ; export HISTSIZE
-
-if have less ; then
+########################################################################
+# Set anything depending on PATH etc.
+########################################################################
+if type -- less >/dev/null 2>&1 ; then
     PAGER="less" ; export PAGER
 fi
-if have vim ; then
-    EDITOR="vim" ; export EDITOR
-    VISUAL="$EDITOR" ; export VISUAL
-fi
-if have google-chrome ; then
+
+for i_ in vim nano pico ; do
+    if type -- "$i_" >/dev/null 2>&1 ; then
+        VISUAL="$i_" ; export VISUAL
+        break
+    fi
+done
+unset i_
+EDITOR="${VISUAL:-}" ; export EDITOR
+SVN_EDITOR="${VISUAL:-}" ; export SVN_EDITOR
+if type -- google-chrome >/dev/null 2>&1 ; then
     BROWSER="google-chrome" ; export BROWSER
-elif have iceweasel ; then
+elif type -- iceweasel >/dev/null 2>&1 ; then
     BROWSER="iceweasel" ; export BROWSER
-elif have firefox ; then
+elif type -- firefox >/dev/null 2>&1 ; then
     BROWSER="firefox" ; export BROWSER
 fi
 
-if have gvim ; then
-    CONSOLE_EDITOR="$EDITOR" ; export CONSOLE_EDITOR
-    VISUAL_EDITOR="gvim" ; export VISUAL_EDITOR
-fi
-
-SCREEN_SHELL="$(which bash)" ; export SCREEN_SHELL
-
-if test -n "$interactive" ; then
-    KEYCHAIN_DIR="${HOME}/.keychain" ; export KEYCHAIN_DIR
-    if test ! -d "$KEYCHAIN_DIR" ; then
-        if test ! -e "$KEYCHAIN_DIR" ; then
-            mkdir -p "$KEYCHAIN_DIR"
+if test "${isinteractive:-0}" -ne 0 ; then
+    if type -- keychain >/dev/null 2>&1 ; then
+        KEYCHAIN_DIR="${HOME}/.keychain"
+        if test ! -d "$KEYCHAIN_DIR" ; then
+            if test ! -e "$KEYCHAIN_DIR" ; then
+                mkdir -p "$KEYCHAIN_DIR"
+            fi
         fi
-    fi
-    if test -d "$KEYCHAIN_DIR" ; then
-        if have keychain ; then
-            iecho "Starting keychain."
+        if test -d "$KEYCHAIN_DIR" ; then
+            iecho "keychain..."
             keychain --nogui --quiet --timeout 4800
             for bashrc_key_type in "sh" "sh-gpg" ; do
                 if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}" ; then
-                    iecho "Sourcing \"${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}\""
+                    iecho ". ${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
                     . "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
                 fi
             done
             unset bashrc_key_type
         fi
     fi
-    if have tty ; then
+    if type -- tty >/dev/null 2>&1 ; then
         GPG_TTY=$(tty) ; export GPG_TTY
     fi
 fi
 
-FULLNAME="Gavin Beatty" ; export FULLNAME
-EMAIL="gavinbeatty@gmail.com" ; export EMAIL
-
-GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
-export GPG_KEY_ID
-
-DEBFULLNAME="${FULLNAME}" ; export DEBFULLNAME
-DEBEMAIL="${EMAIL}" ; export DEBEMAIL
-GIT_AUTHOR_NAME="${FULLNAME}" ; export GIT_AUTHOR_NAME
-GIT_AUTHOR_EMAIL="${EMAIL}" ; export GIT_AUTHOR_EMAIL
-BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
-
-if test -n "$interactive" ; then
+if test "${isinteractive:-0}" -ne 0 ; then
     if test -r "${HOME}/.git-completion.bash" ; then
         . "${HOME}/.git-completion.bash"
     else
@@ -179,7 +211,7 @@ if test -n "$interactive" ; then
     #
     # __git_ps1 accepts 0 or 1 arguments (i.e., format string)
     # returns text to add to bash PS1 prompt (includes branch name)
-    __git_ps1 () {
+    __git_ps1() {
         local g="$(git rev-parse --git-dir 2>/dev/null)"
         if [ -n "$g" ]; then
             local r
@@ -247,24 +279,34 @@ if test -n "$interactive" ; then
     }
     fi
 
-    if (test \! "x${TERM}" = 'xdumb') && (test -n "$BASH") && (test -n "$PS1") ; then
-        if test "x$(/usr/bin/id -u)" = 'x0' ; then
-            PS1='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
-            export PS1
-        else
-            PS1='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(__git_ps1 "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
-            export PS1
-        fi
+fi
+svn_ps1_() {
+    local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)"
+    if test $? -eq 0 ; then
+        v="$(echo "$v" | perl -wne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)((/[^/]*)?).*!$1$2!;s/^trunk.*/trunk/;print;}')"
+        if test -n "$v" ; then printf "$1" "$v" && return 0 ; fi
     fi
-fi
-
-# line-wrap minicom by default
-MINICOM="${MINICOM:-}"
-if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*w' ; then
-    MINICOM="${MINICOM}${MINICOM:+ }-w" ; export MINICOM
-fi
-if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*c +on' ; then
-    MINICOM="${MINICOM}${MINICOM:+ }-c on" ; export MINICOM
+    return 1
+}
+ps1_() {
+    local i=
+    for i in __git_ps1 svn_ps1_ ; do
+        local v="$("$i" "$@")"
+        if test -n "$v" ; then echo "$v" && break ; fi
+    done
+}
+export -f ps1_
+if (test "${TERM:-}" != 'dumb') && (test -n "${BASH:-}") && (test -n "${PS1:-}") ; then
+    if test "$(/usr/bin/id -u)" = '0' ; then
+        PS1='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
+        export PS1
+    else
+        #PS1='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(git_ps1_ "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
+        PS1='\[\e[0;32m\]\u\[\e[m\]@\[\e[1;34m\]\h\[\e[m\]:\[\e[0;37m\]\w\[\e[m\]$(ps1_ "\[\e[1;31m\](%s)\[\e[m\]")\$ '; export PS1
+        export PS1
+    fi
+    # BASIC_PS1 is PS1 without any function calls
+    BASIC_PS1='\[\e[0;32m\]\u\[\e[m\]@\[\e[1;34m\]\h\[\e[m\]:\[\e[0;37m\]\w\[\e[m\]\$ '
 fi
 
 ########################################################################
@@ -294,7 +336,7 @@ fi
 ########################################################################
 # Per interactive feature
 ########################################################################
-if test -n "$interactive" ; then
+if test "${isinteractive:-0}" -ne 0 ; then
     if test -r /etc/bash_completion ; then
         # /etc/bash_completion sources ${HOME}/.bash_completion for us
         . /etc/bash_completion
