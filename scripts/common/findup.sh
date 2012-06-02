@@ -11,21 +11,39 @@ set -e
 set -u
 trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
+
+prog="$(basename -- "$0")"
+shell="${BOURNE_SHELL:-}"
+
 die() { echo "error: $@" >&2 ; exit 1 ; }
 have() { type -- "$@" >/dev/null 2>&1 ; }
-findhere() {
-    find . -maxdepth 1 -name "$1" | xargs -0 "$shell" -c 'echo $#' count | wc -l
+
+get_shell() {
+    if test -z "$shell" ; then
+        shell="bash"
+        if have dash ; then shell="dash"
+        elif have sh ; then shell="sh"
+        elif ! have "$shell" ; then die "Unknown shell!" ; fi
+    fi
+}
+get_xargs() {
+    if test -z "$xargs" ; then
+        xargs=xargs
+        ! have gxargs || xargs=gxargs
+        have "$xargs" || die "Unknown shell!"
+    fi
 }
 
-shell="bash"
-if have dash ; then shell="dash"
-elif have sh ; then shell="sh"
-elif ! have "$shell" ; then die "Unknown shell!" ; fi
+findhere() {
+    find . -maxdepth 1 -name "$1" | $xargs -r0 "$shell" -c 'echo $#' count | wc -l
+}
 
 if test $# -ne 1 ; then
     echo "usage: $(basename -- "$0") <file>" >&2
     exit 1
 fi
+get_shell
+get_xargs
 lastpwd=""
 while test "$(findhere "$1")" -eq 0 ; do
     cd ..
