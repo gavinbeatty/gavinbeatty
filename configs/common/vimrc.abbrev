@@ -1,4 +1,4 @@
-
+" vi: set ft=vim shiftwidth=4 tabstop=4 expandtab:
 " Handy abbreviations for unicode chars
 ab #euro €
 ab #le ≤
@@ -71,5 +71,4 @@ ab #ndash –
 ab #mdash —
 " parenthetical note―like this one―etc.
 ab #qdash ―
-
 

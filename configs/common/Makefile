@@ -4,6 +4,7 @@ INSTALL ?= install
 INSTALL_DATA ?= $(INSTALL) -m 0644
 INSTALL_DIR ?= $(INSTALL) -d
 INSTALL_PRIVATE_DATA ?= $(INSTALL) -m 0600
+TOUCH ?= touch
 SED ?= sed
 UNAME ?= uname
 UNAME_OS ?= $(UNAME) -s
@@ -58,11 +59,11 @@ muttrc.gmail \
 screenrc \
 .ssh_config \
 vimrc \
-vimrc_abbreviations \
-vimrc_bash \
-vimrc_cpp \
-vimrc_text \
-vimrc_unicodemacros
+vimrc.abbrev \
+vimrc.sh \
+vimrc.cpp \
+vimrc.txt \
+vimrc.unicode
 
 install: $(SOURCES)
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)
@@ -90,9 +91,11 @@ install: $(SOURCES)
 	$(INSTALL_PRIVATE_DATA) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 	$(INSTALL_DATA) screenrc $(DESTDIR)$(HOME)/.screenrc
 	$(INSTALL_PRIVATE_DATA) .ssh_config $(DESTDIR)$(HOME)/.ssh/config
+	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre
 	$(INSTALL_DATA) vimrc $(DESTDIR)$(HOME)/.vimrc
-	$(INSTALL_DATA) vimrc_abbreviations $(DESTDIR)$(HOME)/.vimrc_abbreviations
-	$(INSTALL_DATA) vimrc_bash $(DESTDIR)$(HOME)/.vimrc_bash
-	$(INSTALL_DATA) vimrc_cpp $(DESTDIR)$(HOME)/.vimrc_cpp
-	$(INSTALL_DATA) vimrc_text $(DESTDIR)$(HOME)/.vimrc_text
-	$(INSTALL_DATA) vimrc_unicodemacros $(DESTDIR)$(HOME)/.vimrc_unicodemacros
+	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post
+	$(INSTALL_DATA) vimrc.abbrev $(DESTDIR)$(HOME)/.vimrc.abbrev
+	$(INSTALL_DATA) vimrc.sh $(DESTDIR)$(HOME)/.vimrc.sh
+	$(INSTALL_DATA) vimrc.cpp $(DESTDIR)$(HOME)/.vimrc.cpp
+	$(INSTALL_DATA) vimrc.txt $(DESTDIR)$(HOME)/.vimrc.txt
+	$(INSTALL_DATA) vimrc.unicode $(DESTDIR)$(HOME)/.vimrc.unicode

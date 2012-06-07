@@ -1,3 +1,4 @@
+" vi: set ft=vim expandtab tabstop=4 shiftwidth=4:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Unicode Macro Table
@@ -438,7 +439,7 @@ let g:MathSymbols = {
 """""""""""""""""""""""""""""""""""""""
 
 " Register our escape char as valid keyword
-let s:EscapeChar = '\'
+let s:EscapeChar = '#'
 execute 'set iskeyword+=' . s:EscapeChar
 "execute 'set iskeyword=' . escape( &iskeyword, '\' ) . ',\\'
 
