@@ -9,7 +9,7 @@ if test -z "$USER" ; then
     USER="$USERNAME" ; export USER
 fi
 
-if ! have "python" ; then
+if ! type -- python >/dev/null 2>&1 ; then
     python="$(find "/c" -maxdepth 1 -type d \
         -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
     tmp_PATH="$(envlist "$PATH" append "$python")"
@@ -31,7 +31,7 @@ if test -d "/c/Program Files/Vim/" ; then
 fi
 
 # if cmake isn't already in the path...
-if ! have "cmake" ; then
+if ! type -- cmake >/dev/null 2>&1 ; then
     cmake="$(find "/c/Program Files" -maxdepth 1 -type d \
         -iregex '.*/CMake [0-9]+\.[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
     tmp_PATH="$(envlist "$PATH" append "$cmake")"

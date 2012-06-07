@@ -3,7 +3,7 @@ if test -n "${bashrc_aliases_guard-}" ; then return 0 ; fi
 bashrc_aliases_guard=1
 iecho ".bashrc.aliases"
 
-if (have sed) && (have grep) \
+if (type -- sed >/dev/null 2>&1) && (type -- grep >/dev/null 2>&1) \
 && (echo | grep -Eq ''); then
     LS_OPTIONS="${LS_OPTIONS:-}"
     bash_aliases_ls="$(eval echo $(alias ls 2>/dev/null | sed -e 's/^alias ls=//'))"
@@ -39,7 +39,7 @@ alias lsquote='ls --quoting-style=shell-always'
 alias lsescape='ls --quoting-style=escape'
 alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
 alias r='runq.sh'
-if have "xdg-open" ; then
+if type -- xdg-open >/dev/null 2>&1 ; then
     alias o='runq.sh xdg-open'
 else
     alias o='runq.sh doubleclick.sh'
@@ -51,11 +51,11 @@ alias encrypt='gpg -c'
 
 alias btftp='tftp -m binary'
 
-if ! have "gmake" ; then
+if ! type -- gmake >/dev/null 2>&1 ; then
     alias gmake='make'
 fi
 
-if have colordiff ; then
+if type -- colordiff >/dev/null 2>&1 ; then
     alias diff='colordiff'
 fi
 

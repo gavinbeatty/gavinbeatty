@@ -5,6 +5,7 @@ if test -n "${bash_completion_guard-}" ; then return 0 ; fi
 bash_completion_guard=1
 iecho ".bash_completion"
 
+have() { type -- "$@" >/dev/null 2>&1 ; }
 ## see http://www.debian-administration.org/articles/317 for examples
 # have foo && {
 #     _foo() {
