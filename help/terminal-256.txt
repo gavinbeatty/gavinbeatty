@@ -1,0 +1,29 @@
+% Terminal 256 colors
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# tmux
+
+Put the following in your tmux.conf:
+
+    set -g default-terminal "screen-256color"
+
+Unfortunately, that's not enough, so you should also start tmux with "-2":
+
+    tmux -2 new
+
+Add an alias to do this.
+
+
+# vim
+
+Vim has some trouble detecting this as well, even in Vim 7.3. Add this
+to your vimrc:
+
+    set t_Co=256
+    " or let &t_Co=256
+
+
+# test
+
+You can test whether it has succeeded with [this script](http://www.robmeerman.co.uk/_media/unix/256colors2.pl).
+

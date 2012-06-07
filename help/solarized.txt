@@ -1,0 +1,43 @@
+% Solarized color scheme
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+<!-- vi: set ft=markdown textwidth=79: -->
+
+# tmux
+
+https://github.com/seebi/tmux-colors-solarized
+
+You can install it in your tmux.conf using source. This silently fails
+if the file is not found :)
+
+    source ~/.tmuxcolors.conf
+
+
+# vim
+
+https://github.com/altercation/vim-colors-solarized
+
+Modify your vimrc to add the following, and make sure you do so before
+any call to "syntax"!
+
+    let g:solarized_termcolors=256
+    " set background=dark
+    colorscheme solarized
+
+
+# xfce4-terminal
+
+https://github.com/sgerrand/xfce4-terminal-colors-solarized
+
+
+# terminal
+
+***None of this seems to work for me :(***
+
+https://github.com/altercation/solarized
+
+Install like so:
+
+    install -m 0644 Xresources ~/.Xresources
+    xrdb -merge ~/.Xresources
+
