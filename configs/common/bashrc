@@ -298,18 +298,26 @@ ps1_() {
     done
 }
 export -f ps1_
-if (test "${TERM:-}" != 'dumb') && (test -n "${BASH:-}") && (test -n "${PS1:-}") ; then
+PS1_ROOT='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
+export PS1_ROOT
+PS1_ROOT_NOCOLOR='\h:\w\$ '
+export PS1_ROOT_NOCOLOR
+PS1_FUNC='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(ps1_ "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
+export PS1_FUNC
+PS1_NOFUNC='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]\[\e[1;32m\]\$\[\e[00m\] '
+export PS1_NOFUNC
+PS1_NOCOLOR='\u@\h:\w\$ '
+export PS1_NOCOLOR
+if test "${TERM:-}" != 'dumb' && test -n "${BASH:-}" ; then
     if test "$(/usr/bin/id -u)" = '0' ; then
-        PS1='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
-        export PS1
+        PS1="$PS1_ROOT" ; export PS1
     else
-        #PS1='\[\e[01;32m\]\u\[\e[1;37m\]@\[\e[0m\]\[\e[01;32m\]\h\[\e[01;34m\]\w\[\e[01;31m\]$(git_ps1_ "(%s)")\[\e[1;32m\]\$\[\e[00m\] '
-        PS1='\[\e[0;32m\]\u\[\e[m\]@\[\e[1;34m\]\h\[\e[m\]:\[\e[0;37m\]\w\[\e[m\]$(ps1_ "\[\e[1;31m\](%s)\[\e[m\]")\$ '; export PS1
-        export PS1
+        PS1="$PS1_FUNC" ; export PS1
     fi
-    # BASIC_PS1 is PS1 without any function calls
-    BASIC_PS1='\[\e[0;32m\]\u\[\e[m\]@\[\e[1;34m\]\h\[\e[m\]:\[\e[0;37m\]\w\[\e[m\]\$ '
+elif test "${isinteractive:-0}" -ne 0 ; then
+    PS1="$PS1_NOCOLOR" ; export PS1
 fi
+SUDO_PS1="$PS1_NOCOLOR" ; export SUDO_PS1
 
 ########################################################################
 # Per box

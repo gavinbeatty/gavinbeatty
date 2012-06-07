@@ -13,17 +13,10 @@ symlinks="${symlinks--L}"
 
 prog=$(basename -- "$0")
 usage() {
-    cat <<EOF
-usage: $prog -h
-   or: $prog [-v] [-L|-H|-P|-D] [<directory>...]
-EOF
+   echo "$prog [-v] [-L|-H|-P|-D] [<directory>...]"
 }
-error() {
-    echo "error: $@" >&2
-}
-warn() {
-    echo "warn: $@" >&2
-}
+error() { echo "error: $@" >&2 ; }
+warn() { echo "warn: $@" >&2 ; }
 #usage: verbose <level> <msg>...
 verbose() {
     if test $verbose -ge "$1" ; then
@@ -31,13 +24,8 @@ verbose() {
         echo "verbose: $@" >&2
     fi
 }
-die() {
-    error "$@"
-    exit 1
-}
-have() {
-    type -- "$@" >/dev/null 2>&1
-}
+die() { error "$@" ; exit 1 ; }
+have() { type -- "$@" >/dev/null 2>&1 ; }
 getopt_works() {
     eval set -- "$("$getopt" -n "test" -o "ab:c" -- -a yah -b -c -b \'\  -c nay 2>&1)"
     if test $# -ne 9 ; then return 1
@@ -52,6 +40,13 @@ getopt_works() {
         elif test "$8" != "yah" ; then return 1
         elif test "$9" != "nay" ; then return 1
         else return 0 ; fi
+    fi
+}
+get_xargs() {
+    if test -z "$xargs" ; then
+        xargs=xargs
+        ! have gxargs || xargs=gxargs
+        have "$xargs" || die "Unable to find $xargs"
     fi
 }
 
@@ -82,8 +77,9 @@ main() {
     if test $# -eq 0 ; then
         eval set -- .
     fi
+    get_xargs
     set -x
-    find $symlinks "$@" \( -type f -a \( -name '*.gcda' -o -name 'tracefile' \) \) -print0 | xargs -r0 rm --
+    find $symlinks "$@" \( -type f -a \( -name '*.gcda' -o -name 'tracefile' \) \) -print0 | $xargs -r0 rm --
     exit 0
 }
 main "$@"

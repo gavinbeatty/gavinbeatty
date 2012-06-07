@@ -58,6 +58,7 @@ muttrc.color-dark \
 muttrc.gmail \
 screenrc \
 .ssh_config \
+tmux.conf \
 vimrc \
 vimrc.abbrev \
 vimrc.sh \
@@ -91,6 +92,7 @@ install: $(SOURCES)
 	$(INSTALL_PRIVATE_DATA) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 	$(INSTALL_DATA) screenrc $(DESTDIR)$(HOME)/.screenrc
 	$(INSTALL_PRIVATE_DATA) .ssh_config $(DESTDIR)$(HOME)/.ssh/config
+	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre
 	$(INSTALL_DATA) vimrc $(DESTDIR)$(HOME)/.vimrc
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post

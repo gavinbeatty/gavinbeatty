@@ -30,6 +30,7 @@ if (have sed) && (have grep) \
     export LS_OPTIONS
     alias ls="${bash_aliases_ls}"
 fi
+alias dash='PS1=\$\  dash'
 alias sl='ls'
 alias ks='ls'
 alias l='ls -l'

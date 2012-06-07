@@ -77,11 +77,11 @@ main() {
     fi
     if test -z "$variant" ; then
         set -x
-        find $symlinks "$@" \( -name 'bin' -o -iname 'release' -o -iname 'debug' \) -prune | xargs -r rm -r --
+        find $symlinks "$@" \( -name 'bin' -o -iname 'release' -o -iname 'debug' \) -prune | $xargs -0r rm -r --
         exit 0
     else
         set -x
-        find $symlinks "$@" -name "$variant" -prune | xargs -r rm -r --
+        find $symlinks "$@" -name "$variant" -prune | $xargs -r rm -r --
         exit 0
     fi
 }

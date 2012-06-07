@@ -10,7 +10,7 @@ progname="$(basename -- "$0")"
 usage() {
     echo "usage: ${progname} [<svnpath>]"
 }
-    
+
 
 if test $# -eq 0 ; then
     eval set -- "."

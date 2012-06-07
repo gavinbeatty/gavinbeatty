@@ -5,60 +5,63 @@ set -e
 trap " echo Caught SIGINT ; exit 1 ; " INT
 trap " echo Caught SIGTERM ; exit 1 ; " TERM
 
-getopt=${getopt-getopt}
-help=${help-}
-basedir=${basedir-$HOME}
-what=${what-}
-host=${host-}
+getopt=${GETOPT:-getopt}
+help=${EXPORT_GIT_HELP:-}
+basedir=${EXPORT_GIT_BASEDIR:-$HOME}
+what=${EXPORT_GIT_WHAT:-}
+host=${EXPORT_GIT_HOST:-}
+xargs=${XARGS:-}
+ssh=${SSH:-ssh}
+tar=${TAR:-tar}
+git=${GIT:-git}
+prog="$(basename -- "$0")"
 
-prog=$(basename -- "$0")
-
-longopts_support=
+longopts=
 e=0
 "$getopt" -T >/dev/null 2>&1 || e=$?
-test "$e" -ne 4 || longopts_support=1
+test "$e" -ne 4 || longopts=1
 unset e
 
 usage() {
-    cat <<EOF
-usage: $prog [-h]
-   or: $prog [-b <basedir>] [-w <what>] [-H <host>]
-EOF
+   echo "$prog [-b <basedir>] [-w <what>] [-H <host>]"
 }
 help() {
     cat <<EOF
 Options:
- -h${longopts_support:+|--help}:
+ -h${longopts:+|--help}:
   Print this help message and exit.
- -b${longopts_support:+|--basedir}:
+ -b${longopts:+|--basedir}:
   The base directory to use for exporting <what>. Defaults to \${HOME}.
- -w${longopts_support:+|--what}:
+ -w${longopts:+|--what}:
   Export the given <what> directory (relative to <basedir>).
- -H${longopts_support:+|--host}:
+ -H${longopts:+|--host}:
   Export to the given <host>.
 EOF
 }
-warning() {
-    echo "warning: $@" >&2
-}
-error() {
-    echo "error: $@" >&2
-}
-die() {
-    error "$@"
-    exit 1
-}
-have() {
-    type -- "$@" >/dev/null 2>&1
-}
+warning() { echo "warning: $@" >&2 ; }
+error() { echo "error: $@" >&2 ; }
+die() { error "$@" ; exit 1 ; }
+have() { type -- "$@" >/dev/null 2>&1 ; }
 getopt_works() {
     "$getopt" -n "test" -o "ab:c" -- -ab -c -c >/dev/null 2>&1
+}
+get_xargs() {
+    if test -z "$xargs" ; then
+        xargs=xargs
+        ! have gxargs || xargs=gxargs
+    fi
+}
+get_tar() {
+    if test -z "$tar" ; then
+        tar=tar
+        ! have gtar || xargs=gtar
+    fi
 }
 
 main() {
     if getopt_works ; then
         long=
-        if test -n "$longopts_support" ; then
+        if test -n "$longopts" ; then
             long="-l help,basedir:,what:,host:"
         fi
         e=0
@@ -110,10 +113,12 @@ main() {
         die "Must give -H <host> optarg."
     fi
 
+    get_xargs
+    get_tar
     set -x
     ( cd -- "${basedir}/$what" && \
-      git archive --format=tar --prefix="$what"/ 'HEAD^{tree}' \
-        | ssh "$host" \( test -d "$what" '&&' rm -rf -- "$what" \; tar xv \) '&&' find "$what" -type f -print0 \| xargs -r0 chmod a-w --
+      $git archive --format=tar --prefix="$what"/ 'HEAD^{tree}' \
+        | $ssh "$host" \( test -d "$what" '&&' rm -rf -- "$what" \; $tar xv \) '&&' find "$what" -type f -print0 \| $xargs -r0 chmod a-w --
     )
 }
 main "$@"
