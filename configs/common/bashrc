@@ -360,7 +360,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
     if test -r /etc/bash_completion ; then
         # /etc/bash_completion sources ${HOME}/.bash_completion for us
         . /etc/bash_completion
-    elif test -r "${HOME}/.bash_completion"
+    elif test -r "${HOME}/.bash_completion" ; then
         . "${HOME}/.bash_completion"
     fi
 

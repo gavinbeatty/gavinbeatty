@@ -3,7 +3,10 @@ if test -n "${bashrc_functions_guard-}" ; then return 0 ; fi
 bashrc_functions_guard=1
 iecho ".bashrc.functions"
 
-r() { "$@" >/dev/null 2>&1 & ; }
+r() {
+    # must be on own line because of '&', I think
+    "$@" >/dev/null 2>&1 &
+}
 o() { r xdg-open "$@" ; }
 e() {
     if test -f cscope.out ; then
