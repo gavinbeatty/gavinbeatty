@@ -1,7 +1,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 if test -n "${bashrc_msys_guard-}" ; then return 0 ; fi
 bashrc_msys_guard=1
-iecho ".bashrc.msys"
+iecho ".bashrc.msys.sh"
 
 CMAKETOOL_BUILD_DIR="${USERPROFILE}/work/build" ; export CMAKETOOL_BUILD_DIR
 

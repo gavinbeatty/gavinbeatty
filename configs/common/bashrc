@@ -197,12 +197,11 @@ if test "${isinteractive:-0}" -ne 0 ; then
             fi
         fi
         if test -d "$KEYCHAIN_DIR" ; then
-            iecho "keychain..."
-            keychain --nogui --quiet --timeout 4800
+            keychain --inherit any-once --noask --quick --host gavinbeatty >/dev/null 2>&1
             for i_ in "sh" "sh-gpg" ; do
-                if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${i_}" ; then
-                    iecho "${HOSTNAME}-${i_}"
-                    . "${KEYCHAIN_DIR}/${HOSTNAME}-${i_}"
+                if test -r "${KEYCHAIN_DIR}/gavinbeatty-${i_}" ; then
+                    iecho "gavinbeatty-${i_}"
+                    . "${KEYCHAIN_DIR}/gavinbeatty-${i_}"
                 fi
             done
             unset i_

@@ -1,7 +1,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 if test -n "${bashrc_alias_guard-}" ; then return 0 ; fi
 bashrc_alias_guard=1
-iecho ".bashrc.alias"
+iecho ".bashrc.alias.sh"
 
 if (type -- sed >/dev/null 2>&1) && (type -- grep >/dev/null 2>&1) \
 && (echo | grep -Eq ''); then

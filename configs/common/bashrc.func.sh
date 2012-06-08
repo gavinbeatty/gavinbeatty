@@ -1,7 +1,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
-if test -n "${bashrc_functions_guard-}" ; then return 0 ; fi
-bashrc_functions_guard=1
-iecho ".bashrc.functions"
+if test -n "${bashrc_func_guard-}" ; then return 0 ; fi
+bashrc_func_guard=1
+iecho ".bashrc.func.sh"
 
 r() {
     # must be on own line because of '&', I think
