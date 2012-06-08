@@ -1,6 +1,30 @@
-text/html;              mutt_bgrun firefox %s ; test=RunningX
-text/html;              lynx -dump %s ; copiousoutput
-application/pdf;        mutt_bgrun kpdf %s ; test=RunningX
-application/pdf;        mutt_bgrun evince %s ; test=RunningX
-application/pdf;        mutt_bgrun xpdf %s ; test=RunningX
-application/pdf;        mutt_bgrun pdftotext %s - ; copiousoutput
+# Reference: http://www.spocom.com/users/gjohnson/mutt/
+text/html; mutt_bgrun firefox %s ; test=RunningX
+text/html; w3m %s ; nametemplate=%s.html
+text/html; lynx -dump %s ; nametemplate=%s.html ; copiousoutput
+application/pdf; mutt_bgrun okular %s ; test=RunningX
+application/pdf; mutt_bgrun evince %s ; test=RunningX
+application/pdf; mutt_bgrun xpdf %s ; test=RunningX
+application/pdf; mutt_bgrun pdftotext %s - ; copiousoutput
+application/msword; mutt_bgrun libreoffice %s; test=RunningX
+#application/msword; word2text %s; copiousoutput
+application/vnd.msword; mutt_bgrun libreoffice %s; test=RunningX
+#application/vnd.msword; word2text %s; copiousoutput
+application/excel; mutt_bgrun libreoffice %s; test=RunningX
+#application/excel; excel2text %s; copiousoutput
+application/msexcel; mutt_bgrun libreoffice %s; test=RunningX
+#application/msexcel; excel2text %s; copiousoutput
+application/vnd.ms-excel; mutt_bgrun libreoffice %s; test=RunningX
+#application/vnd.ms-excel; excel2text %s; copiousoutput
+application/x-excel; mutt_bgrun libreoffice %s; test=RunningX
+#application/x-excel; excel2text %s; copiousoutput
+application/x-msexcel; mutt_bgrun libreoffice %s; test=RunningX
+#application/x-msexcel; excel2text %s; copiousoutput
+application/ms-Excel; mutt_bgrun libreoffice %s; test=RunningX
+#application/ms-Excel; excel2text %s; copiousoutput
+application/vnd.ms-powerpoint; mutt_bgrun libreoffice %s; test=RunningX
+#application/vnd.ms-powerpoint; ppt2text %s; copiousoutput
+application/x-mspowerpoint; mutt_bgrun libreoffice %s; test=RunningX
+#application/x-mspowerpoint; ppt2text %s; copiousoutput
+application/ppt; mutt_bgrun libreoffice %s; test=RunningX
+#application/ppt; ppt2text %s; copiousoutput
