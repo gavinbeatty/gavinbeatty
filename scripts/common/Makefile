@@ -29,7 +29,6 @@ doubleclick.sh \
 example-xml.sh \
 export-git.sh \
 findpid.sh \
-find-src2.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
