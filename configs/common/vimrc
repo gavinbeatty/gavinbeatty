@@ -48,12 +48,13 @@ if version >= 700
     set viminfo='1000,f1,<500
 endif
 " Save folds on exit and reload on load (only on non-readonly files)
-"augroup saveview
-"    if !exists('saveview_loaded')
-"        let saveview_loaded = 1
+"if !exists('saveview_loaded')
+"    let saveview_loaded = 1
+"    augroup saveview
 "        autocmd BufWritePost * if !&readonly | mkview | endif
 "        autocmd BufReadPost  * if !&readonly | silent loadview | endif
-"    endif
+"    augroup end
+"endif
 " Allow indenting automatically
 set autoindent
 " Turn off search highlighting
@@ -187,28 +188,28 @@ if has("autocmd")
         \   if &buftype == 'quickfix' |
         \       setlocal wrap |
         \   endif
-    augroup filetypeextras
-        if !exists('filetypeextras_loaded')
-            let filetypeextras_loaded = 1
+    if !exists('filetypeextras_loaded')
+        let filetypeextras_loaded = 1
+        augroup filetypeextras
             autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt
             " autocmd FileType text,txt,mail  setlocal formatoptions=tcqn2 textwidth=79 shiftwidth=2 tabstop=2 expandtab
             autocmd FileType c,cpp,objc source ~/.vimrc.cpp
             autocmd FileType sh,bash    source ~/.vimrc.sh
             autocmd FileType perl       setlocal smartindent
             autocmd FileType make       setlocal noexpandtab shiftwidth=8
-        endif
-    augroup end
-    augroup filetypedetect
-        if !exists('filetypedetect_loaded')
-            let filetypedetect_loaded = 1
+        augroup end
+    endif
+    if !exists('filetypedetect_loaded')
+        let filetypedetect_loaded = 1
+        augroup filetypedetect
             autocmd BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
             autocmd BufRead,BufNewFile .followup,.article,.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt* setlocal ft=mail
             " .m files are objective c by default, not matlab
             autocmd BufRead,BufNewFile *.m setlocal filetype=objc
             " .proto files for google protocol buffers
             autocmd BufRead,BufNewFile *.proto setlocal filetype=proto
-        endif
-    augroup end
+        augroup end
+    endif
 endif
 
 function! Gav_fnameescape(name)
