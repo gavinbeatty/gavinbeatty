@@ -16,6 +16,6 @@ if has("autocmd")
             autocmd BufEnter *.cc let b:fswitchdst = 'h,hh,hpp' | let b:fswitchlocs = '.'
             autocmd BufEnter *.hpp let b:fswitchdst = 'cpp' | let b:fswitchlocs = '.'
             autocmd BufEnter *.h let b:fswitchdst = 'cc,cpp,c' | let b:fswitchlocs = '.'
-        end
+        augroup end
     endif
 endif
