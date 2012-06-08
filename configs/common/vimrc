@@ -1,6 +1,6 @@
 " DON'T keep compatibility with vi
 set nocompatible
-source ~/.vimrc.pre
+source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
@@ -191,10 +191,10 @@ if has("autocmd")
     if !exists('filetypeextras_loaded')
         let filetypeextras_loaded = 1
         augroup filetypeextras
-            autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt
+            autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt.vim
             " autocmd FileType text,txt,mail  setlocal formatoptions=tcqn2 textwidth=79 shiftwidth=2 tabstop=2 expandtab
-            autocmd FileType c,cpp,objc source ~/.vimrc.cpp
-            autocmd FileType sh,bash    source ~/.vimrc.sh
+            autocmd FileType c,cpp,objc source ~/.vimrc.cpp.vim
+            autocmd FileType sh,bash    source ~/.vimrc.sh.vim
             autocmd FileType perl       setlocal smartindent
             autocmd FileType make       setlocal noexpandtab shiftwidth=8
         augroup end
@@ -375,6 +375,6 @@ if has('gui_running')
     nmap <F11> :call IncrFontPt()<CR>
     nmap <F10> :call DecrFontPt()<CR>
 endif
-" source ~/.vimrc.abbrev
-source ~/.vimrc.unicode
-source ~/.vimrc.post
+" source ~/.vimrc.abbrev.vim
+source ~/.vimrc.unicode.vim
+source ~/.vimrc.post.vim

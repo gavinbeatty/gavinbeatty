@@ -1,6 +1,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 test -z "${bashrc_guard:-}" || return 0
 bashrc_guard=1
+
 case $- in
 *i*) isinteractive=1 ; iecho() { echo "$@" ; } ;;
 *) isinteractive=0 ; iecho() { true ; } ;;
@@ -9,11 +10,18 @@ iecho ".bashrc"
 # XXX perhaps use this to add to PATH etc.
 regexelem() { echo "$2" | grep -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
 
+if test "$isinteractive" -ne 0 ; then
+    cat -- /tmp/gavinbeatty-du.log 2>/dev/null || true
+    if type -- df >/dev/null 2>&1 ; then
+        df -h
+    fi
+fi
+
 ########################################################################
 # Options
 ########################################################################
-if test -r ~/.bashrc.options ; then
-    . ~/.bashrc.options
+if test -r ~/.bashrc.options.sh ; then
+    . ~/.bashrc.options.sh
 fi
 if test "${BASHRC_OPTION_ETC_BASHRC:-0}" -ne 0 ; then
     if test -r /etc/bashrc ; then
@@ -191,13 +199,13 @@ if test "${isinteractive:-0}" -ne 0 ; then
         if test -d "$KEYCHAIN_DIR" ; then
             iecho "keychain..."
             keychain --nogui --quiet --timeout 4800
-            for bashrc_key_type in "sh" "sh-gpg" ; do
-                if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}" ; then
-                    iecho ". ${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
-                    . "${KEYCHAIN_DIR}/${HOSTNAME}-${bashrc_key_type}"
+            for i_ in "sh" "sh-gpg" ; do
+                if test -r "${KEYCHAIN_DIR}/${HOSTNAME}-${i_}" ; then
+                    iecho "${HOSTNAME}-${i_}"
+                    . "${KEYCHAIN_DIR}/${HOSTNAME}-${i_}"
                 fi
             done
-            unset bashrc_key_type
+            unset i_
         fi
     fi
     if type -- tty >/dev/null 2>&1 ; then
@@ -325,8 +333,8 @@ SUDO_PS1="$PS1_NOCOLOR" ; export SUDO_PS1
 # Per box
 ########################################################################
 for i_ in $HOSTS ; do
-    if test -r "${HOME}/.bashrc.${i_}" ; then
-        . "${HOME}/.bashrc.${i_}"
+    if test -r "${HOME}/.bashrc.${i_}.sh" ; then
+        . "${HOME}/.bashrc.${i_}.sh"
     fi
 done
 unset i_
@@ -334,14 +342,14 @@ unset i_
 # Per system
 ########################################################################
 if echo "$UNAME" | grep -Fiq 'darwin' ; then
-    if test -r "${HOME}/.bashrc.darwin" ; then
-        . "${HOME}/.bashrc.darwin"
+    if test -r "${HOME}/.bashrc.darwin.sh" ; then
+        . "${HOME}/.bashrc.darwin.sh"
     fi
 fi
 # XXX how to detect msys/mingw properly? what's the difference?
 if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
-    if test -r "${HOME}/.bashrc.msys" ; then
-        . "${HOME}/.bashrc.msys"
+    if test -r "${HOME}/.bashrc.msys.sh" ; then
+        . "${HOME}/.bashrc.msys.sh"
     fi
 fi
 
@@ -352,16 +360,16 @@ if test "${isinteractive:-0}" -ne 0 ; then
     if test -r /etc/bash_completion ; then
         # /etc/bash_completion sources ${HOME}/.bash_completion for us
         . /etc/bash_completion
-    else
+    elif test -r "${HOME}/.bash_completion"
         . "${HOME}/.bash_completion"
     fi
 
     if test -r "${HOME}/.cdargs.bash" ; then
         . "${HOME}/.cdargs.bash"
     fi
-    for i_ in functions aliases ; do
-        if test -r "${HOME}/.bashrc.${i_}" ; then
-            . "${HOME}/.bashrc.${i_}"
+    for i_ in func alias ; do
+        if test -r "${HOME}/.bashrc.${i_}.sh" ; then
+            . "${HOME}/.bashrc.${i_}.sh"
         fi
     done
 fi
