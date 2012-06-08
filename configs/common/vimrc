@@ -4,13 +4,11 @@ source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
-call pathogen#infect()
-set nonumber
 " see :h filetype-overview
 filetype plugin indent on
 " Syntax highlighting on
 if has('syntax')
-    syntax on
+    syntax enable
     if exists(':highlight')
         highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
         highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
@@ -20,8 +18,10 @@ endif
 " assume 256 color terminal
 set t_Co=256
 set background=dark
+call pathogen#infect()
 colorscheme solarized
 let mapleader = '\'
+set nonumber
 set textwidth=79
 set tabstop=4
 set shiftwidth=4
@@ -176,6 +176,7 @@ if exists('g:clipboard')
     endif
 endif
 let g:haddock_browser = 'x-www-browser'
+let g:pandoc_no_folding = 1
 
 if has("autocmd")
     if exists("+omnifunc")
