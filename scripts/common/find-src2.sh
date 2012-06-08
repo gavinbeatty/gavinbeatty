@@ -4,38 +4,19 @@ set -e
 set -u
 trap "echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 trap "echo Caught SIGINT >&2 ; exit 1 ; " INT
+prog="$(basename -- "$0")"
 
 getopt=${getopt-getopt}
 help=${help-}
 types=${types-}
-absolute=${all-}
+absolute=${absolute-}
 files=${files-}
 type=${type-}
 zero=${zero-}
 debug=${debug-}
 
-have() {
-    type -- "$@" >/dev/null 2>&1
-}
-die() {
-    echo "$@" >&2
-    exit 1
-}
-
-if ! have basename ; then
-    prog="find-src.sh"
-else
-    e=0
-    tryprog="$(basename -- "$0")" || e=$?
-    if test $e -ne 0 ; then
-        e=0
-        tryprog="$(basename "$0")" || e=$?
-    fi
-    if test $e -eq 0 ; then
-        prog="$tryprog"
-    fi
-    unset tryprog
-fi
+have() { type -- "$@" >/dev/null 2>&1 ; }
+die() { echo "error: $@" >&2 ; exit 1 ; }
 
 usage() {
     cat <<EOF
@@ -68,7 +49,7 @@ Arguments:
  <find_dir>:
   The directory to search in. If not given, the current directory is used.
  <find_args>:
-  XXX
+  Extra options that can be given directly to find.
 EOF
 }
 getopt_works() {
@@ -96,14 +77,14 @@ main() {
         eval set -- $opts
         while test $# -gt 0 ; do
             case "$1" in
-            -h) help=1 ; ;;
-            -T) types=1 ; ;;
-            -a) absolute=1 ; ;;
-            -f) files=1 ; ;;
-            -c) type="cppc" ; ;;
-            -t) type="$2" ; shift ; ;;
-            -0) zero=1 ; ;;
-            -d) debug=1 ; ;;
+            -h) help=1 ;;
+            -T) types=1 ;;
+            -a) absolute=1 ;;
+            -f) files=1 ;;
+            -c) type="cppc" ;;
+            -t) type="$2" ; shift ;;
+            -0) zero=1 ;;
+            -d) debug=1 ;;
             --)
                 shift
                 break
@@ -123,7 +104,7 @@ main() {
         exit 0
     fi
     if test -n "$types" ; then
-        echo "c cpp cppc python perl lua sh bash java"
+        echo "all c cpp cppc python perl lua sh bash java"
         exit 0
     fi
 
@@ -147,85 +128,91 @@ main() {
     shift
 
     case "$type" in
-    c|cpp|cppc|python|perl|lua|sh|bash|java) files=1 ; ;;
+    all|c|cpp|cppc|py|python|perl|lua|sh|bash|java) files=1 ;;
     esac
 
     findfiles=""
     if test -n "$files" ; then
         findfiles="-a -type f"
     fi
+    forcedir=""
+    if find -f . -maxdepth 0 >/dev/null 2>&1 ; then
+        forcedir="-f"
+    fi
 
-    if test -z "$type" ; then
-        test -z "$debug" || set -x
-        find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-            -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
-            "$printer"
-    else
-        case "$type" in
+    if test -z "$type" ; then type="all" ; fi
+    for t in $(echo "$type" | tr '[A-Z]' '[a-z]' | sed -e 's/[:,;]/ /g') ; do
+        case "$t" in
+        all)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                "$printer"
+            ;;
         c)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.c' -o -name '*.h' \) \
                 "$printer"
             ;;
         cpp)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.cc' -o -name '*.C' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) \
                 "$printer"
             ;;
         cppc)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.cc' -o -name '*.cpp' -o -iname '*.c' -o -name '*.hpp' -o -name '*.h' \) \
                 "$printer"
             ;;
-        python)
+        py|python)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.py' \) \
                 "$printer"
             ;;
         perl)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.pl' \) \
                 "$printer"
             ;;
         lua)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.lua' \) \
                 "$printer"
             ;;
         sh)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.sh' \) \
                 "$printer"
             ;;
         bash)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.sh' -o -name '*.bash' \) \
                 "$printer"
             ;;
         java)
             test -z "$debug" || set -x
-            find "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
-                -o -name 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.java' \) \
                 "$printer"
             ;;
         esac
-    fi
+    done
 }
-main "$@"
+( main "$@" )
