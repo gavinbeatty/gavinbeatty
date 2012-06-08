@@ -2,6 +2,8 @@
 # tell Finder to show/or hide all files.
 set -e
 set -u
+trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
+trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 prog="$(basename -- "$0")"
 die() { echo "error: $@" >&2 ; exit 1 ; }
 usage() {
@@ -37,6 +39,4 @@ main() {
     fi
     return 0
 }
-trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
-trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 main "$@"
