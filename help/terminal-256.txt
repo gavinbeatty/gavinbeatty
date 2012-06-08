@@ -1,6 +1,8 @@
 % Terminal 256 colors
 % Gavin Beatty <gavinbeatty@gmail.com>
 
+<!-- vi: set ft=pandoc shiftwidth=2 tabstop=2 expandtab: -->
+
 # tmux
 
 Put the following in your tmux.conf:
@@ -12,6 +14,15 @@ Unfortunately, that's not enough, so you should also start tmux with "-2":
     tmux -2 new
 
 Add an alias to do this.
+
+
+# terminal
+
+To get vim to work inside tmux, even if you terminal supports 256 colors, it must have the proper TERM exported. For xfce4-terminal, and probably many others, this is:
+
+    TERM="xterm-256color" ; export TERM
+
+You can usually do this per-terminal, rather than, say, in your ~/.bashrc.
 
 
 # vim
