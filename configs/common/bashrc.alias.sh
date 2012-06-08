@@ -30,6 +30,7 @@ if (type -- sed >/dev/null 2>&1) && (type -- grep >/dev/null 2>&1) \
     export LS_OPTIONS
     alias ls="${bash_alias_ls}"
 fi
+alias tmux='tmux -2 '
 alias dash='PS1=\$\  dash'
 alias sl='ls'
 alias ks='ls'
