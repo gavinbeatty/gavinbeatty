@@ -5,27 +5,20 @@ set -u
 trap " echo 'Caught SIGINT' >&2 ; exit 1 ; " INT
 trap " echo 'Caught SIGTERM' >&2 ; exit 1 ; " TERM
 
-getopt=${getopt:-getopt}
-help=${help-}
-
 prog="$(basename -- "$0")"
+getopt="${GETOPT:-getopt}"
+allow_no_getopt="${VIMPATCH_ALLOW_NO_GETOPT:-}"
+help="${VIMPATCH_HELP:-}"
+vim="${VIMPATCH_VIM:-vim}"
+
 usage() {
     echo "usage: $prog -h"
     echo "   or: $prog <file> <patch>"
 }
-error() {
-    echo "error: $@" >&2
-}
-warn() {
-    echo "warn: $@" >&2
-}
-die() {
-    error "$@"
-    exit 1
-}
-have() {
-    type -- "$@" >/dev/null 2>&1
-}
+error() { echo "error: $@" >&2 ; }
+warn() { echo "warn: $@" >&2 ; }
+die() { error "$@" ; exit 1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 # usage: abspath <path> <cwd>
 abspath() {
     case "$1" in
@@ -41,19 +34,16 @@ main() {
 
         while test $# -gt 0 ; do
             case "$1" in
-            -h)
-                help=1
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "Unknown option: $1"
-                ;;
+            -h) help=1 ;;
+            --) shift ; break ;;
+            *) die "Unknown option: $1" ;;
             esac
             shift
         done
+    elif test -n "$allow_no_getopt" ; then
+        warning "$getopt not found. Only taking options from the environment."
+    else
+        die "$getopt not found."
     fi
     if test -n "$help" ; then
         usage
@@ -61,11 +51,11 @@ main() {
     fi
     if test $# -ne 2 ; then
         usage >&2
-        die "Must give only 2 arguments, <file> and <patch>."
+        exit 1
     fi
 
     filename=$1
     patchfile=$(abspath "$2" "$(pwd)")
-    vim "$filename" '+vert diffpatch '"$patchfile"
+    $vim -- "$filename" '+vert diffpatch '"$patchfile"
 }
 main "$@"
