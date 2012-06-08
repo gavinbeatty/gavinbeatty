@@ -19,7 +19,7 @@ usage() {
 error() { echo "error: $@" >&2 ; }
 warn() { echo "warn: $@" >&2 ; }
 die() { error "$@" ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 main() {
     if have getopt ; then

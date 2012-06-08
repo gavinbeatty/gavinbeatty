@@ -3,7 +3,7 @@
 set -e
 set -u
 prog="$(basename -- "$0")"
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 usage() { echo "usage: ${prog} [--] <iface>" ; }
 main() {
     if test $# -eq 2 ; then

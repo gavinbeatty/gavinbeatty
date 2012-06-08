@@ -56,7 +56,7 @@ Options:
   option multiple times to increase verbosity further.
 EOF
 }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 echodo() { echo "$@" ; "$@" ; }
 echosleepdo() { echo "$@" ; sleep "$sleep" ; "$@" ; }
 justdo() { "$@" ; }

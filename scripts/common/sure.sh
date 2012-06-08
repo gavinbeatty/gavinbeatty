@@ -27,7 +27,7 @@ set -e
 set -u
 prog="$(basename -- "$0")"
 getopt="${getopt-getopt}"
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 case "$prog" in
 sureno.sh)

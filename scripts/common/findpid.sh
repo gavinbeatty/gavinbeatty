@@ -27,7 +27,7 @@ set -e
 set -u
 
 die() { echo "error: $@" >&2 ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 help() {
     cat <<EOF
 Copyright (C) 2008, 2012 by Gavin Beatty

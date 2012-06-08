@@ -60,7 +60,7 @@ die() {
     exit 1
 }
 have() {
-    type -- "$@" >/dev/null 2>&1
+    type "$@" >/dev/null 2>&1
 }
 
 # usage: svnurl <path>

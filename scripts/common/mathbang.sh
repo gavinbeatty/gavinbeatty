@@ -36,7 +36,7 @@ size="Large"
 open_tex_block="\\["
 close_tex_block="\\]"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 verbose() {
     if test "$1" -le "$verbose" ; then

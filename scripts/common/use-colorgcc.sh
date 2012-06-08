@@ -25,7 +25,7 @@ verbose() {
     fi
 }
 die() { error "$@" ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 enable_symlink() {
     anyway=""

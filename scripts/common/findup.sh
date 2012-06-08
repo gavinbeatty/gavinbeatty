@@ -16,7 +16,7 @@ prog="$(basename -- "$0")"
 shell="${BOURNE_SHELL:-}"
 
 die() { echo "error: $@" >&2 ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 get_shell() {
     if test -z "$shell" ; then

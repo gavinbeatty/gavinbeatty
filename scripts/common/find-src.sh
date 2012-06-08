@@ -15,7 +15,7 @@ type=${type-}
 zero=${zero-}
 debug=${debug-}
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 
 usage() {

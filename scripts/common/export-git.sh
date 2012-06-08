@@ -41,7 +41,7 @@ EOF
 warning() { echo "warning: $@" >&2 ; }
 error() { echo "error: $@" >&2 ; }
 die() { error "$@" ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 getopt_works() {
     "$getopt" -n "test" -o "ab:c" -- -ab -c -c >/dev/null 2>&1
 }

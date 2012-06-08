@@ -33,7 +33,7 @@ lf="
 getopt="${getopt-getopt}"
 #verbose="${verbose-0}"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 TEXTDOMAIN="$prog" ; export TEXTDOMAIN
 TEXTDOMAINDIR="${prefix}/share/locale/sh/" ; export TEXTDOMAINDIR

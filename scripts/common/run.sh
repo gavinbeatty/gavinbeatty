@@ -27,7 +27,7 @@
 ###########################################################################
 set -e
 set -u
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 if ! have "shellquote" ; then
     die "Please install shellquote."

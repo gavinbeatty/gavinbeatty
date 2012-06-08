@@ -6,7 +6,7 @@ set -e
 set -u
 prog="$(basename -- "$0")"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 getopt="${getopt-getopt}"
 echodo="${echodo-}"

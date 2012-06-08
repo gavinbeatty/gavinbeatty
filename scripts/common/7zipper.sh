@@ -9,7 +9,7 @@ usage() {
 die() { echo "error: $@" >&2 ; exit 1 ; }
 trap "die 'Caught SIGINT'" INT
 trap "die 'Caught SIGTERM'" TERM
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 getopt_impl__=""
 get_getopt() {
     if test -z "$getopt_impl__" ; then
