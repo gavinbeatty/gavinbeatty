@@ -1,11 +1,17 @@
 .SUFFIXES:
+SHELL = /bin/sh
 
 INSTALL ?= install
 INSTALL_DATA ?= $(INSTALL) -m 0644
+INSTALL_DATA_PRIV ?= $(INSTALL) -m 0600
 INSTALL_DIR ?= $(INSTALL) -d
-INSTALL_PRIVATE_DATA ?= $(INSTALL) -m 0600
+INSTALL_DIR_PRIV ?= $(INSTALL) -d -m 0700
+CHMOD ?= chmod
+CHMOD_PRIV ?= $(CHMOD) 0600
 TOUCH ?= touch
+GREP ?= grep
 SED ?= sed
+CAT ?= cat
 UNAME ?= uname
 UNAME_OS ?= $(UNAME) -s
 OS ?= $(shell $(UNAME_OS))
@@ -14,7 +20,6 @@ ifeq ($(OS),Darwin)
 else
   TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
 endif
-OPENSSH_INCLUDE_SUPPORT_COMMENT ?= \#
 
 DESTDIR ?=
 
@@ -23,11 +28,9 @@ help:
 
 .msmtprc: msmtprc.in
 	$(SED) -e 's#@TLS_TRUST_FILE@#$(TLS_TRUST_FILE)#g' msmtprc.in > .msmtprc
-.ssh_config: ssh_config.in
-	$(SED) -e 's/@OPENSSH_INCLUDE_SUPPORT_COMMENT@/$(OPENSSH_INCLUDE_SUPPORT_COMMENT)/g' ssh_config.in > .ssh_config
-configure: .msmtprc .ssh_config
+configure: .msmtprc
 confclean:
-	$(RM) .msmtprc .ssh_config
+	$(RM) .msmtprc
 clean: confclean
 
 config: configure
@@ -71,19 +74,22 @@ install-mailcap: $(DESTDIR)$(HOME) mailcap
 	$(INSTALL_DATA) mailcap $(DESTDIR)$(HOME)/.mailcap
 
 install-msmtprc: $(DESTDIR)$(HOME) .msmtprc
-	$(INSTALL_PRIVATE_DATA) .msmtprc $(DESTDIR)$(HOME)/.msmtprc
+	$(INSTALL_DATA_PRIV) .msmtprc $(DESTDIR)$(HOME)/.msmtprc
 
 install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark muttrc.gmail
 	$(INSTALL_DATA) muttrc $(DESTDIR)$(HOME)/.muttrc
 	$(INSTALL_DATA) muttrc.color $(DESTDIR)$(HOME)/.muttrc.color
 	$(INSTALL_DATA) muttrc.color-dark $(DESTDIR)$(HOME)/.muttrc.color-dark
-	$(INSTALL_PRIVATE_DATA) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
+	$(INSTALL_DATA_PRIV) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 
 install-screenrc: $(DESTDIR)$(HOME) screenrc
 	$(INSTALL_DATA) screenrc $(DESTDIR)$(HOME)/.screenrc
 
-install-ssh_config: $(DESTDIR)$(HOME) .ssh_config
-	$(INSTALL_PRIVATE_DATA) .ssh_config $(DESTDIR)$(HOME)/.ssh/config
+install-ssh_config: $(DESTDIR)$(HOME) ssh_config
+	@$(INSTALL_DIR_PRIV) -- $(DESTDIR)$(HOME)/.ssh
+	$(TOUCH) -- $(DESTDIR)$(HOME)/.ssh/config
+	$(CHMOD_PRIV) -- $(DESTDIR)$(HOME)/.ssh/config
+	if ! $(GREP) -q '^#\s*gavinbeatty:ssh_config$$' -- $(DESTDIR)$(HOME)/.ssh/config ; then $(CAT) ssh_config >> $(DESTDIR)$(HOME)/.ssh/config ; fi
 
 install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
