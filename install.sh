@@ -22,6 +22,7 @@ set -x
 cd -- "$dirname"
 $MAKE -C configs install
 $MAKE -C scripts/common install
+$MAKE -C scripts/external install
 if test -d "scripts/$plat" ; then
     $MAKE -C "scripts/$plat" install
 fi
