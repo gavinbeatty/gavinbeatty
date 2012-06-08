@@ -13,7 +13,7 @@ popdv() {
     echo "cd $(pwd)"
 }
 
-if (! have "gvim") && (test -x "/Applications/Vim.app/Contents/MacOS/Vim") ; then
+if (! type --  >/dev/null 2>&1) && (test -x "/Applications/Vim.app/Contents/MacOS/Vim") ; then
     gvim() {
         "/Applications/Vim.app/Contents/MacOS/Vim" -g "$@"
     }
