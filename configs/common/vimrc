@@ -4,8 +4,13 @@ source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
-" see :h filetype-overview
-filetype plugin indent on
+" The below 2 filetype lines fix return code of vim on Mac OS X, when using
+" pathogen.
+" http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
+filetype on
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
 " Syntax highlighting on
 if has('syntax')
     syntax enable
@@ -18,7 +23,8 @@ endif
 " assume 256 color terminal
 set t_Co=256
 set background=dark
-call pathogen#infect()
+" see :h filetype-overview
+filetype plugin indent on
 colorscheme solarized
 let mapleader = '\'
 set nonumber
@@ -80,8 +86,8 @@ set printoptions=paper:a4
 " cd to the file's directory
 if exists('+autochdir')
     set autochdir
-elseif has("autocmd")
-    autocmd BufEnter * silent! lcd Gav_fnameescape(%:p:h)
+"elseif has("autocmd")
+    "autocmd BufEnter * silent! lcd Gav_fnameescape(expand('%:p:h'))
 endif
 " Flag problematic whitespace (trailing and spaces before tabs).
 " Note you get the same by doing let c_space_errors=1 but this rule applies to
