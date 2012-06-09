@@ -154,7 +154,7 @@ verbose() {
     fi
 }
 have() {
-    type -- "$@" >/dev/null 2>&1
+    type "$@" >/dev/null 2>&1
 }
 gitconfig() {
     if test -n "$configfile" ; then

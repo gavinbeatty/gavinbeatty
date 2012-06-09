@@ -1,7 +1,7 @@
 #!/bin/sh
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 prog="$(basename -- "$0")"
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 usage() { echo "usage: ${prog} [--] <path>" ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 main() {

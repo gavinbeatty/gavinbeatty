@@ -50,9 +50,12 @@
 ##      file.
 set -e
 set -u
+trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
+trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 prog="$(basename -- "$0")"
 help="${CTAGS_HELP:-}"
 getopt="${CTAGS_GETOPT:-getopt}"
+allow_no_getopt="${CTAGS_ALLOW_NO_GETOPT:-}"
 ctags="${CTAGS_CTAGS:-ctags}"
 verbose="${CTAGS_VERBOSE:-0}"
 files="${CTAGS_FILES:-}"
@@ -67,10 +70,12 @@ cxx_extra="+fq"
 cxx_fields="+failnsS"
 cxx_kinds="+cdefgmnpstuvx"
 
+# XXX ctags -L "$opt_list" --c++-kinds=+p --fields=+iaS --extra=+q "$@"
+
 usage() {
     echo "usage: $prog [-v] [-c|-x|-t <type>] [-f <files>|<dir>]"
 }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 echodo() { echo "$@" ; "$@" ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 warning() { echo "warning: $@" >&2 ; }
@@ -121,8 +126,10 @@ main() {
             esac
             shift
         done
-    else
+    elif test -n "$allow_no_getopt" ; then
         warning "$getopt not found. Only taking options from the environment."
+    else
+        die "$getopt not found."
     fi
     test -z "$help" || { usage ; exit 0 ; }
 
@@ -138,6 +145,4 @@ main() {
         "$fxn" -L "$files"
     fi
 }
-trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
-trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 main "$@"

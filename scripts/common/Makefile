@@ -18,9 +18,7 @@ buf.sh \
 codepretty.py \
 configure-git2.sh \
 configure-git.sh \
-cscope2.sh \
 cscope.sh \
-ctags2.sh \
 ctags.sh \
 daemonize.sh \
 differ.sh \
@@ -29,7 +27,6 @@ doubleclick.sh \
 example-xml.sh \
 export-git.sh \
 findpid.sh \
-find-src2.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \

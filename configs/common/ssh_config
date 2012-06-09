@@ -1,3 +1,11 @@
+# gavinbeatty:ssh_config
+Host ssh.github.com
+	User git
+	Port 443
+	IdentityFile /home/gavinbeatty/.ssh/github_dsa
+	TCPKeepAlive yes
+	IdentitiesOnly yes
+
 Host kdesvn
     Hostname svn.kde.org
     User gavinbt
@@ -48,7 +56,4 @@ Host gitorious
 Host repo
     Hostname repo.or.cz
     IdentityFile ~/.ssh/github_rsa
-
-@OPENSSH_INCLUDE_SUPPORT_COMMENT@Include "~/.ssh/config.work"
-
 

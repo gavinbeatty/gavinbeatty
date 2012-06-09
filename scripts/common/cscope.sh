@@ -2,35 +2,25 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 set -e
 set -u
+trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
+trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 prog="$(basename -- "$0")"
 help="${CSCOPE_HELP:-}"
 getopt="${CSCOPE_GETOPT:-getopt}"
+allow_no_getopt="${CSCOPE_ALLOW_NO_GETOPT:-}"
 cscope="${CSCOPE_CSCOPE:-cscope}"
 verbose="${CSCOPE_VERBOSE:-0}"
 files="${CSCOPE_FILES:-}"
 reverse="${CSCOPE_REVERSE:-}"
 echodo="${CSCOPE_ECHODO:-}"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 usage() {
-    echo "usage: $prog [-v] [-c|-x|-t <type>] [-f <files>|<dir>]"
+    echo "usage: $prog [-v] [-r] [-f <files>|<dir>]"
 }
 echodo() { echo "$@" ; "$@" ; }
 warning() { echo "warning: $@" >&2 ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
-
-do_cscope() {
-    local opts
-    opts=""
-    if test -n "$reverse" ; then
-        opts="-q"
-    fi
-    if test -z "$files" ; then
-        $echodo "$cscope" -b $opts -R
-    else
-        $echodo "$cscope" -b $opts -i "$files"
-    fi
-}
 
 main() {
     if have "$getopt" ; then
@@ -49,12 +39,21 @@ main() {
             esac
             shift
         done
-    else
+    elif test -n "$allow_no_getopt" ; then
         warning "$getopt not found. Only taking options from the environment."
+    else
+        die "$getopt not found."
     fi
     test -z "$help" || { usage ; exit 0 ; }
-    do_cscope
+
+    opts=""
+    if test -n "$reverse" ; then
+        opts="-q"
+    fi
+    if test -z "$files" ; then
+        $echodo $cscope -b $opts -R
+    else
+        $echodo $cscope -b $opts -i "$files"
+    fi
 }
-trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
-trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 main "$@"

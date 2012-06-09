@@ -1,16 +1,14 @@
 " DON'T keep compatibility with vi
 set nocompatible
-source ~/.vimrc.pre
+source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
-call pathogen#infect()
-set nonumber
 " see :h filetype-overview
 filetype plugin indent on
 " Syntax highlighting on
 if has('syntax')
-    syntax on
+    syntax enable
     if exists(':highlight')
         highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
         highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
@@ -20,8 +18,10 @@ endif
 " assume 256 color terminal
 set t_Co=256
 set background=dark
+call pathogen#infect()
 colorscheme solarized
 let mapleader = '\'
+set nonumber
 set textwidth=79
 set tabstop=4
 set shiftwidth=4
@@ -48,12 +48,13 @@ if version >= 700
     set viminfo='1000,f1,<500
 endif
 " Save folds on exit and reload on load (only on non-readonly files)
-"augroup saveview
-"    if !exists('saveview_loaded')
-"        let saveview_loaded = 1
+"if !exists('saveview_loaded')
+"    let saveview_loaded = 1
+"    augroup saveview
 "        autocmd BufWritePost * if !&readonly | mkview | endif
 "        autocmd BufReadPost  * if !&readonly | silent loadview | endif
-"    endif
+"    augroup end
+"endif
 " Allow indenting automatically
 set autoindent
 " Turn off search highlighting
@@ -175,6 +176,7 @@ if exists('g:clipboard')
     endif
 endif
 let g:haddock_browser = 'x-www-browser'
+let g:pandoc_no_folding = 1
 
 if has("autocmd")
     if exists("+omnifunc")
@@ -187,28 +189,28 @@ if has("autocmd")
         \   if &buftype == 'quickfix' |
         \       setlocal wrap |
         \   endif
-    augroup filetypeextras
-        if !exists('filetypeextras_loaded')
-            let filetypeextras_loaded = 1
-            autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt
+    if !exists('filetypeextras_loaded')
+        let filetypeextras_loaded = 1
+        augroup filetypeextras
+            autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt.vim
             " autocmd FileType text,txt,mail  setlocal formatoptions=tcqn2 textwidth=79 shiftwidth=2 tabstop=2 expandtab
-            autocmd FileType c,cpp,objc source ~/.vimrc.cpp
-            autocmd FileType sh,bash    source ~/.vimrc.sh
+            autocmd FileType c,cpp,objc source ~/.vimrc.cpp.vim
+            autocmd FileType sh,bash    source ~/.vimrc.sh.vim
             autocmd FileType perl       setlocal smartindent
             autocmd FileType make       setlocal noexpandtab shiftwidth=8
-        endif
-    augroup end
-    augroup filetypedetect
-        if !exists('filetypedetect_loaded')
-            let filetypedetect_loaded = 1
+        augroup end
+    endif
+    if !exists('filetypedetect_loaded')
+        let filetypedetect_loaded = 1
+        augroup filetypedetect
             autocmd BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
             autocmd BufRead,BufNewFile .followup,.article,.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt* setlocal ft=mail
             " .m files are objective c by default, not matlab
             autocmd BufRead,BufNewFile *.m setlocal filetype=objc
             " .proto files for google protocol buffers
             autocmd BufRead,BufNewFile *.proto setlocal filetype=proto
-        endif
-    augroup end
+        augroup end
+    endif
 endif
 
 function! Gav_fnameescape(name)
@@ -374,6 +376,6 @@ if has('gui_running')
     nmap <F11> :call IncrFontPt()<CR>
     nmap <F10> :call DecrFontPt()<CR>
 endif
-" source ~/.vimrc.abbrev
-source ~/.vimrc.unicode
-source ~/.vimrc.post
+" source ~/.vimrc.abbrev.vim
+source ~/.vimrc.unicode.vim
+source ~/.vimrc.post.vim

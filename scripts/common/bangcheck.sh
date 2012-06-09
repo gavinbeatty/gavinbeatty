@@ -39,7 +39,7 @@ help="${help-}"
 env="${env-}"
 bin="${bin-}"
 
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 if test -n "$getopt" ; then
     e=0
     "$getopt" -T >/dev/null 2>&1 || e=$?

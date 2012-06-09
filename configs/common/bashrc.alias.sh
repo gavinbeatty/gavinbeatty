@@ -1,35 +1,36 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
-if test -n "${bashrc_aliases_guard-}" ; then return 0 ; fi
-bashrc_aliases_guard=1
-iecho ".bashrc.aliases"
+if test -n "${bashrc_alias_guard-}" ; then return 0 ; fi
+bashrc_alias_guard=1
+iecho ".bashrc.alias.sh"
 
 if (type -- sed >/dev/null 2>&1) && (type -- grep >/dev/null 2>&1) \
 && (echo | grep -Eq ''); then
     LS_OPTIONS="${LS_OPTIONS:-}"
-    bash_aliases_ls="$(eval echo $(alias ls 2>/dev/null | sed -e 's/^alias ls=//'))"
-    if test -z "$bash_aliases_ls" ; then
-        bash_aliases_ls='ls ${LS_OPTIONS}'
+    bash_alias_ls="$(eval echo $(alias ls 2>/dev/null | sed -e 's/^alias ls=//'))"
+    if test -z "$bash_alias_ls" ; then
+        bash_alias_ls='ls ${LS_OPTIONS}'
     else
-        bash_aliases_ls="${bash_aliases_ls} "'${LS_OPTIONS}'
+        bash_alias_ls="${bash_alias_ls} "'${LS_OPTIONS}'
     fi
     if uname | grep -Eqi '(bsd|darwin)' ; then
-        if ! echo "$bash_aliases_ls $LS_OPTIONS" | grep -Eq -- ' +-[A-Za-z0-9]*G' ; then
+        if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +-[A-Za-z0-9]*G' ; then
             # defining CLICOLOR has the same effect as -G option and is more
             # foolproof (if -G isn't supported, say)
             CLICOLOR=1 ; export CLICOLOR
             #LS_OPTIONS="${LS_OPTIONS} -G"
         fi
     else
-        if ! echo "$bash_aliases_ls $LS_OPTIONS" | grep -Eq -- ' +--colou?r(=| +)(auto|tty)' ; then
+        if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +--colou?r(=| +)(auto|tty)' ; then
             LS_OPTIONS="${LS_OPTIONS} --color=auto"
         fi
     fi
-    if ! echo "$bash_aliases_ls $LS_OPTIONS" | grep -Eq -- ' +(-[A-Za-z0-9]*F|--classify)' ; then
+    if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +(-[A-Za-z0-9]*F|--classify)' ; then
         LS_OPTIONS="${LS_OPTIONS} -F"
     fi
     export LS_OPTIONS
-    alias ls="${bash_aliases_ls}"
+    alias ls="${bash_alias_ls}"
 fi
+alias tmux='tmux -2 '
 alias dash='PS1=\$\  dash'
 alias sl='ls'
 alias ks='ls'
@@ -70,8 +71,8 @@ alias cdbuild='cd $(builddir)'
 alias perlsed.sh='perlsed.bash'
 
 for i_ in $HOSTS ; do
-    if test -r "${HOME}/.bashrc.aliases.${i_}" ; then
-        . "${HOME}/.bashrc.aliases.${i_}"
+    if test -r "${HOME}/.bashrc.alias.${i_}.sh" ; then
+        . "${HOME}/.bashrc.alias.${i_}.sh"
     fi
 done
 unset i_

@@ -39,7 +39,7 @@ lf="
 
 TEXTDOMAIN="$prog" ; export TEXTDOMAIN
 TEXTDOMAINDIR="${prefix}/share/locale/sh/" ; export TEXTDOMAINDIR
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 if have gettext.sh ; then
     set +e
     set +u

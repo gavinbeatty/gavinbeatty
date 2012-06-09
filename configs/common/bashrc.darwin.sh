@@ -1,7 +1,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 if test -n "${bashrc_darwin_guard-}" ; then return 0 ; fi
 bashrc_darwin_guard=1
-iecho ".bashrc.darwin"
+iecho ".bashrc.darwin.sh"
 
 # macports
 if (test -d "/opt/local/bin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/bin") ; then

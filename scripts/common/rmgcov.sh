@@ -25,7 +25,7 @@ verbose() {
     fi
 }
 die() { error "$@" ; exit 1 ; }
-have() { type -- "$@" >/dev/null 2>&1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 getopt_works() {
     eval set -- "$("$getopt" -n "test" -o "ab:c" -- -a yah -b -c -b \'\  -c nay 2>&1)"
     if test $# -ne 9 ; then return 1
