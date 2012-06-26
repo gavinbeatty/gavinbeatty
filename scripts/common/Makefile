@@ -16,7 +16,6 @@ bangcheck.sh \
 battery.sh \
 buf.sh \
 codepretty.py \
-configure-git2.sh \
 configure-git.sh \
 cscope.sh \
 ctags.sh \
