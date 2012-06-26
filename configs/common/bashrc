@@ -48,6 +48,10 @@ iecho "ulimit -c $(ulimit -c)"
 # 0027 => 'u=rwx,g=rx,o='
 umask 0027
 iecho "umask $(umask)"
+if test -r "${HOME}/.dircolors" ; then
+    eval $(dircolors "${HOME}/.dircolors") >/dev/null
+    iecho "dircolors ansi-dark"
+fi
 
 ########################################################################
 # Set variables that have no dependency on PATH etc.

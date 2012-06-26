@@ -3,8 +3,8 @@ if test -n "${bash_logout_guard-}" ; then return 0 ; fi
 bash_logout_guard=1
 #iecho ".bash_logout"
 
-if (have keychain) \
-&& (have who) && (have wc) \
+if (type -- keychain >/dev/null 2>&1) \
+&& (type -- who >/dev/null 2>&1) && (type -- wc >/dev/null 2>&1) \
 && (test "$(who | grep -F -- "$USER" | wc -l)" -eq 1) ; then
     keychain --quiet -k all
 fi

@@ -4,8 +4,40 @@ source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
-" see :h filetype-overview
-filetype plugin indent on
+
+function! Gav_fnameescape(name)
+    if exists('*fnameescape')
+        return fnameescape(a:name)
+    endif
+    return a:name
+endfunction
+function! Gav_abspath(name)
+    if exists('*fnamemodify')
+        return fnamemodify(a:name, ':p')
+    endif
+    return getcwd().'/'.a:name
+endfunction
+function! Gav_leaf(path)
+    if exists('*fnamemodify')
+        return fnamemodify(a:path, ':p:t')
+    endif
+    echoerr 'fnamemodify required'
+    return a:path
+endfunction
+
+if filereadable(getcwd().'/tags')
+    exec 'set tags+='.Gav_fnameescape(getcwd()).'/tags'
+endif
+if filereadable(getcwd().'/cscope.out')
+    exec 'cscope add '.Gav_fnameescape(getcwd()).'/cscope.out'
+endif
+" The below 2 filetype lines fix return code of vim on Mac OS X, when using
+" pathogen.
+" http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
+filetype on
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
 " Syntax highlighting on
 if has('syntax')
     syntax enable
@@ -18,8 +50,21 @@ endif
 " assume 256 color terminal
 set t_Co=256
 set background=dark
-call pathogen#infect()
+" see :h filetype-overview
+filetype plugin indent on
 colorscheme solarized
+"colorscheme blackboard
+"set listchars=
+"if has('multi_byte')
+"    "let &termencoding = &encoding
+"    "set listchars=nbsp:~,tab:>\ ,trail:_,precedes:<,extends:>
+"    set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
+"    endif
+"    "set encoding=utf-8
+"    "setglobal fileencoding=utf-8
+"    set fileencodings=ucs-bom,utf-8,latin1
+"    setglobal nobomb
+"endif
 let mapleader = '\'
 set nonumber
 set textwidth=79
@@ -80,8 +125,8 @@ set printoptions=paper:a4
 " cd to the file's directory
 if exists('+autochdir')
     set autochdir
-elseif has("autocmd")
-    autocmd BufEnter * silent! lcd Gav_fnameescape(%:p:h)
+"elseif has("autocmd")
+    "autocmd BufEnter * silent! lcd Gav_fnameescape(expand('%:p:h'))
 endif
 " Flag problematic whitespace (trailing and spaces before tabs).
 " Note you get the same by doing let c_space_errors=1 but this rule applies to
@@ -95,7 +140,7 @@ if has('autocmd')
     autocmd BufWinLeave * call clearmatches()
 endif
 " Use :set list! or \tl (below) to toggle visible whitespace on/off
-set listchars=tab:->,trail:.,precedes:<,extends:>
+"set list
 " Get rid of annoying beep and flash
 set novisualbell           " no visual bell
 set noerrorbells           " no audio bell
@@ -212,26 +257,6 @@ if has("autocmd")
         augroup end
     endif
 endif
-
-function! Gav_fnameescape(name)
-    if exists('*fnameescape')
-        return fnameescape(a:name)
-    endif
-    return a:name
-endfunction
-function! Gav_abspath(name)
-    if exists('*fnamemodify')
-        return fnamemodify(a:name, ':p')
-    endif
-    return getcwd().'/'.a:name
-endfunction
-function! Gav_leaf(path)
-    if exists('*fnamemodify')
-        return fnamemodify(a:path, ':p:t')
-    endif
-    echoerr 'fnamemodify required'
-    return a:path
-endfunction
 
 " redraw the screen
 nnoremap <Leader>rr :redraw!<CR>

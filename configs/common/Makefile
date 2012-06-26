@@ -86,10 +86,10 @@ install-screenrc: $(DESTDIR)$(HOME) screenrc
 	$(INSTALL_DATA) screenrc $(DESTDIR)$(HOME)/.screenrc
 
 install-ssh_config: $(DESTDIR)$(HOME) ssh_config
-	@$(INSTALL_DIR_PRIV) -- $(DESTDIR)$(HOME)/.ssh
-	$(TOUCH) -- $(DESTDIR)$(HOME)/.ssh/config
-	$(CHMOD_PRIV) -- $(DESTDIR)$(HOME)/.ssh/config
-	if ! $(GREP) -q '^#\s*gavinbeatty:ssh_config$$' -- $(DESTDIR)$(HOME)/.ssh/config ; then $(CAT) ssh_config >> $(DESTDIR)$(HOME)/.ssh/config ; fi
+	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh
+	$(TOUCH) $(DESTDIR)$(HOME)/.ssh/config
+	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config
+	if ! $(GREP) -q '^#\s*gavinbeatty:ssh_config$$' $(DESTDIR)$(HOME)/.ssh/config ; then $(CAT) ssh_config >> $(DESTDIR)$(HOME)/.ssh/config ; fi
 
 install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
