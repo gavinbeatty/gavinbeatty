@@ -4,6 +4,9 @@ source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
 endif
+if !exists('g:cpp_expandtab')
+    let g:cpp_expandtab = 1
+endif
 
 function! Gav_fnameescape(name)
     if exists('*fnameescape')

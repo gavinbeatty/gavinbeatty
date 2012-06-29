@@ -3,6 +3,12 @@ setlocal formatoptions=croql
 setlocal cindent
 setlocal makeprg=TERM=dumb\ bjam\ -j6\ link=static
 setlocal makeef=bjam-build-errors.log
+if g:cpp_expandtab
+    setlocal expandtab
+else
+    setlocal expandtab
+endif
+
 iab #d #define
 iab #i #include
 iab #w #warning
