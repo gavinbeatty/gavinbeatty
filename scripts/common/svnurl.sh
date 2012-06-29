@@ -4,20 +4,23 @@ set -e
 set -u
 trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
-if test $# -eq 2 ; then
-    if test x"$1" != x"--" ; then path="$1"
-    elif test x"$2" != x"--" ; then path="$2"
-    else path="$2" ; fi
-elif test $# -eq 0 ; then path="."
-elif test $# -eq 1 ; then path="$1"
-elif test $# -gt 2 ; then
-    echo "error: Expected zero or one <path> argument" >&2
+SVN_EXE="${SVN_EXE:-svn}"
+AWK="${AWK:-awk}"
+if test $# -gt 0 ; then
+    if test "$1" = "--" ; then
+        shift
+    fi
+fi
+if test $# -eq 0 ; then set -- . ; fi
+if test $# -gt 1 ; then
+    echo "error: Expected zero or one <path> argument(s)." >&2
     echo "usage: $(basename -- "$0") [--] [<path>]" >&2
     exit 1
 fi
-if info="$(svn info -- "$path" 2>/dev/null)" ; then
-    echo "$info" | awk 'BEGIN {FS=": " } /^URL: / {print $2}'
+if info="$(LC_ALL=C ${SVN_EXE} info -- "$1" 2>/dev/null)" ; then
+    echo "$info" | LC_ALL=C ${AWK} 'BEGIN {FS=": " } /^URL: / {print $2}'
 else
-    echo "error: $path is an invalid <path>" >&2
+    echo "error: $1 is an invalid <path>" >&2
+    echo "usage: $(basename -- "$0") [--] [<path>]" >&2
     exit 1
 fi

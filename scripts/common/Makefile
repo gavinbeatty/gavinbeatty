@@ -50,7 +50,6 @@ mydatetime.sh \
 net-check.sh \
 pager.sh \
 poke.sh \
-rmbin2.sh \
 rmbin.sh \
 rmgcov.sh \
 rmtmp.sh \
@@ -66,7 +65,6 @@ svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
 svnswitch.sh \
-svnurl2.sh \
 svnurl.sh \
 svnwcroot.sh \
 tcp-proxy.sh \
