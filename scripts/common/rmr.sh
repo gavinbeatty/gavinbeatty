@@ -63,7 +63,7 @@ main() {
     expect=""
     break=""
     did_find=""
-    set -x
+    test -z "${RMR_DEBUG:-}" || set -x
     for arg in "$@" ; do
         case "$arg" in
         -L|-P|-H|-D)
