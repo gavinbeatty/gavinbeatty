@@ -52,6 +52,7 @@ pager.sh \
 poke.sh \
 rmbin.sh \
 rmgcov.sh \
+rmr.sh \
 rmtmp.sh \
 runq.sh \
 run.sh \
