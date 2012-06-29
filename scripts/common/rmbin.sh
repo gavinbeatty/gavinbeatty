@@ -8,7 +8,7 @@ prog="$(basename -- "$0")"
 getopt=${GETOPT-getopt}
 xargs="${XARGS:-}"
 help=${RMBIN_HELP:-}
-verbose=${RMBIN_QUIET:-}
+quiet=${RMBIN_QUIET:-}
 variant=${RMBIN_VARIANT:-}
 symlinks="${RMBIN_SYMLINKS:--L}"
 have() { type "$@" >/dev/null 2>&1 ; }
@@ -24,7 +24,7 @@ getopt_works() {
 }
 main() {
     if getopt_works ; then
-        opts="$("$getopt" -n "$prog" -o "hb:LPHD" -- "$@")"
+        opts="$("$getopt" -n "$prog" -o "hqb:LPHD" -- "$@")"
         eval set -- "$opts"
 
         while test $# -gt 0 ; do
@@ -59,10 +59,10 @@ main() {
         set -- .
     fi
     if test -z "$variant" ; then
-        set -x
+        test -n "$quiet" || set -x
         find $symlinks "$@" -type d \( -name 'bin' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 rm -r --
     else
-        set -x
+        test -n "$quiet" || set -x
         find $symlinks "$@" -type d -name "$variant" -prune -print0 | $xargs -r0 rm -r --
     fi
 }
