@@ -34,6 +34,12 @@ endif
 if filereadable(getcwd().'/cscope.out')
     exec 'cscope add '.Gav_fnameescape(getcwd()).'/cscope.out'
 endif
+if has('multi_byte')
+    if matchend(v:lang, '[Uu][Tt][Ff][-_]\?8')
+        set encoding=utf-8
+        set listchars=nbsp:·,tab:»·,trail:␣,precedes:<,extends:>
+    endif
+endif
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using
 " pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
@@ -56,18 +62,10 @@ set background=dark
 " see :h filetype-overview
 filetype plugin indent on
 colorscheme solarized
-"colorscheme blackboard
-"set listchars=
-"if has('multi_byte')
-"    "let &termencoding = &encoding
-"    "set listchars=nbsp:~,tab:>\ ,trail:_,precedes:<,extends:>
-"    set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
-"    endif
-"    "set encoding=utf-8
-"    "setglobal fileencoding=utf-8
-"    set fileencodings=ucs-bom,utf-8,latin1
-"    setglobal nobomb
-"endif
+if g:colors_name != 'solarized'
+    " fallback
+    colorscheme blackboard
+endif
 let mapleader = '\'
 set nonumber
 set textwidth=79
