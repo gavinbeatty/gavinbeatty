@@ -152,6 +152,12 @@ test -z "${PATH:-}" || v_=":$PATH"
 if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${n_}${v_}" ; export PATH
 fi
+n_="${HOME}/Library/Haskell/bin"
+v_=
+test -z "${PATH:-}" || v_=":$PATH"
+if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+    PATH="${n_}${v_}" ; export PATH
+fi
 
 # use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
 n_="${HOME}/.rvm/bin"
