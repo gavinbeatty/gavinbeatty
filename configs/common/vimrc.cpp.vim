@@ -1,5 +1,6 @@
 " vi: set ft=vim expandtab tabstop=4 shiftwidth=4:
 setlocal formatoptions=croql
+setlocal list
 setlocal cindent
 setlocal makeprg=TERM=dumb\ bjam\ -j6\ link=static
 setlocal makeef=bjam-build-errors.log

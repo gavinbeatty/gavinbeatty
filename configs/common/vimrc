@@ -34,12 +34,21 @@ endif
 if filereadable(getcwd().'/cscope.out')
     exec 'cscope add '.Gav_fnameescape(getcwd()).'/cscope.out'
 endif
+set listchars=
 if has('multi_byte')
     if matchend(v:lang, '[Uu][Tt][Ff][-_]\?8')
         set encoding=utf-8
         set nobomb
-        set listchars=nbsp:·,tab:»·,trail:␣,precedes:<,extends:>
+        set listchars=nbsp:·,tab:»\ ,precedes:<,extends:>,trail:␣
+        let g:trail = '␣'
+        if has('autocmd')
+            autocmd InsertEnter * exec 'set listchars-=trail:' . g:trail
+            autocmd InsertLeave * exec 'set listchars+=trail:' . g:trail
+        endif
     endif
+endif
+if &listchars == ''
+    set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
 endif
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using
 " pathogen.
@@ -138,7 +147,7 @@ endif
 "    highlight RedundantSpaces ctermbg=red guibg=red
 "    match RedundantSpaces /\s\+$/
 "    autocmd BufWinEnter * match RedundantSpaces /\s\+$/
-"    autocmd InsertEnter * match RedundantSpaces /\s\+\%#\@<!$/
+"    autocmd InsertEnter * set listchars-=trail:
 "    autocmd InsertLeave * match RedundantSpaces /\s\+$/
 "    autocmd BufWinLeave * call clearmatches()
 "endif
@@ -240,7 +249,7 @@ if has("autocmd")
     if !exists('filetypeextras_loaded')
         let filetypeextras_loaded = 1
         augroup filetypeextras
-            autocmd FileType markdown,text,txt,mail source ~/.vimrc.txt.vim
+            autocmd FileType pandoc,markdown,text,txt,mail source ~/.vimrc.txt.vim
             " autocmd FileType text,txt,mail  setlocal formatoptions=tcqn2 textwidth=79 shiftwidth=2 tabstop=2 expandtab
             autocmd FileType c,cpp,objc source ~/.vimrc.cpp.vim
             autocmd FileType sh,bash    source ~/.vimrc.sh.vim
