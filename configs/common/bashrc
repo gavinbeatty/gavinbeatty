@@ -70,12 +70,12 @@ GIT_AUTHOR_EMAIL="${EMAIL}" ; export GIT_AUTHOR_EMAIL
 BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
 GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
 
-# since i'm definitely setting options, start off with at least '-'
-LESS="${LESS:--}"
-if ! echo "$LESS" | grep -Fq 'F' ; then LESS="${LESS}F" ; fi
-if ! echo "$LESS" | grep -Fq 'X' ; then LESS="${LESS}X" ; fi
-if ! echo "$LESS" | grep -Fq 'R' ; then LESS="${LESS}R" ; fi
-if ! echo "$LESS" | grep -Fq 'S' ; then LESS="${LESS}S" ; fi
+LESS="${LESS:-}"
+if ! echo "$LESS" | grep -q '\<-F\>' ; then LESS="${LESS} -F" ; fi
+if ! echo "$LESS" | grep -q '\<-X\>' ; then LESS="${LESS} -X" ; fi
+if ! echo "$LESS" | grep -q '\<-R\>' ; then LESS="${LESS} -R" ; fi
+if ! echo "$LESS" | grep -q '\<-r\>' ; then LESS="${LESS} -r" ; fi
+if ! echo "$LESS" | grep -q '\<-S\>' ; then LESS="${LESS} -S" ; fi
 export LESS
 
 # line-wrap minicom by default
