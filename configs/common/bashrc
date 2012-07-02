@@ -153,17 +153,30 @@ if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${n_}${v_}" ; export PATH
 fi
 
-if (type -- ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
-&& (type -- awk >/dev/null 2>&1) && (type -- sed >/dev/null 2>&1) ; then
-    if test -z "${RUBY_VERSION:-}" ; then
-        RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
-    fi
-    n_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
-    v_="${PATH:-}"
-    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-        PATH="${n_}${v_:+:}${v_}" ; export PATH
-    fi
-    unset v_
+# use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
+n_="${HOME}/.rvm/bin"
+v_=
+test -z "${PATH:-}" || v_=":$PATH"
+if (test -d "${HOME}/.rvm") && (! echo "$v_" | grep -Fq "$n_") ; then
+    PATH="${n_}${v_}" ; export PATH
+fi
+#if (type -- ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
+#&& (type -- awk >/dev/null 2>&1) && (type -- sed >/dev/null 2>&1) ; then
+#    if test -z "${RUBY_VERSION:-}" ; then
+#        RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
+#    fi
+#    n_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
+#    v_="${PATH:-}"
+#    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
+#        PATH="${n_}${v_:+:}${v_}" ; export PATH
+#    fi
+#    unset v_
+#fi
+n_="${HOME}/.cabal/bin"
+v_=
+test -z "${PATH:-}" || v_=":$PATH"
+if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
+    PATH="${n_}${v_}" ; export PATH
 fi
 unset v_
 unset n_
