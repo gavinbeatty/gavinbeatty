@@ -1,0 +1,21 @@
+% GHC
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Installing GHC >= 7.2 with glibc < 2.7
+
+This is the case on Redhat Enterprise 5.3.
+
+* Install gcc >= 4.4 from redhat packages
+* Install ghc 6.8 from source
+* Install ghc 6.12 from source
+* Install ghc 7.4.2 from source
+* Install [cabal-install] with:
+
+    wget http://hackage.haskell.org/packages/archive/cabal-install/0.14.0/cabal-install-0.14.0.tar.gz
+    tar -zxf cabal-install-0.14.0.tar.gz
+    cd cabal-install-0.14.0
+    sh ./bootstrap.sh
+
+  [cabal-install]: http://hackage.haskell.org/trac/hackage/wiki/CabalInstall
+
+<!-- vi: set ft=pandoc: -->
