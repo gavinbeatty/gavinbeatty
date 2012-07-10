@@ -7,7 +7,7 @@ setlocal makeef=bjam-build-errors.log
 if g:cpp_expandtab
     setlocal expandtab
 else
-    setlocal expandtab
+    setlocal noexpandtab
 endif
 
 iab #d #define
