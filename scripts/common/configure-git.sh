@@ -157,6 +157,8 @@ core_section() {
     gitconfig repack.usedeltabaseoffset true
 # warnings appear in 1.6 if not set (we set to default = current)
     gitconfig push.default current
+# when `merge`-ing with no arguments, merge upstream into current branch
+    gitconfig merge.defaultToUpstream true
 }
 alias_section() {
     gitconfig alias.st "status"
