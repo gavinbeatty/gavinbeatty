@@ -20,8 +20,8 @@ https://github.com/altercation/vim-colors-solarized
 Modify your vimrc to add the following, and make sure you do so before
 any call to "syntax"!
 
-    let g:solarized_termcolors=256
-    " set background=dark
+    set t_Co=256
+    set background=dark
     colorscheme solarized
 
 

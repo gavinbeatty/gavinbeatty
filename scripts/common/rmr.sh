@@ -18,6 +18,7 @@ dryrun="${RMR_DRYRUN:-}"
 have() { type "$@" >/dev/null 2>&1 ; }
 die() { echo "error: $@" ; exit 1 ; }
 udie() { usage >&2 ; exit 1 ; }
+warning() { echo "warning: $@" >&2 ; }
 usage() {
     cat <<EOF
 usage: $prog -h
@@ -66,6 +67,13 @@ main() {
     test -z "${RMR_DEBUG:-}" || set -x
     for arg in "$@" ; do
         case "$arg" in
+        -h) test -z "$expect" || udie
+            if test -z "$break" ; then
+                usage ; exit 0
+            else
+                find_arg "$arg"
+            fi
+            ;;
         -L|-P|-H|-D)
             test -z "$expect" || udie
             if test -z "$break" ; then
@@ -136,7 +144,7 @@ main() {
                 expect=""
             else
                 if test -z "$break" ; then
-                    warning "found <patter> argument before '--' which begins with '-'"
+                    warning "found <pattern> argument before '--' which begins with '-'"
                 fi
                 find_arg "$arg"
             fi
