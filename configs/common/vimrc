@@ -39,8 +39,9 @@ if has('multi_byte')
     if matchend(v:lang, '[Uu][Tt][Ff][-_]\?8')
         set encoding=utf-8
         set nobomb
-        set listchars=nbsp:·,tab:»\ ,precedes:<,extends:>,trail:␣
         let g:trail = '␣'
+        set listchars=nbsp:·,tab:»\ ,precedes:<,extends:>
+        exec 'set listchars+=trail:' . g:trail
         if has('autocmd')
             autocmd InsertEnter * exec 'set listchars-=trail:' . g:trail
             autocmd InsertLeave * exec 'set listchars+=trail:' . g:trail
