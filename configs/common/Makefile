@@ -92,15 +92,15 @@ install-ssh_config: $(DESTDIR)$(HOME) ssh_config
 install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
 
-install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.abbrev.vim vimrc.sh.vim vimrc.cpp.vim vimrc.txt.vim vimrc.unicode.vim
-	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
+install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.unicode.vim vim/ftplugin/cpp.vim vim/ftplugin/txt.vim
 	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/.vimrc
-	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
-	$(INSTALL_DATA) vimrc.abbrev.vim $(DESTDIR)$(HOME)/.vimrc.abbrev.vim
-	$(INSTALL_DATA) vimrc.sh.vim $(DESTDIR)$(HOME)/.vimrc.sh.vim
-	$(INSTALL_DATA) vimrc.cpp.vim $(DESTDIR)$(HOME)/.vimrc.cpp.vim
-	$(INSTALL_DATA) vimrc.txt.vim $(DESTDIR)$(HOME)/.vimrc.txt.vim
 	$(INSTALL_DATA) vimrc.unicode.vim $(DESTDIR)$(HOME)/.vimrc.unicode.vim
+	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
+	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
+	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim
+	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim/ftplugin
+	$(INSTALL_DATA) vim/ftplugin/cpp.vim $(DESTDIR)$(HOME)/.vim/ftplugin/cpp.vim
+	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 .PHONY: install-vimrc
 
 install: install-ackrc install-bashrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc

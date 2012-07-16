@@ -1,4 +1,7 @@
 " vi: set ft=vim expandtab tabstop=4 shiftwidth=4:
+if !exists('b:did_ftplugin_cpp_vim')
+let b:did_ftplugin_cpp_vim = 1
+
 setlocal formatoptions=croql
 setlocal list
 setlocal cindent
@@ -25,4 +28,6 @@ if has("autocmd")
             autocmd BufEnter *.h let b:fswitchdst = 'cc,cpp,c' | let b:fswitchlocs = '.'
         augroup end
     endif
+endif
+
 endif
