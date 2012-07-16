@@ -1,9 +1,12 @@
 .SUFFIXES:
+SHELL = /bin/sh
 
 INSTALL ?= install
 INSTALL_DATA ?= $(INSTALL) -m 0644
 INSTALL_DIR ?= $(INSTALL) -d
 SED ?= sed
+GREP ?= grep
+CAT ?= cat
 
 DESTDIR ?=
 
@@ -13,17 +16,15 @@ help:
 
 SOURCES = Xresources \
 bash_profile.maths \
-bashrc.aliases.maths \
-bashrc.maths \
+bashrc.maths.sh \
 cshrc.maths \
 ratpoisonrc
 
 install: $(SOURCES)
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)
 	$(INSTALL_DATA) Xresources $(DESTDIR)$(HOME)/.Xresources
-	$(INSTALL_DATA) bash_profile.maths $(DESTDIR)$(HOME)/.bash_profile.maths
-	$(INSTALL_DATA) bashrc.aliases.maths $(DESTDIR)$(HOME)/.bashrc.aliases.maths
-	$(INSTALL_DATA) bashrc.maths $(DESTDIR)$(HOME)/.bashrc.maths
+	if ! $(GREP) -q '^#\s*gavinbeatty:bash_profile.maths.sh$$' $(DESTDIR)$(HOME)/.bash_profile ; then $(CAT) bash_profile.maths.sh >> $(DESTDIR)$(HOME)/.bash_profile ; fi
+	if ! $(GREP) -q '^#\s*gavinbeatty:bashrc.maths.sh$$' $(DESTDIR)$(HOME)/.bashrc.post.sh ; then $(CAT) bashrc.maths.sh >> $(DESTDIR)$(HOME)/.bashrc.post.sh ; fi
 	$(INSTALL_DATA) cshrc.maths $(DESTDIR)$(HOME)/.cshrc.maths
 	$(INSTALL_DATA) ratpoisonrc $(DESTDIR)$(HOME)/.ratpoisonrc
 
