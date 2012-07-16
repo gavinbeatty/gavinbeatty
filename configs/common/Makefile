@@ -43,19 +43,11 @@ $(DESTDIR)$(HOME):
 install-ackrc: $(DESTDIR)$(HOME) ackrc
 	$(INSTALL_DATA) ackrc $(DESTDIR)$(HOME)/.ackrc
 
-install-bashrc: $(DESTDIR)$(HOME) bash_completion bash_logout bash_profile bashrc bashrc.alias.sh bashrc.func.sh bashrc.darwin.sh bashrc.msys.sh
+install-bashrc: $(DESTDIR)$(HOME) bash_completion bash_logout bash_profile bashrc
 	$(INSTALL_DATA) bash_completion $(DESTDIR)$(HOME)/.bash_completion
 	$(INSTALL_DATA) bash_logout $(DESTDIR)$(HOME)/.bash_logout
 	$(INSTALL_DATA) bash_profile $(DESTDIR)$(HOME)/.bash_profile
 	$(INSTALL_DATA) bashrc $(DESTDIR)$(HOME)/.bashrc
-	$(INSTALL_DATA) bashrc.alias.sh $(DESTDIR)$(HOME)/.bashrc.alias.sh
-	$(INSTALL_DATA) bashrc.func.sh $(DESTDIR)$(HOME)/.bashrc.func.sh
-	$(INSTALL_DATA) bashrc.darwin.sh $(DESTDIR)$(HOME)/.bashrc.darwin.sh
-	$(INSTALL_DATA) bashrc.msys.sh $(DESTDIR)$(HOME)/.bashrc.msys.sh
-
-install-cdargs: $(DESTDIR)$(HOME) cdargs cdargs.bash
-	$(INSTALL_DATA) cdargs $(DESTDIR)$(HOME)/.cdargs
-	$(INSTALL_DATA) cdargs.bash $(DESTDIR)$(HOME)/.cdargs.bash
 
 install-cshrc: $(DESTDIR)$(HOME) cshrc
 	$(INSTALL_DATA) cshrc $(DESTDIR)$(HOME)/.cshrc
@@ -104,6 +96,6 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc vimrc.abbrev.vim vimrc.sh.vim vimrc.cpp.v
 	$(INSTALL_DATA) vimrc.txt.vim $(DESTDIR)$(HOME)/.vimrc.txt.vim
 	$(INSTALL_DATA) vimrc.unicode.vim $(DESTDIR)$(HOME)/.vimrc.unicode.vim
 
-install: install-ackrc install-bashrc install-cdargs install-cshrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
-.PHONY: install install-ackrc install-bashrc install-cdargs install-cshrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
+install: install-ackrc install-bashrc install-cshrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
+.PHONY: install install-ackrc install-bashrc install-cshrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
 
