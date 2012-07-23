@@ -3,11 +3,12 @@ if test -n "${bashrc_func_guard-}" ; then return 0 ; fi
 bashrc_func_guard=1
 iecho ".bashrc.func.sh"
 
-r() {
-    # must be on own line because of '&', I think
+q() {
     "$@" >/dev/null 2>&1 &
 }
-o() { r xdg-open "$@" ; }
+o() {
+    q xdg-open "$@"
+}
 e() {
     if test -f cscope.out ; then
         vim "+cscope add Gav_fnameescape('$(pwd)/cscope.out')" "$@"
@@ -50,7 +51,8 @@ svneext() {
     if test $# -eq 0 ; then set -- . ; fi
     ${SVN_EXE:-svn} pe svn:externals "$@"
 }
-svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | grep -v '^X  ' ; }
+svnst() { LC_ALL=C ${SVN_EXE:-svn} status --ignore-externals "$@" | grep -v '^X  ' ; }
+svnstm() { svnst | grep '^M' ; }
 svnlog() { svnl log -vgr HEAD:1 "$@" ; }
 svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
 svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
