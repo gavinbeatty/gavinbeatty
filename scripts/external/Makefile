@@ -15,7 +15,6 @@ help:
 
 SOURCES = colordiff \
 colorgcc.pl \
-edit-server.pl \
 fix-outlook-quoting.rb \
 mutt_bgrun \
 256colors2.pl
