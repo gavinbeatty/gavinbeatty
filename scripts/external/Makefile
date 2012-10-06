@@ -13,7 +13,9 @@ BINDIR ?= $(PREFIX)/bin
 help:
 	@echo Targets: install
 
-SOURCES = colordiff \
+SOURCES = \
+checkbashisms \
+colordiff \
 colorgcc.pl \
 edit-server.pl \
 fix-outlook-quoting.rb \
