@@ -422,7 +422,17 @@ if test "${isinteractive:-0}" -ne 0 ; then
         # must be on own line because of '&', I think
         "$@" >/dev/null 2>&1 &
     }
-    o() { r xdg-open "$@" ; }
+    if type xdg-open >/dev/null 2>&1 ; then
+        OPENER="xdg-open"
+    elif type open >/dev/null 2>&1 && test "$(echo "$UNAME" | tr '[A-Z]' '[a-z]')" = "darwin" ; then
+        OPENER="command open"
+    # elif windows, OPENER="start" ?
+    fi
+    open() {
+        if test -n "${OPENER:-}" ; then r $OPENER "$@"
+        else echo "No OPENER installed." >&2
+        fi
+    }
     e() {
         if test -f cscope.out ; then
             vim "+cscope add Gav_fnameescape('$(pwd)/cscope.out')" "$@"
@@ -449,12 +459,19 @@ if test "${isinteractive:-0}" -ne 0 ; then
         shift
         (cd -- "$d" && "$@")
     }
-
-    grepcpp() { find-src.sh -0fc | xargs -r0 grep -Hn "$@" ; }
-    greppy() { find-src.sh -0f -t python | xargs -r0 grep -Hn "$@" ; }
+    XARGS="xargs"
+    if type gxargs >/dev/null 2>&1 ; then
+        XARGS="gxargs"
+    fi
+    XARGS_R="$XARGS -r"
+    if ! echo | $XARGS_R >/dev/null 2>&1 ; then
+        XARGS_R="$XARGS"
+    fi
+    grepcpp() { find-src.sh -0fc | $XARGS -0 grep -Hn "$@" ; }
+    greppy() { find-src.sh -0f -t python | $XARGS -0 grep -Hn "$@" ; }
     # note it's actually for .bash and .sh extensions
-    grepsh() { find-src.sh -0f -t bash | xargs -r0 grep -Hn "$@" ; }
-    grepsrc() { find-src.sh -0f | xargs -r0 grep -Hn "$@" ; }
+    grepsh() { find-src.sh -0f -t bash | $XARGS -0 grep -Hn "$@" ; }
+    grepsrc() { find-src.sh -0f | $XARGS -0 grep -Hn "$@" ; }
 
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svngext() {
