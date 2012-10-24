@@ -6,9 +6,7 @@ iecho ".bashrc.func.sh"
 q() {
     "$@" >/dev/null 2>&1 &
 }
-o() {
-    q xdg-open "$@"
-}
+open() { echo no impl ; }
 e() {
     if test -f cscope.out ; then
         vim "+cscope add Gav_fnameescape('$(pwd)/cscope.out')" "$@"
@@ -52,8 +50,10 @@ svneext() {
     ${SVN_EXE:-svn} pe svn:externals "$@"
 }
 svnst() { LC_ALL=C ${SVN_EXE:-svn} status --ignore-externals "$@" | grep -v '^X  ' ; }
-svnstm() { svnst | grep '^M' ; }
-svnlog() { svnl log -vgr HEAD:1 "$@" ; }
+svnstm() { svnst "$@" | grep '^M' ; }
+svnstma() { svn status "$@" | grep '^M' ; }
+svnlog() { svnl log -vr HEAD:1 "$@" ; }
+svnmergelog() { svnlog -g "$@" ; }
 svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
 svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
 svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }

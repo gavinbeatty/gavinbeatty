@@ -39,12 +39,6 @@ alias la='l -a'
 alias lsquote='ls --quoting-style=shell-always'
 alias lsescape='ls --quoting-style=escape'
 alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
-alias r='runq.sh'
-if type -- xdg-open >/dev/null 2>&1 ; then
-    alias o='runq.sh xdg-open'
-else
-    alias o='runq.sh doubleclick.sh'
-fi
 alias dir='ls --format=vertical'
 alias vdir='ls --format=long'
 
