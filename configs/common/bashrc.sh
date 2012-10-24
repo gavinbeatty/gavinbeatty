@@ -34,14 +34,14 @@ iecho "ulimit -c $(ulimit -c)"
 umask 0027
 iecho "umask $(umask)"
 
-if test -r ~/.dircolors ; then
-    eval $(dircolors ~/.dircolors) >/dev/null
+if test -r "${HOME}/.dircolors" ; then
+    eval $(dircolors "${HOME}/.dircolors") >/dev/null
 fi
 
 ########################################################################
 # Set variables that have no dependency on PATH etc.
 ########################################################################
-UNAME="$(uname 2>/dev/null || true)"
+UNAME="$(uname 2>/dev/null | tr '[A-Z]' '[a-z]' 2>/dev/null || true)"
 HOST="$(hostname -s 2>/dev/null || true)"
 if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
 
@@ -412,7 +412,7 @@ fi
 
 if test "${isinteractive:-0}" -ne 0 ; then
     if test -r /etc/bash_completion ; then
-        # /etc/bash_completion sources ~/.bash_completion for me
+        # /etc/bash_completion sources "${HOME}/.bash_completion" for me
         . /etc/bash_completion
     elif test -r "${HOME}/.bash_completion" ; then
         . "${HOME}/.bash_completion"
@@ -430,7 +430,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
     fi
     open() {
         if test -n "${OPENER:-}" ; then r $OPENER "$@"
-        else echo "No OPENER installed." >&2
+        else echo "No OPENER installed/configured." >&2
         fi
     }
     e() {
@@ -483,7 +483,10 @@ if test "${isinteractive:-0}" -ne 0 ; then
         ${SVN_EXE:-svn} pe svn:externals "$@"
     }
     svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | grep -v '^X  ' ; }
-    svnlog() { svnl log -vgr HEAD:1 "$@" ; }
+    svnstm() { svnst "$@" | grep '^M' ; }
+    svnstma() { svn status "$@" | grep '^M' ; }
+    svnlog() { svnl log -vr HEAD:1 "$@" ; }
+    svnmergelog() { svnlog -g "$@" ; }
     svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
@@ -573,12 +576,6 @@ EOF
     alias lsquote='ls --quoting-style=shell-always'
     alias lsescape='ls --quoting-style=escape'
     alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
-    alias r='runq.sh'
-    if type xdg-open >/dev/null 2>&1 ; then
-        alias o='runq.sh xdg-open'
-    else
-        alias o='runq.sh doubleclick.sh'
-    fi
     alias dir='ls --format=vertical'
     alias vdir='ls --format=long'
 

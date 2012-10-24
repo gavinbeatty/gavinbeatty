@@ -7,6 +7,9 @@ endif
 if !exists('g:cpp_expandtab')
     let g:cpp_expandtab = 1
 endif
+if !exists('g:cpp_textwidth')
+    let g:cpp_textwidth = 100
+endif
 
 function! Gav_fnameescape(name)
     if exists('*fnameescape')
@@ -67,14 +70,12 @@ if has('syntax')
         highlight DiffChange ctermfg=0 ctermbg=3 guibg='yellow'
     endif
 endif
-" assume 256 color terminal
 set t_Co=256
 set background=dark
 " see :h filetype-overview
 filetype plugin indent on
 colorscheme solarized
 if g:colors_name != 'solarized'
-    " fallback
     colorscheme blackboard
 endif
 let mapleader = '\'
@@ -83,15 +84,13 @@ set textwidth=79
 set tabstop=4
 set shiftwidth=4
 set expandtab
-" Match with % on <> pairs as well
 set matchpairs+=<:>
 " don't automatically format text as it's typed
 set formatoptions-=t
-" when formatting, use 'soft wrap', i.e., don't insert an eol into the buffer:
+" when 'wrap' is enabled, use 'soft wrap', i.e., don't insert an eol into the buffer
 set linebreak
-" Don't wrap lines by default
 set nowrap
-" h,j,k,l and ~ will now walk across line breaks
+" the movements can travel across line breaks
 set whichwrap=h,l,~,[,]
 " allow <BkSpc> to delete beyond the start of the current insertion, and over
 " indentations:
@@ -112,15 +111,9 @@ endif
 "        autocmd BufReadPost  * if !&readonly | silent loadview | endif
 "    augroup end
 "endif
-" Allow indenting automatically
 set autoindent
-" Turn off search highlighting
-" It can be toggled with <Leader>th
 set nohlsearch
-" Do incremental search
 set incsearch
-" Do smart case searching: case insensitive when all lowercase/uppercase,
-" sensitive otherwise
 set smartcase
 set undolevels=200
 set history=100
@@ -132,41 +125,19 @@ set wildmode=longest,list
 set wildchar=<TAB>
 " show a tab through menu
 set wildmenu
-" use A4 instead of the default: US Letter size
 set printoptions=paper:a4
-" cd to the file's directory
 if exists('+autochdir')
     set autochdir
-"elseif has("autocmd")
-    "autocmd BufEnter * silent! lcd Gav_fnameescape(expand('%:p:h'))
+elseif has("autocmd")
+    autocmd BufEnter * silent! lcd Gav_fnameescape(expand('%:p:h'))
 endif
-" Flag problematic whitespace (trailing and spaces before tabs).
-" Note you get the same by doing let c_space_errors=1 but this rule applies to
-" everything.
-"" I use trail: in listchars instead
-"if has('autocmd')
-"    highlight RedundantSpaces ctermbg=red guibg=red
-"    match RedundantSpaces /\s\+$/
-"    autocmd BufWinEnter * match RedundantSpaces /\s\+$/
-"    autocmd InsertEnter * set listchars-=trail:
-"    autocmd InsertLeave * match RedundantSpaces /\s\+$/
-"    autocmd BufWinLeave * call clearmatches()
-"endif
-" Use :set list! or \tl (below) to toggle visible whitespace on/off
-"set list
-" Get rid of annoying beep and flash
-set novisualbell           " no visual bell
-set noerrorbells           " no audio bell
+set novisualbell
+set noerrorbells
 " make c-u and c-w start a new change before running
 " http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
-" Have Y act analogously to D and C
 noremap Y y$
-" Format selection
-vnoremap Q gq
-" Format paragraph
-nnoremap Q gqap
 " <HOME> toggles between start of line and start of text
 imap <khome> <home>
 nmap <khome> <home>
@@ -190,25 +161,23 @@ nnoremap <Leader>cn :cnext<CR>
 nnoremap <Leader>cp :cprev<CR>
 nnoremap <Leader>ci :copen<Cr>
 if has('multi_byte')
-    " en dash (built-in)
-    "digraphs -N 8211
-    " em dash (built-in)
-    "digraphs -M 8212
     " quotation dash
     digraphs -Q 8213
     " figure dash
     digraphs -F 8210
+    " e.g., Polish as in Grze<c-k>'s
+    digraphs 's 347
+    digraphs s' 347
 endif
 if has('cmdline_info')
-    set ruler                  " show the ruler
-    " a ruler on steroids
+    set ruler
     set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%)
-    set showcmd                " show partial commands in status line and
-                               "   selected characters/lines in visual mode
+    " show number of chars/lines in visual selection
+    set showcmd
 endif
 if has('statusline')
-    set laststatus=1           " show statusline only if there are > 1 windows
-    " a statusline, also on steroids
+    " show statusline only if there are > 1 windows
+    set laststatus=1
     set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
     set shortmess+=r
 endif
@@ -220,18 +189,14 @@ if has('unix')
         " The reason for the double-command on <C-c> is due to some weirdness with the X clipboard system.
         vnoremap <silent> <Leader>y y:call system("xclip -i -selection clipboard", getreg("\""))<CR>:call system("xclip -i", getreg("\""))<CR>
     endif
-elseif has('win16') || has('win32') || has('win64') || has('win95')
-    " XXX No implementation yet
+"elseif has('win16') || has('win32') || has('win64') || has('win95') XXX no impl yet
 else
-    " if no specific implementation, use + register
     vnoremap <silent> <Leader>y "+y
     nnoremap <silent> <Leader>p "+p
 endif
-if exists('g:clipboard')
-    if g:clipboard == 'macosx'
-        vnoremap <silent> <Leader>y y:call system("pbcopy", getreg("\""))<CR>
-        nnoremap <silent> <Leader>p :call setreg("\"",system("pbpaste"))<CR>p
-    endif
+if exists('g:clipboard') && g:clipboard == 'macosx'
+    vnoremap <silent> <Leader>y y:call system("pbcopy", getreg("\""))<CR>
+    nnoremap <silent> <Leader>p :call setreg("\"",system("pbpaste"))<CR>p
 endif
 let g:haddock_browser = 'x-www-browser'
 let g:pandoc_no_folding = 1
@@ -269,30 +234,21 @@ if has("autocmd")
     endif
 endif
 
-" redraw the screen
 nnoremap <Leader>rr :redraw!<CR>
-" ("toggle paste") toggle paste on/off and report the change, and
-" where possible also have <F12> do this both in normal and insert mode:
+nnoremap <Leader>tn :set invnumber number?<CR>
 nnoremap <Leader>tp :set invpaste paste?<CR>
 nmap <F12> <Leader>tp
 imap <F12> <C-O><Leader>tp
 set pastetoggle=<F12>
-" ("toggle wrap") toggle wrap on/off and report the change
 nnoremap <Leader>tw :set invwrap wrap?<CR>
-" ("toggle highlight") toggle highlighting of search matches, and
-" report the change:
 nnoremap <Leader>th :set invhls hls?<CR>
-" ("toggle format") toggle the automatic insertion of line breaks
-" during typing and report the change:
+" toggle hard line wrapping at textwidth on and off
 nnoremap <Leader>tf :if &fo =~ 't' <Bar> set fo-=t <Bar> else <Bar> set fo+=t <Bar>
   \ endif <Bar> set fo?<CR>
-" ("toggle list") toggle list on/off and report the change:
 nnoremap <Leader>tl :set invlist list?<CR>
-" ("toggle spell") toggle spellchecker on/off and report the change:
 nnoremap <Leader>ts :set invspell spell?<CR>
-" ("toggle wrap") toggle wrap on/off and report the change:
 nnoremap <Leader>tw :set invwrap wrap?<CR>
-" ("diff no") turn off diff mode and report the change:
+" ("diff no") turn off diff mode and report the change
 nnoremap <Leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
 " ("diff obtain") do :diffget on range and report the change:
 " use "diff obtain" as that's what Vim itself uses for the non-range command: do
@@ -316,7 +272,6 @@ endfun
 nnoremap <Leader>tb :call Gav_SwitchBufMove()<CR>
 call Gav_SwitchBufMove()
 
-" Just make a simple git commit of a given file (relative to cwd).
 function! AutoGitCommit(filename)
 	execute 'silent! !git commit -m autocommit\ '.Gav_fnameescape(Gav_leaf(a:filename)).' '.Gav_fnameescape(a:filename)
 endfunction
@@ -368,13 +323,12 @@ augroup pyflakesfiletypedetect
     au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
 augroup END
 " grep plugin options
-let sep = ''
-if exists('g:Grep_Skip_Dirs')
-    let g:Grep_Skip_Dirs = g:Grep_Skip_Dirs . ' '
-else
+if !exists('g:Grep_Skip_Dirs')
     let g:Grep_Skip_Dirs = ''
+else
+    let g:Grep_Skip_Dirs = g:Grep_Skip_Dirs . ' '
 endif
-let g:Grep_Skip_Dirs = g:Grep_Skip_Dirs . sep . ' .git .svn .hg'
+let g:Grep_Skip_Dirs = g:Grep_Skip_Dirs . '.git .svn .hg _darcs'
 " grep plugin macros
 nnoremap <Leader>gg :Grep<CR>
 nnoremap <Leader>gf :Fgrep<CR>
@@ -387,12 +341,13 @@ nnoremap <Leader>gra :Ragrep<CR>
 
 " gvim specific options
 if has('gui_running')
+    " remove toolbar
     set guioptions-=T          " remove: T, the toolbar
-    set guioptions-=L          " remove: L, the left-hand toolbar in vsplit
-                               "         this fixes a bug where caret
-                               "         disappears in vsplit in 7.2
-    set lines=30               " 30 lines of text instead of 24,
-                               "   perfect for 1024x768
+    " remove left-hand toolbar in vsplit
+    " this fixes a bug where caret
+    " disappears in vsplit in 7.2
+    set guioptions-=L
+    set lines=30
     let g:font = 'Bitstream\ Vera\ Sans\ Mono'
     "let g:font = 'Monospace'
     let g:fontpt = 10
@@ -408,9 +363,12 @@ if has('gui_running')
         call SetFont()
     endfun
     call SetFont()
-    set mousemodel=popup       " hold right click for the usual kind of menu
+    " hold right click for the usual kind of menu
+    set mousemodel=popup
     nmap <F11> :call IncrFontPt()<CR>
     nmap <F10> :call DecrFontPt()<CR>
+    nmap <Leader>fi :call IncrFontPt()<CR>
+    nmap <Leader>fd :call DecrFontPt()<CR>
 endif
 source ~/.vimrc.unicode.vim
 source ~/.vimrc.post.vim
