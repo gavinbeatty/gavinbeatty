@@ -4,6 +4,7 @@ setlocal list
 setlocal cindent
 setlocal makeprg=TERM=dumb\ bjam\ -j6\ link=static
 setlocal makeef=bjam-build-errors.log
+exec 'setlocal textwidth=' . g:cpp_textwidth
 if g:cpp_expandtab
     setlocal expandtab
 else
