@@ -23,7 +23,7 @@ usage() {
     cat <<EOF
 usage: $prog [-h]
    or: $prog [-T]
-   or: $prog [-0] [-a] [-f|-c|-t <type>] [<find_dir> [<find_args>...]]
+   or: $prog [-0] [-a] [-f|-c|-t <type>] [<find_dir> [-- <find_args>...]]
 EOF
 }
 help() {
