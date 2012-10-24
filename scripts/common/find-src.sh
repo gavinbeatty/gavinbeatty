@@ -17,6 +17,7 @@ debug=${debug-}
 
 have() { type "$@" >/dev/null 2>&1 ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
+warn() { echo "warning: $@" >&2 ; }
 
 usage() {
     cat <<EOF
@@ -53,7 +54,10 @@ Arguments:
 EOF
 }
 getopt_works() {
-    "$getopt" -n "test" -o "ab:c" -- -ab -c -c >/dev/null 2>&1
+    eval set -- "$("$getopt" -n "test" -o "ab:c" -- -ab -c "s pace" "a rg" -b "o arg" 2>&1)"
+    test $# -eq 8 && test "$1" = "-a" && test "$2" = "-b" && test "$3" = "-c" \
+        && test "$4" = "-b" && test "$5" = "o arg" && test "$6" = "--" \
+        && test "$7" = "s pace" && test "$8" = "a rg"
 }
 
 abspath() {
@@ -74,7 +78,7 @@ abspath() {
 main() {
     if getopt_works ; then
         opts="$("$getopt" -n "$prog" -o "hTafct:0d" -- "$@")"
-        eval set -- $opts
+        eval set -- "$opts"
         while test $# -gt 0 ; do
             case "$1" in
             -h) help=1 ;;
@@ -95,6 +99,12 @@ main() {
             esac
             shift
         done
+    else
+        if test -z "${NO_GETOPT:-}" ; then
+            die "getopt doesn't work."
+        else
+            warn "Not using getopt for options."
+        fi
     fi
 
     if test -n "$help" ; then

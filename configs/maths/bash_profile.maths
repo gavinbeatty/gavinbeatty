@@ -1,16 +1,2 @@
-# WARNING!! :: if you found this file in ${HOME}, then DO NOT TOUCH!
-#               it will be overwritten!
-#              Instead look in ${GAV_GIT_BASE_DIR}/gavinbeatty/configs and edit
-#               there
-
-gav_bash_profile_maths_guard="${gav_bash_profile_maths_guard:-}"
-if test -n "$gav_bash_profile_maths_guard" ; then
-    return 0;
-fi
-gav_bash_profile_maths_guard="1"
-
+# gavinbeatty:bash_profile.maths.sh
 . /local/skel/bash_profile
-
-# A default .bash_profile is in /local/skel/bash_profile;
-# this could be copied and adapted.
-

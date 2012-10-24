@@ -33,6 +33,7 @@ git-release \
 giturl.sh \
 gitwcroot.sh \
 gpg-add.sh \
+ifnargs.sh \
 ipof.sh \
 isgitrepo.sh \
 isiface.sh \

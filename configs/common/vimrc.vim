@@ -215,10 +215,8 @@ if has("autocmd")
     if !exists('filetypeextras_loaded')
         let filetypeextras_loaded = 1
         augroup filetypeextras
-            autocmd FileType pandoc,markdown,text,txt,mail source ~/.vimrc.txt.vim
-            " autocmd FileType text,txt,mail  setlocal formatoptions=tcqn2 textwidth=79 shiftwidth=2 tabstop=2 expandtab
-            autocmd FileType c,cpp,objc source ~/.vimrc.cpp.vim
-            autocmd FileType sh,bash    source ~/.vimrc.sh.vim
+            autocmd FileType pandoc,markdown runtime ftplugin/txt.vim
+            autocmd FileType c,objc,objcpp runtime ftplugin/cpp.vim
             autocmd FileType perl       setlocal smartindent
             autocmd FileType make       setlocal noexpandtab shiftwidth=8
         augroup end
@@ -226,8 +224,8 @@ if has("autocmd")
     if !exists('filetypedetect_loaded')
         let filetypedetect_loaded = 1
         augroup filetypedetect
+            autocmd BufRead,BufNewFile *.text,*.txt,*.mail,*.email,*.followup,*.article,*.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt* setlocal filetype=txt
             autocmd BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
-            autocmd BufRead,BufNewFile .followup,.article,.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt* setlocal ft=mail
             " .m files are objective c by default, not matlab
             autocmd BufRead,BufNewFile *.m setlocal filetype=objc
             " .proto files for google protocol buffers
@@ -372,6 +370,5 @@ if has('gui_running')
     nmap <Leader>fi :call IncrFontPt()<CR>
     nmap <Leader>fd :call DecrFontPt()<CR>
 endif
-" source ~/.vimrc.abbrev.vim
 source ~/.vimrc.unicode.vim
 source ~/.vimrc.post.vim

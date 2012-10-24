@@ -1,6 +1,4 @@
-" vi: set ft=vim expandtab tabstop=4 shiftwidth=4:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"
 " Unicode Macro Table
 " ===================
 "
@@ -15,7 +13,6 @@
 " macros for useful Unicode characters as well as initial mapping tables for
 " a mostly math oriented background.
 "
-"
 " Instructions
 " ------------
 "
@@ -27,33 +24,32 @@
 " You may customize every mapping table to your linkings or add new ones. If
 " you create new tables or extend the ones already present I would be grateful
 " if you could send me a copy of your work, for everyone to benefit from.
-"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-if v:version >= 700
-
-"""""""""""""""""""""""""""""""""""""""
-" Configuration
-"""""""""""""""""""""""""""""""""""""""
+if !exists('s:did_unicode_mappings') && v:version >= 700
+let s:did_unicode_mappings = 1
+"" hyphen: used to hyphenate words
+"" figure dash: used for e.g., phone numbers 802‒1234567
+"" en dash: used for ranges e.g., 40–50 years
+"" em dash: used for relationships, contrasting or otherwise
+"" e.g., Mother—Daughter; 5—4 vote; McCain—Feingold bill
+"" parenthetical note―like this one―etc.
 
 " You may specify a list of mappings to be loaded here. This might be useful,
 " if you do not want to take advantage of all mappings to avoid conflicts by
 " unwanted macro expansion.
 let g:UnicodeMappingGroups = [
-    \ "GreekAlphabet",
-    \ "Superscript",
-    \ "Subscript",
-    \ "MathOperators",
-    \ "MathSymbols",
-    \ "Punctuation",
     \ "Currencies",
     \ "Units",
     \ "Legal",
     \ "Technical",
     \ "RomanNumerals",
+    \ "Punctuation",
+    \ "GreekAlphabet",
+    \ "Superscript",
+    \ "Subscript",
+    \ "MathOperators",
+    \ "MathSymbols",
 \]
-
 let g:Currencies = {
     \ "euro":               "€",
     \ "cent":               "¢",
@@ -68,7 +64,6 @@ let g:Currencies = {
     \ "dong":               "₫",
     \ "drachma":            "₯",
 \}
-
 let g:Units = {
     \ "celcius":            "℃",
     \ "fahrenheit":         "℉",
@@ -78,7 +73,6 @@ let g:Units = {
     \ "kelvin":             "K",
     \ "angstrom":           "Å",
 \}
-
 let g:Legal = {
     \ "information":        "ℹ",
     \ "copyright":          "©",
@@ -88,7 +82,6 @@ let g:Legal = {
     \ "account":            "℀",
     \ "servicemark":        "℠",
 \}
-
 let g:Technical = {
     \ "fax":                "℻",
     \ "tel":                "℡",
@@ -102,7 +95,6 @@ let g:Technical = {
     \ "crosshair":          "⌖",
     \ "optionkey":          "⌥",
 \}
-
 let g:RomanNumerals = {
     \ "romani":             "ⅰ",
     \ "romanii":            "ⅱ",
@@ -140,23 +132,27 @@ let g:RomanNumerals = {
     \ "Romandd":            "ↁ",
     \ "Romancdcd":          "ↂ",
 \}
-
 let g:Punctuation = {
     \ "invbang":            "¡",
     \ "invquestion":        "¿",
+    \ "invq":               "¿",
     \ "interrobang":        "‽",
     \ "interbang":          "‽",
     \ "invinterrobang":     "⸘",
     \ "revquestion":        "⸮",
     \ "irony":              "⸮",
     \ "degree":             "°",
+    \ "deg":                "°",
     \ "pilcrow":            "¶",
     \ "section":            "§",
+    \ "cdots":              "⋯",
     \ "ellipsis":           "…",
     \ "ell":                "…",
     \ "bullet":             "•",
     \ "interpunct":         "·",
     \ "mdot":               "·",
+    \ "cdot":               "·",
+    \ "decimal":            "·",
     \ "lsg":                "‹",
     \ "rsg":                "›",
     \ "ldg":                "«",
@@ -190,17 +186,6 @@ let g:Punctuation = {
     \ "emdash":             "—",
     \ "qdash":              "―",
 \}
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" You should NOT change anything below this line, if you do not know what you
-" are doing.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""""""""""""""""""""""""""""""""""""""
-" Unicode mappings
-"""""""""""""""""""""""""""""""""""""""
-
 let g:GreekAlphabet = {
     \ "alpha":   "α",
     \ "beta":    "β",
@@ -251,7 +236,6 @@ let g:GreekAlphabet = {
     \ "Psi":     "Ψ",
     \ "Omega":   "Ω",
 \}
-
 let g:Superscript = {
     \ "sup0": "⁰",
     \ "sup1": "¹",
@@ -271,7 +255,6 @@ let g:Superscript = {
     \ "supn": "ⁿ",
     \ "supi": "ⁱ",
 \}
-
 let g:Subscript = {
     \ "sub0": "₀",
     \ "sub1": "₁",
@@ -289,7 +272,6 @@ let g:Subscript = {
     \ "sub(": "₍",
     \ "sub)": "₎",
 \}
-
 let g:MathOperators = {
     \ "therefore":                  "∴",
     \ "because":                    "∵",
@@ -338,6 +320,7 @@ let g:MathOperators = {
     \ "prop":                       "∝",
     \ "infinity":                   "∞",
     \ "inf":                        "∞",
+    \ "infty":                      "∞",
     \ "divides":                    "∣",
     \ "ndivides":                   "∤",
     \ "does_not_divide":            "∤",
@@ -351,6 +334,9 @@ let g:MathOperators = {
     \ "iint":                       "∬",
     \ "triple_integral":            "∭",
     \ "iiint":                      "∭",
+    \ "oint":                       "∮",
+    \ "oiint":                      "∯",
+    \ "oiiint":                     "∰",
     \ "colon_equals":               "≔",
     \ "equals_colon":               "≕",
     \ "estimates":                  "≙",
@@ -380,18 +366,26 @@ let g:MathOperators = {
     \ "nsucceed":                   "⊁",
     \ "precedes_or_equal":          "≼",
     \ "succeeds_or_equal":          "≽",
+    \ "propsub":                    "⊂",
     \ "proper_subset":              "⊂",
+    \ "propsuper":                  "⊃",
     \ "proper_superset":            "⊃",
+    \ "npropsub":                   "⊄",
     \ "not_proper_subset":          "⊄",
     \ "nproper_subset":             "⊄",
+    \ "npropsuper":                 "⊅",
     \ "not_proper_superset":        "⊅",
     \ "nproper_superset":           "⊅",
+    \ "subeq":                      "⊆",
     \ "subset_or_equal":            "⊆",
     \ "subset":                     "⊆",
+    \ "supereq":                    "⊇",
     \ "superset_or_equal":          "⊇",
     \ "superset":                   "⊇",
+    \ "nsubeq":                     "⊈",
     \ "not_subset_or_equal":        "⊈",
     \ "nsubset":                    "⊈",
+    \ "nsupereq":                   "⊉",
     \ "not_superset_or_equal":      "⊉",
     \ "nsuperset":                  "⊉",
     \ "circled_plus":               "⊕",
@@ -415,7 +409,6 @@ let g:MathOperators = {
     \ "nand":                       "⊼",
     \ "nor":                        "⊽",
 \}
-
 let g:MathSymbols = {
     \ "complex_numbers":  "ℂ",
     \ "complex":          "ℂ",
@@ -431,38 +424,29 @@ let g:MathSymbols = {
     \ "permyriad":        "‱",
     \ "hbar":             "ℏ"
 \}
-
-
-
-"""""""""""""""""""""""""""""""""""""""
-" Abbreviation registration
-"""""""""""""""""""""""""""""""""""""""
-
 " Register our escape char as valid keyword
 let s:EscapeChar = '#'
 execute 'set iskeyword+=' . s:EscapeChar
 "execute 'set iskeyword=' . escape( &iskeyword, '\' ) . ',\\'
-
 fun! RemoveUnicodeMappingGroup(dict)
     for name in keys( a:dict )
         execute 'iunab ' . s:EscapeChar . name
     endfor
 endfun
-
 fun! AddUnicodeMappingGroup(dict)
     for name in keys( a:dict )
         execute 'iab ' . s:EscapeChar . name . ' ' . a:dict[name]
     endfor
 endfun
-
 " Combine all selected mappings in one dictionary for registration
-let s:MacroMapping = {}
-for dict in g:UnicodeMappingGroups
-    execute 'call extend( s:MacroMapping, g:' . dict . ' )'
-endfor
-
-" Register every character mapping as abbreviation
-call AddUnicodeMappingGroup(s:MacroMapping)
+fun! AddAllUnicodeMappingGroups()
+    let s:MacroMapping = {}
+    for dict in g:UnicodeMappingGroups
+        execute 'call extend( s:MacroMapping, g:' . dict . ' )'
+    endfor
+    " Register every character mapping as abbreviation
+    call AddUnicodeMappingGroup(s:MacroMapping)
+endfun
 
 endif
 
