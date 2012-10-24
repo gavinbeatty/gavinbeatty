@@ -6,11 +6,14 @@ trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 
 plat="${plat:-}"
+MAKE="${MAKE:-}"
 if test -z "$plat" ; then plat="$(uname -s | tr '[A-Z]' '[a-z]')" ; fi
-case "$plat" in
-    darwin) MAKE=gmake ;;
-    *) MAKE=make ;;
-esac
+if test -z "$MAKE" ; then
+    case "$plat" in
+        darwin) MAKE=gmake ;;
+        *) MAKE=make ;;
+    esac
+fi
 HOST="$(hostname -f 2>/dev/null || true)"
 if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
 
