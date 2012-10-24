@@ -59,8 +59,19 @@ endif
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
 filetype on
 filetype off
-call pathogen#infect()
-call pathogen#helptags()
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'dag/vim2hs'
+Bundle 'scrooloose/syntastic'
+Bundle 'ujihisa/neco-ghc'
+Bundle 'eagletmt/ghcmod-vim'
+Bundle 'godlygeek/tabular'
+Bundle 'wincent/Command-T'
+Bundle 'tpope/vim-git'
+Bundle 'tpope/vim-surround'
+Bundle 'chikamichi/mediawiki.vim'
+Bundle 'vim-pandoc/vim-pandoc'
 " Syntax highlighting on
 if has('syntax')
     syntax enable
@@ -133,6 +144,9 @@ elseif has("autocmd")
 endif
 set novisualbell
 set noerrorbells
+if has("gui_macvim")
+    set vb " workaround to get rid of audible bell. still no visualbell :D
+endif
 " make c-u and c-w start a new change before running
 " http://vim.wikia.com/wiki/Recover_from_accidental_Ctrl-U
 inoremap <c-u> <c-g>u<c-u>
@@ -312,6 +326,7 @@ nnoremap <Leader>si :call GavFound(":Search", "MultipleSearch", ":SearchReinit")
 " fswitch plugin macro
 nnoremap <Leader>fs :call GavFound(":FSHere", "fswitch")<CR>
 nnoremap <Leader>fv :call GavFound(":FSSplitRight", "fswitch")<CR>
+nnoremap ,t :call GavFound(":CommandT", "CommandT")<cr>
 " gnupg options
 let g:GPGPreferArmor = 1
 " svndiff plugin macros
