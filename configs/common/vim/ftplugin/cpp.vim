@@ -2,9 +2,7 @@
 if !exists('b:did_ftplugin_cpp_vim')
 let b:did_ftplugin_cpp_vim = 1
 
-setlocal formatoptions=croql
-setlocal list
-setlocal cindent
+setlocal formatoptions=croql list cindent tabstop=4 shiftwidth=4
 setlocal makeprg=TERM=dumb\ bjam\ -j6\ link=static
 setlocal makeef=bjam-build-errors.log
 exec 'setlocal textwidth=' . g:cpp_textwidth

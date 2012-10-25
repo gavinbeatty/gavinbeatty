@@ -1,3 +1,1 @@
-set textwidth=2
-set tabstop=2
-set expandtab
+setlocal textwidth=2 tabstop=2 expandtab
