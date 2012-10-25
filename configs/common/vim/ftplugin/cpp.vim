@@ -11,6 +11,8 @@ if g:cpp_expandtab
 else
     setlocal noexpandtab
 endif
+let g:neocomplcache_force_overwrite_completefunc = 1
+let g:clang_complete_auto = 1
 
 iab #d #define
 iab #i #include

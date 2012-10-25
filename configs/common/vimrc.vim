@@ -72,6 +72,10 @@ Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-surround'
 Bundle 'chikamichi/mediawiki.vim'
 Bundle 'vim-pandoc/vim-pandoc'
+Bundle 'Rip-Rip/clang_complete'
+Bundle 'Shougo/neocomplcache'
+Bundle 'osyo-manga/neocomplcache-clang_complete'
+Bundle 'Shougo/vimshell'
 " Syntax highlighting on
 if has('syntax')
     syntax enable
@@ -192,7 +196,15 @@ endif
 if has('statusline')
     " show statusline only if there are > 1 windows
     set laststatus=1
-    set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
+    " From spf13-vim
+    " Broken down into easily includeable segments
+    set statusline=%<%f\    " Filename
+    set statusline+=%w%h%m%r " Options
+    "set statusline+=%{fugitive#statusline()} "  Git Hotness
+    set statusline+=\ [%{&ff}/%Y]            " filetype
+    set statusline+=\ [%{getcwd()}]          " current dir
+    set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+    "my original set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
     set shortmess+=r
 endif
 if has('unix')
@@ -212,8 +224,6 @@ if exists('g:clipboard') && g:clipboard == 'macosx'
     vnoremap <silent> <Leader>y y:call system("pbcopy", getreg("\""))<CR>
     nnoremap <silent> <Leader>p :call setreg("\"",system("pbpaste"))<CR>p
 endif
-let g:haddock_browser = 'x-www-browser'
-let g:pandoc_no_folding = 1
 
 if has("autocmd")
     if exists("+omnifunc")
@@ -353,6 +363,32 @@ nnoremap <Leader>grg :Rgrep<CR>
 nnoremap <Leader>grf :Rfgrep<CR>
 nnoremap <Leader>gre :Regrep<CR>
 nnoremap <Leader>gra :Ragrep<CR>
+
+" neocomplcache
+let g:acp_enableAtStartup = 0
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+" Use underbar completion.
+let g:neocomplcache_enable_underbar_completion = 1
+" Set minimum syntax keyword length.
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" Plugin key-mappings.
+imap <C-k> <Plug>(neocomplcache_snippets_expand)
+smap <C-k> <Plug>(neocomplcache_snippets_expand)
+inoremap <expr><C-g> neocomplcache#undo_completion()
+inoremap <expr><C-l> neocomplcache#complete_common_string()
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
 " gvim specific options
 if has('gui_running')
