@@ -17,10 +17,10 @@ usage() {
 usage: $niceprog [options] -- [<command>]
     -n, --dry-run   print only the final command, but don't execute it
     -v, --verbose   print and execute
-    -l, --local     find changes from local not in remote (remote..HEAD) (default)
-    -r, --remote    find changes from remote not in local (HEAD..remote)
-    -N, --news      news in b since last merge base (a..HEAD) (default)
-    -d, --diff      all differences since last merge base (a...HEAD)
+    -r, --remote    find changes from remote not in local (HEAD..remote) (default)
+    -l, --local     find changes from local not in remote (remote..HEAD) (reverses)
+    -N, --news      news in b since last merge base (HEAD..remote) (default)
+    -d, --diff      all differences since last merge base (HEAD...remote) (bidirectional)
 EOF
 }
 testrun=
@@ -39,10 +39,10 @@ while test $# -gt 0 ; do
         case "$1" in
             -n|--dry-run) testrun=1 ; verbose=1 ;;
             -v|--verbose) verbose=1 ;;
-            -l|--local) reverse= ;;
-            -r|--remote) reverse=1 ;;
-            -d|--diff) diff=... ; extra="--left-right" ;;
+            -r|--remote) reverse= ;;
+            -l|--local) reverse=1 ;;
             -N|--news) diff=.. ; extra= ;;
+            -d|--diff) diff=... ; extra="--left-right" ;;
             -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
             --) odone=1 ;;
             -[a-z][a-z]*) os="$(echo "${1##-}" | sed 's/./-& /g')" ; shift ; set -- $os "$@" ;;
@@ -56,12 +56,8 @@ while test $# -gt 0 ; do
     else shift ; fi
 done
 go() {
-    if test -n "$verbose" ; then
-        echo "$*"
-    fi
-    if test -z "$testrun" ; then
-        trap '' 0 ; exec "$@"
-    fi
+    if test -n "$verbose" ; then echo "$*" ; fi
+    if test -z "$testrun" ; then trap '' 0 ; exec "$@" ; fi
 }
 br="$(git rev-parse --abbrev-ref HEAD)"
 if test "$br" = HEAD ; then
@@ -72,7 +68,7 @@ rbr_="$(git config branch."$br".merge)" || die "No remote branch for $br."
 rbr="${rbr_##refs/heads/}"
 test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
-if test -z "$reverse" ; then
+if test -n "$reverse" ; then
     go git "$command" $extra "$@" "${r}/$rbr"$diff
 else
     go git "$command" $extra "$@" $diff"${r}/$rbr"
