@@ -15,12 +15,10 @@ pax() { trap '' 0 ; exit 0 ; }
 usage() {
     cat <<EOF
 usage: $niceprog [options] -- [<dir>] [<command>]
-
     -n, --dry-run   print only the final command, but don't execute it
     -l, --local     find changes from local not in remote (default)
     -r, --remote    find changes from remote not in local
     -d, --diff      diff instead of the default log
-
 EOF
 }
 dirset=
@@ -30,23 +28,29 @@ command=
 args=0
 odone=
 testrun=
+arg() {
+    if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
+    elif test "$args" -eq 1 ; then args=2 ; command="$1" ; fi
+}
 while test $# -gt 0 ; do
     if test -z "$odone" ; then
         case "$1" in
             -n|--dry-run) testrun=1 ;;
-            -r|--reverse) reverse=1 ;;
+            -l|--local) reverse= ;;
+            -r|--remote) reverse=1 ;;
             -d|--diff) diff=.. ;;
             -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
             --) odone=1 ;;
+            -[a-z][a-z]*) os="$(echo "${1##-}" | sed 's/./-& /g')" ; shift ; set -- $os "$@" ;;
+            -) arg "$1" ;;
             -*) udie "Unrecognized option, $1." ;;
-            *)  if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
-                elif test "$args" -eq 1 ; then args=2 ; command="$1"
-                else udie "Too many arguments." ; fi
+            *) arg "$1" ;;
         esac
     elif test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
     elif test "$args" -eq 1 ; then args=2 ; command="$1"
-    else udie "Too many arguments." ; fi
-    shift
+    else break ; fi
+    if test -n "${os:-}" ; then os=
+    else shift ; fi
 done
 go() {
     if test -n "$testrun" ; then
