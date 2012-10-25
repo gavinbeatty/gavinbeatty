@@ -15,28 +15,32 @@ pax() { trap '' 0 ; exit 0 ; }
 usage() {
     cat <<EOF
 usage: $niceprog [options] -- [<dir>]
-
     -n, --dry-run   print only the final command, but don't execute it
-
 EOF
 }
 dirset=
 args=0
 odone=
 testrun=
+arg() {
+    if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
+    else udie "Too many arguments." ; fi
+}
 while test $# -gt 0 ; do
     if test -z "$odone" ; then
         case "$1" in
             -n|--dry-run) testrun=1 ;;
             -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
             --) odone=1 ;;
+            -[a-z][a-z]*) os="$(echo "${1##-}" | sed 's/./-& /g')" ; shift ; set -- $os "$@" ;;
+            -) arg "$1" ;;
             -*) udie "Unrecognized option, $1." ;;
-            *)  if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
-                else udie "Too many arguments." ; fi
+            *) arg "$1" ;;
         esac
     elif test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
     else udie "Too many arguments." ; fi
-    shift
+    if test -n "${os:-}" ; then os=
+    else shift ; fi
 done
 go() {
     if test -n "$testrun" ; then
