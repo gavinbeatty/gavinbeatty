@@ -20,6 +20,7 @@ configure-git.sh \
 cscope.sh \
 ctags.sh \
 daemonize.sh \
+dashify.sh \
 differ.sh \
 dnsnameexists.sh \
 doubleclick.sh \
@@ -49,8 +50,6 @@ lsmaketargets.sh \
 mathbang.sh \
 merge.sh \
 move-home.sh \
-mydate.sh \
-mydatetime.sh \
 net-check.sh \
 pager.sh \
 poke.sh \
@@ -91,6 +90,7 @@ install:
 	$(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh
 	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
+	if dash="$$(which dash)" ; then for i in $(SOURCES) ; do ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/$$i ; done ; ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh ; fi
 
 uninstall:
 	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
