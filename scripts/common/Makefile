@@ -21,6 +21,7 @@ cscope.sh \
 ctags.sh \
 daemonize.sh \
 dashify.sh \
+dashinstall.sh \
 differ.sh \
 dnsnameexists.sh \
 doubleclick.sh \
