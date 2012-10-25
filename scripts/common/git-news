@@ -14,31 +14,35 @@ udie() { trap '' 0 ; usage >&2 ; echo "error: $@" >&2 ; exit 1 ; }
 pax() { trap '' 0 ; exit 0 ; }
 usage() {
     cat <<EOF
-usage: $niceprog [options] -- [<dir>] [<command>]
+usage: $niceprog [options] -- [<command>]
     -n, --dry-run   print only the final command, but don't execute it
-    -l, --local     find changes from local not in remote (default)
-    -r, --remote    find changes from remote not in local
-    -d, --diff      diff instead of the default log
+    -v, --verbose   print and execute
+    -l, --local     find changes from local not in remote (remote..HEAD) (default)
+    -r, --remote    find changes from remote not in local (HEAD..remote)
+    -N, --news      news in b since last merge base (a..HEAD) (default)
+    -d, --diff      all differences since last merge base (a...HEAD)
 EOF
 }
-dirset=
+testrun=
+verbose=
 reverse=
-diff=...
+diff=..
+extra=
 command=
 args=0
 odone=
-testrun=
 arg() {
-    if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
-    elif test "$args" -eq 1 ; then args=2 ; command="$1" ; fi
+    if test "$args" -eq 0 ; then args=1 ; command="$1" ; fi
 }
 while test $# -gt 0 ; do
     if test -z "$odone" ; then
         case "$1" in
-            -n|--dry-run) testrun=1 ;;
+            -n|--dry-run) testrun=1 ; verbose=1 ;;
+            -v|--verbose) verbose=1 ;;
             -l|--local) reverse= ;;
             -r|--remote) reverse=1 ;;
-            -d|--diff) diff=.. ;;
+            -d|--diff) diff=... ; extra="--left-right" ;;
+            -N|--news) diff=.. ; extra= ;;
             -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
             --) odone=1 ;;
             -[a-z][a-z]*) os="$(echo "${1##-}" | sed 's/./-& /g')" ; shift ; set -- $os "$@" ;;
@@ -46,18 +50,16 @@ while test $# -gt 0 ; do
             -*) udie "Unrecognized option, $1." ;;
             *) arg "$1" ;;
         esac
-    elif test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
-    elif test "$args" -eq 1 ; then args=2 ; command="$1"
+    elif test "$args" -eq 0 ; then args=1 ; command="$1"
     else break ; fi
     if test -n "${os:-}" ; then os=
     else shift ; fi
 done
 go() {
-    if test -n "$testrun" ; then
-        if test -n "$dirset" ; then echo "(cd -- $dir && $@)"
-        else echo "$*" ; fi
-    else
-        test -z "$dirset" || cd -- "$dir"
+    if test -n "$verbose" ; then
+        echo "$*"
+    fi
+    if test -z "$testrun" ; then
         trap '' 0 ; exec "$@"
     fi
 }
@@ -71,8 +73,8 @@ rbr="${rbr_##refs/heads/}"
 test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
 if test -z "$reverse" ; then
-    go git "$command" "$@" -- "${r}/$rbr"$diff
+    go git "$command" $extra "$@" "${r}/$rbr"$diff
 else
-    go git "$command" "$@" -- $diff"${r}/$rbr"
+    go git "$command" $extra "$@" $diff"${r}/$rbr"
 fi
 pax
