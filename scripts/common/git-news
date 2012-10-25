@@ -1,0 +1,74 @@
+#!/bin/sh
+# vi: set ft=sh expandtab shiftwidth=4 tabstop=4:
+set -e
+set -u
+trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
+trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
+trap ' echo Unexpected exit >&2 ; exit 1 ; ' 0
+prog="$(basename -- "$0")"
+subprog="${prog##git-}"
+niceprog="git $subprog"
+test "$prog" != "$subprog" || niceprog="$prog"
+die() { trap '' 0 ; echo "error: $@" >&2 ; exit 1 ; }
+udie() { trap '' 0 ; usage >&2 ; echo "error: $@" >&2 ; exit 1 ; }
+pax() { trap '' 0 ; exit 0 ; }
+usage() {
+    cat <<EOF
+usage: $niceprog [options] -- [<dir>] [<command>]
+
+    -n, --dry-run   print only the final command, but don't execute it
+    -l, --local     find changes from local not in remote (default)
+    -r, --remote    find changes from remote not in local
+    -d, --diff      diff instead of the default log
+
+EOF
+}
+dirset=
+reverse=
+diff=...
+command=
+args=0
+odone=
+testrun=
+while test $# -gt 0 ; do
+    if test -z "$odone" ; then
+        case "$1" in
+            -n|--dry-run) testrun=1 ;;
+            -r|--reverse) reverse=1 ;;
+            -d|--diff) diff=.. ;;
+            -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
+            --) odone=1 ;;
+            -*) udie "Unrecognized option, $1." ;;
+            *)  if test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
+                elif test "$args" -eq 1 ; then args=2 ; command="$1"
+                else udie "Too many arguments." ; fi
+        esac
+    elif test "$args" -eq 0 ; then args=1 ; dirset=1 ; dir="$1"
+    elif test "$args" -eq 1 ; then args=2 ; command="$1"
+    else udie "Too many arguments." ; fi
+    shift
+done
+go() {
+    if test -n "$testrun" ; then
+        if test -n "$dirset" ; then echo "(cd -- $dir && $@)"
+        else echo "$*" ; fi
+    else
+        test -z "$dirset" || cd -- "$dir"
+        trap '' 0 ; exec "$@"
+    fi
+}
+br="$(git rev-parse --abbrev-ref HEAD)"
+if test "$br" = HEAD ; then
+    die "Not on any branch so I cannot find the remote branch."
+fi
+r="$(git config branch."$br".remote)" || die "No remote for $br."
+rbr_="$(git config branch."$br".merge)" || die "No remote branch for $br."
+rbr="${rbr_##refs/heads/}"
+test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
+command="${command:-log}"
+if test -z "$reverse" ; then
+    go git "$command" "$@" -- "${r}/$rbr"$diff
+else
+    go git "$command" "$@" -- $diff"${r}/$rbr"
+fi
+pax

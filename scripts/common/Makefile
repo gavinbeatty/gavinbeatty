@@ -29,7 +29,10 @@ findpid.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
+git-news \
 git-release \
+git-remotebranch \
+git-thisbranch \
 giturl.sh \
 gitwcroot.sh \
 gpg-add.sh \
@@ -81,7 +84,7 @@ vimpatch.sh \
 whatdebsneeded.sh
 
 help:
-	@echo 'Targets: install'
+	@echo 'Targets: install uninstall'
 
 install:
 	@$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/bin
@@ -89,4 +92,8 @@ install:
 	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh
 	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
 
-.PHONY: help install
+uninstall:
+	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
+	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
+
+.PHONY: help install uninstall
