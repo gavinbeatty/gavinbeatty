@@ -121,7 +121,7 @@ main() {
         exit 0
     fi
     if test -n "$types" ; then
-        echo "all c cpp cppc python perl lua sh bash java"
+        echo "all c cpp cppc cs py python pl perl lua sh bash java"
         exit 0
     fi
 
@@ -145,7 +145,7 @@ main() {
     shift
 
     case "$type" in
-    all|c|cpp|cppc|py|python|perl|lua|sh|bash|java) files=1 ;;
+    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java) files=1 ;;
     esac
 
     findfiles=""
@@ -187,6 +187,13 @@ main() {
                 -a \( -name '*.cc' -o -name '*.cpp' -o -iname '*.c' -o -name '*.hpp' -o -name '*.h' \) \
                 "$printer"
             ;;
+        cs)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.cs' \) \
+                "$printer"
+            ;;
         py|python)
             test -z "$debug" || set -x
             find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
@@ -194,7 +201,7 @@ main() {
                 -a \( -name '*.py' \) \
                 "$printer"
             ;;
-        perl)
+        pl|perl)
             test -z "$debug" || set -x
             find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
