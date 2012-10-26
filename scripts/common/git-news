@@ -45,7 +45,7 @@ while test $# -gt 0 ; do
             -d|--diff) diff=... ; extra="--left-right" ;;
             -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
             --) odone=1 ;;
-            -[a-z][a-z]*) os="$(echo "${1##-}" | sed 's/./-& /g')" ; shift ; set -- $os "$@" ;;
+            -[a-z][a-z]*) os="$(echo "$1" | sed 's/^-./-& /')" ; shift ; set -- $os "$@" ;;
             -) arg "$1" ;;
             -*) udie "Unrecognized option, $1." ;;
             *) arg "$1" ;;
