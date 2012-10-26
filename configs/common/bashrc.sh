@@ -443,6 +443,40 @@ if test "${isinteractive:-0}" -ne 0 ; then
     today() { date +"%Y%m%d" ; }
     todaytime() { date +"%Y%m%d-%H%M%S" ; }
 
+    case "$UNAME" in
+        *mingw*|windows*|cygwin*)
+            abspath() {
+                if test $# -eq 0 ; then pwd
+                else local i ; for i in "$@" ; do
+                    case "$i" in /*|[A-Za-z]:*) echo "$i" ;; *) echo "$(pwd)/$i" ;; esac
+                done ; fi
+            }
+            winslash() {
+                test $# -ne 0 || set -- .
+                local i ; for i in "$@" ; do
+                    abspath "$i" | sed -e 's!\\!/!g'
+                done
+            }
+            posixslash() { winslash "$@" ; }
+            ;;
+        *) abspath() {
+                if test $# -eq 0 ; then pwd
+                else local i ; for i in "$@" ; do
+                    case "$i" in /*) echo "$i" ;; *) echo "$(pwd)/$i" ;; esac
+                done ; fi
+            }
+            winslash() {
+                test $# -ne 0 || set -- .
+                local i ; for i in "$@" ; do
+                    abspath "$i" | sed -e 's!/!\\!g'
+                done
+            }
+            posixslash() {
+                test $# -ne 0 || set -- .
+                local i ; for i in "$@" ; do abspath "$i" ; done
+            }
+            ;;
+    esac
     cdlink() { cd "$(readlink "$1")" ; }
     h() { p history ; }
     hlast() {
