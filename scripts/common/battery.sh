@@ -25,6 +25,8 @@
 ###########################################################################
 set -e
 set -u
+trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
+trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 prog="$(basename -- "$0")"
 getopt="${getopt-getopt}"
 verbose="${verbose-0}"
@@ -35,21 +37,10 @@ fxn="get_percentage"
 
 die() { echo "error: $@" >&2 ; exit 1 ; }
 usage() {
-    echo "usage: $prog [-p] [-t]"
-}
-help() {
-    cat << EOF
-Copyright (C) 2007, 2008, 2009, 2012 by Gavin Beatty
-<gavinbeatty@gmail.com>
-
-Print details about the battery power remaining.
-
-$(usage)
-Options:
- -p:
-  Print the percentage battery power remaining"
- -t:
-  Print the estimated time remaining"
+    cat <<EOF
+usage: $prog [options]
+    -p  print the percentage battery power remaining
+    -t  print the estimated time remaining
 EOF
 }
 
@@ -69,9 +60,9 @@ get_percentage_darwin() {
         | LC_ALL=C awk '{if(tolower($0)~/battery/){gsub(/[^0-9]/,"",$2);print $2}}'
 }
 get_percentage_linux() {
-    local percentage_fullbat=""
-    local percentage_curbat=""
-    local percentage_avg_tmp=""
+    local percentage_fullbat=
+    local percentage_curbat=
+    local percentage_avg_tmp=
     local percentage_total="0"
     local percentage_count="0"
     for percentage_i in "$@" ; do
@@ -91,9 +82,9 @@ get_time_darwin() {
 }
 get_time_linux() {
     local time_count="0"
-    local time_cap_remaining=""
-    local time_cap_rate=""
-    local time_hrsleft=""
+    local time_cap_remaining=
+    local time_cap_rate=
+    local time_hrsleft=
     for time_i in "$@" ; do
         time_cap_remaining="$(awk '{if(tolower($0)~/remaining capacity/){print $3}}' < "${time_i}/state")"
         time_cap_rate="$(grep '{if(tolower($0)~/present rate/){print $3}}' < "${time_i}/state")"
@@ -119,7 +110,7 @@ main() {
         esac
         shift
     done
-    test -z "$help" || { help ; exit 0 ; }
+    test -z "$help" || { usage ; exit 0 ; }
     if test -z "$fxn" ; then
         die "No command found!"
     fi
@@ -140,6 +131,4 @@ main() {
     *) die "Unsupported platform: ${plat-(none given)}" ;;
     esac
 }
-trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
-trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 main "$@"

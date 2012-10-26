@@ -77,6 +77,7 @@ Bundle 'Shougo/neocomplcache'
 Bundle 'osyo-manga/neocomplcache-clang_complete'
 Bundle 'Shougo/vimshell'
 Bundle 'Lokaltog/vim-easymotion'
+Bundle 'vim-scripts/sudo.vim'
 " Syntax highlighting on
 if has('syntax')
     syntax enable
