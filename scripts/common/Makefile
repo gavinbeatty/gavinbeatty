@@ -15,6 +15,7 @@ asciitable.sh \
 bangcheck.sh \
 battery.sh \
 buf.sh \
+cc-includes.sh \
 codepretty.py \
 configure-git.sh \
 cscope.sh \
