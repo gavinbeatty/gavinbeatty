@@ -13,6 +13,7 @@ absolute=${absolute-}
 files=${files-}
 type=${type-}
 zero=${zero-}
+complete="${complete:-}"
 debug=${debug-}
 
 have() { type "$@" >/dev/null 2>&1 ; }
@@ -25,7 +26,8 @@ getopt_works() {
         && test "$7" = "s pace" && test "$8" = "a rg"
 }
 if test -z "$getopt" ; then
-    for getopt in getopt /usr/local/bin/getopt /opt/local/bin/getopt getopt-enhanced getopt-enhanced.py ; do
+    for getopt in getopt /usr/local/bin/getopt /opt/local/bin/getopt getopt-enhanced getopt-enhanced.py \
+            "${HOME}/.local/usr/bin/getopt" "${HOME}/bin/getopt" ; do
         if type "$getopt" >/dev/null 2>&1 ; then
             if getopt_works ; then break ; fi
         fi
@@ -34,36 +36,29 @@ fi
 
 usage() {
     cat <<EOF
-usage: $prog [-h]
-   or: $prog [-T]
-   or: $prog [-0] [-a] [-f|-c|-t <type>] [<find_dir> [-- <find_args>...]]
+usage: $prog -h
+   or: $prog -T
+   or: $prog [options] -C <complete> [-- <find_args>...]
+   or: $prog [options] [<find_dir> [-- <find_args>...]]
 EOF
 }
 help() {
     cat <<EOF
-Options:
- -h:
-  Print this help message and exit.
- -T:
-  Print the list of <type>s supported and exit.
- -0:
-  Use -print0 with find, instead of -print.
- -a:
-  Give absolute paths (non-normalized).
- -f:
-  Find only files.
- -c:
-  Find only C/C++ files. Equivalent to \`-t cppc'.
- -t <type>:
-  Find only files of the given <type>.
- -d:
-  Print some debugging of the find command.
+ -h             print this help message and exit
+ -T             print the list of <type>s supported and exit
+ -C <complete>  use the given clang_complete file for additional directories
 
-Arguments:
- <find_dir>:
-  The directory to search in. If not given, the current directory is used.
- <find_args>:
-  Extra options that can be given directly to find.
+Options
+ -0             use -print0 with find, instead of -print
+ -a             give absolute paths (non-normalized)
+ -f             find only files
+ -c             find only C/C++ files. Equivalent to \`-t cppc'
+ -t <type>      find only files of the given <type>
+ -d             print some debugging of the find command
+
+Arguments
+ <find_dir>     the directory to search in. If not given, the current directory is used
+ <find_args>    extra options that can be given directly to find
 EOF
 }
 
@@ -81,83 +76,7 @@ abspath() {
     esac
     echo "$1"
 }
-
-main() {
-    if test -z "${NO_GETOPT:-}" ; then
-        if getopt_works ; then
-            opts="$("$getopt" -n "$prog" -o "hTafct:0d" -- "$@")"
-            eval set -- "$opts"
-            while test $# -gt 0 ; do
-                case "$1" in
-                -h) help=1 ;;
-                -T) types=1 ;;
-                -a) absolute=1 ;;
-                -f) files=1 ;;
-                -c) type="cppc" ;;
-                -t) type="$2" ; shift ;;
-                -0) zero=1 ;;
-                -d) debug=1 ;;
-                --)
-                    shift
-                    break
-                    ;;
-                *)
-                    die "Unknown option: $1"
-                    ;;
-                esac
-                shift
-            done
-        else
-            die "No suitable getopt found. export getopt=..."
-        fi
-    else
-        warn "Not using getopt for options."
-    fi
-
-    if test -n "$help" ; then
-        usage
-        echo
-        help
-        exit 0
-    fi
-    if test -n "$types" ; then
-        echo "all c cpp cppc cs py python pl perl lua sh bash java"
-        exit 0
-    fi
-
-    if test $# -eq 0 ; then
-        eval set -- "."
-    fi
-
-    if test -n "$zero" ; then
-        printer="-print0"
-    else
-        printer="-print"
-    fi
-
-    if test -n "$absolute" ; then
-        srcdir="$(abspath "$1")"
-        cd /
-    else
-        srcdir="."
-        cd -- "$1"
-    fi
-    shift
-
-    case "$type" in
-    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java) files=1 ;;
-    esac
-
-    findfiles=""
-    if test -n "$files" ; then
-        findfiles="-a -type f"
-    fi
-    forcedir=""
-    if find -f . -maxdepth 0 >/dev/null 2>&1 ; then
-        forcedir="-f"
-    fi
-
-    if test -z "$type" ; then type="all" ; fi
+find_src() {
     for t in $(echo "$type" | tr '[A-Z]' '[a-z]' | sed -e 's/[:,;]/ /g') ; do
         case "$t" in
         all)
@@ -236,7 +155,116 @@ main() {
                 -a \( -name '*.java' \) \
                 "$printer"
             ;;
+        jam)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -iname '*.jam' -o -name 'project-root.jam' -o -iname 'Jamfile' -o -iname 'Jamroot' \) \
+                "$printer"
+            ;;
         esac
     done
+}
+find_src_complete() {
+    complete="$1"
+    shift
+    cat "$complete" | while read c ; do
+        c="$(echo "$c" | sed -n 's/^-\(I\|include \)//p')"
+        if test -n "$c" ; then
+            if test -n "$absolute" ; then
+                srcdir="$(abspath "$c")"
+                (cd / && find_src "$@")
+            else
+                srcdir="."
+                (cd -- "$c" && find_src "$@")
+            fi
+        fi
+    done
+}
+
+main() {
+    if test -z "${NO_GETOPT:-}" ; then
+        if getopt_works ; then
+            getopts="hTafct:0C:d"
+            opts="$("$getopt" -n "$prog" -o "$getopts" -- "$@")"
+            eval set -- "$opts"
+            while test $# -gt 0 ; do
+                case "$1" in
+                -h) help=1 ;;
+                -T) types=1 ;;
+                -a) absolute=1 ;;
+                -f) files=1 ;;
+                -c) type="cppc" ;;
+                -t) type="$2" ; shift ;;
+                -0) zero=1 ;;
+                -C) complete="$2" ; shift ;;
+                -d) debug=1 ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    die "Unknown option: $1"
+                    ;;
+                esac
+                shift
+            done
+        else
+            die "No suitable getopt found. export getopt=..."
+        fi
+    else
+        warn "Not using getopt for options."
+    fi
+    if test -n "$help" ; then
+        usage
+        echo
+        help
+        exit 0
+    fi
+    if test -n "$types" ; then
+        echo "all c cpp cppc cs py python pl perl lua sh bash java jam"
+        exit 0
+    fi
+
+    if test -z "$complete" && test $# -eq 0 ; then
+        set -- .
+    fi
+
+    if test -n "$zero" ; then
+        printer="-print0"
+    else
+        printer="-print"
+    fi
+
+    if test -z "$complete" ; then
+        if test -n "$absolute" ; then
+            srcdir="$(abspath "$1")"
+            cd /
+        else
+            srcdir="."
+            cd -- "$1"
+        fi
+        shift
+    fi
+
+    case "$type" in
+    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam) files=1 ;;
+    esac
+
+    findfiles=""
+    if test -n "$files" ; then
+        findfiles="-a -type f"
+    fi
+    forcedir=""
+    if find -f . -maxdepth 0 >/dev/null 2>&1 ; then
+        forcedir="-f"
+    fi
+
+    if test -z "$type" ; then type="all" ; fi
+    if test -n "$complete" ; then
+        find_src_complete "$complete" "$@"
+    else
+        find_src "$@"
+    fi
 }
 ( main "$@" )

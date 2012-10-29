@@ -507,6 +507,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
     grepsh() { find-src.sh -0f -t bash | $XARGS -0 grep -Hn "$@" ; }
     grepsrc() { find-src.sh -0f | $XARGS -0 grep -Hn "$@" ; }
     grepcs() { find-src.sh -0f -t cs | $XARGS -0 grep -Hn "$@" ; }
+    grepjam() { find-src.sh -0f -t jam | $XARGS -0 grep -Hn "$@" ; }
 
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svngext() {
