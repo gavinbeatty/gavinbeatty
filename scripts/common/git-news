@@ -18,7 +18,9 @@ usage: $niceprog [options] -- [<command>]
     -n, --dry-run   print the final command, but don't execute it
     -v, --verbose   print and execute the final command
     -r, --remote    find changes from remote not in local (HEAD..remote) (default)
-    -l, --local     find changes from local not in remote (remote..HEAD) (reverses)
+    -l, --local     find changes from local not in remote (remote..HEAD)
+    -c, --chrono    list the changes in chronological order (default)
+    -N, --newest    list the changes, newest first
     -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
     -b, --bidi      all differences since last merge base (HEAD...remote) (bidirectional)
     -p, --patch     when the command is log, pass -p (to show the diffs as well)
@@ -27,6 +29,7 @@ EOF
 testrun=
 verbose=
 reverse=
+newest=
 diff=..
 extra=
 command=
@@ -44,6 +47,8 @@ while test $# -gt 0 ; do
             -v|--verbose) verbose=1 ;;
             -r|--remote) reverse= ;;
             -l|--local) reverse=1 ;;
+            -c|--chrono) newest= ;;
+            -N|--newest) newest=1 ;;
             -u|--uni) diff=.. ; extra= ;;
             -b|--bidi) diff=... ; extra="--left-right" ;;
             -p|--patch) patch=1 ;;
@@ -71,6 +76,7 @@ rbr="${rbr_##refs/heads/}"
 test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
 if test "$command" = log && test -n "$patch" ; then extra="$extra -p" ; fi
+if test -z "$newest" ; then extra="$extra --reverse" ; fi
 if test -n "$reverse" ; then
     go git "$command" $extra "$@" "${r}/$rbr"$diff
 else
