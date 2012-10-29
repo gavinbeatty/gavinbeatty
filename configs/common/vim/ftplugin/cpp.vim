@@ -5,6 +5,8 @@ let b:did_ftplugin_cpp_vim = 1
 setlocal formatoptions=croql list cindent tabstop=4 shiftwidth=4
 setlocal makeprg=TERM=dumb\ bjam\ -j6\ link=static
 setlocal makeef=bjam-build-errors.log
+" to ignore boost (since it's so big)
+"setlocal include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
 exec 'setlocal textwidth=' . g:cpp_textwidth
 if g:cpp_expandtab
     setlocal expandtab
@@ -12,6 +14,7 @@ else
     setlocal noexpandtab
 endif
 let g:neocomplcache_force_overwrite_completefunc = 1
+let g:clang_use_library = 1
 let g:clang_complete_auto = 1
 
 iab #d #define

@@ -228,12 +228,12 @@ if exists('g:clipboard') && g:clipboard == 'macosx'
 endif
 
 if has("autocmd")
-    if exists("+omnifunc")
-        autocmd Filetype *
-            \   if &omnifunc == "" |
-            \       setlocal omnifunc=syntaxcomplete#Complete |
-            \   endif
-    endif
+    "if exists("+omnifunc")
+    "    autocmd Filetype *
+    "        \   if &omnifunc == "" |
+    "        \       setlocal omnifunc=syntaxcomplete#Complete |
+    "        \   endif
+    "endif
     autocmd BufNew *
         \   if &buftype == 'quickfix' |
         \       setlocal wrap |
