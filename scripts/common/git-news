@@ -15,12 +15,13 @@ pax() { trap '' 0 ; exit 0 ; }
 usage() {
     cat <<EOF
 usage: $niceprog [options] -- [<command>]
-    -n, --dry-run   print only the final command, but don't execute it
-    -v, --verbose   print and execute
+    -n, --dry-run   print the final command, but don't execute it
+    -v, --verbose   print and execute the final command
     -r, --remote    find changes from remote not in local (HEAD..remote) (default)
     -l, --local     find changes from local not in remote (remote..HEAD) (reverses)
-    -N, --news      news in b since last merge base (HEAD..remote) (default)
-    -d, --diff      all differences since last merge base (HEAD...remote) (bidirectional)
+    -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
+    -b, --bidi      all differences since last merge base (HEAD...remote) (bidirectional)
+    -p, --patch     when the command is log, pass -p (to show the diffs as well)
 EOF
 }
 testrun=
@@ -29,10 +30,12 @@ reverse=
 diff=..
 extra=
 command=
+patch=
 args=0
 odone=
 arg() {
-    if test "$args" -eq 0 ; then args=1 ; command="$1" ; fi
+    if test "$args" -eq 0 ; then args=1 ; command="$1"
+    else udie "Too many arguments." ; fi
 }
 while test $# -gt 0 ; do
     if test -z "$odone" ; then
@@ -41,19 +44,18 @@ while test $# -gt 0 ; do
             -v|--verbose) verbose=1 ;;
             -r|--remote) reverse= ;;
             -l|--local) reverse=1 ;;
-            -N|--news) diff=.. ; extra= ;;
-            -d|--diff) diff=... ; extra="--left-right" ;;
-            -h|-\?|--help) usage ; pax ;; # not much point in --help since git catches it
+            -u|--uni) diff=.. ; extra= ;;
+            -b|--bidi) diff=... ; extra="--left-right" ;;
+            -p|--patch) patch=1 ;;
+            -h|-\?|--help) usage ; pax ;; # but not much point in --help since git catches it
             --) odone=1 ;;
-            -[a-z][a-z]*) os="$(echo "$1" | sed 's/^-./-& /')" ; shift ; set -- $os "$@" ;;
             -) arg "$1" ;;
             -*) udie "Unrecognized option, $1." ;;
             *) arg "$1" ;;
         esac
     elif test "$args" -eq 0 ; then args=1 ; command="$1"
     else break ; fi
-    if test -n "${os:-}" ; then os=
-    else shift ; fi
+    shift
 done
 go() {
     if test -n "$verbose" ; then echo "$*" ; fi
@@ -68,6 +70,7 @@ rbr_="$(git config branch."$br".merge)" || die "No remote branch for $br."
 rbr="${rbr_##refs/heads/}"
 test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
+if test "$command" = log && test -n "$patch" ; then extra="$extra -p" ; fi
 if test -n "$reverse" ; then
     go git "$command" $extra "$@" "${r}/$rbr"$diff
 else
