@@ -20,9 +20,9 @@ usage: $niceprog [options] -- [<command>]
     -r, --remote    find changes from remote not in local (HEAD..remote) (default)
     -l, --local     find changes from local not in remote (remote..HEAD)
     -c, --chrono    list the changes in chronological order (default)
-    -N, --newest    list the changes, newest first
+    -N, --new       list the changes, newest first
     -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
-    -b, --bidi      all differences since last merge base (HEAD...remote) (bidirectional)
+    -b, --bi        all differences since last merge base (HEAD...remote) (bidirectional)
     -p, --patch     when the command is log, pass -p (to show the diffs as well)
 EOF
 }
@@ -30,7 +30,7 @@ testrun=
 verbose=
 reverse=
 newest=
-diff=..
+dir=..
 extra=
 command=
 patch=
@@ -47,10 +47,10 @@ while test $# -gt 0 ; do
             -v|--verbose) verbose=1 ;;
             -r|--remote) reverse= ;;
             -l|--local) reverse=1 ;;
-            -c|--chrono) newest= ;;
-            -N|--newest) newest=1 ;;
-            -u|--uni) diff=.. ; extra= ;;
-            -b|--bidi) diff=... ; extra="--left-right" ;;
+            -c|--chrono|--chronological|--old|--oldest|--oldest-first) newest= ;;
+            -N|--reverse-chrono|--reverse-chronological|--new|--newest|--newest-first) newest=1 ;;
+            -u|--uni|--unidi|--unidir|--unidirectional) dir=.. ; extra= ;;
+            -b|--bi|--bidi|--bidir|--bidirectional) dir=... ; extra="--left-right" ;;
             -p|--patch) patch=1 ;;
             -h|-\?|--help) usage ; pax ;; # but not much point in --help since git catches it
             --) odone=1 ;;
@@ -78,8 +78,8 @@ command="${command:-log}"
 if test "$command" = log && test -n "$patch" ; then extra="$extra -p" ; fi
 if test -z "$newest" ; then extra="$extra --reverse" ; fi
 if test -n "$reverse" ; then
-    go git "$command" $extra "$@" "${r}/$rbr"$diff
+    go git "$command" $extra "$@" "${r}/$rbr"$dir
 else
-    go git "$command" $extra "$@" $diff"${r}/$rbr"
+    go git "$command" $extra "$@" $dir"${r}/$rbr"
 fi
 pax
