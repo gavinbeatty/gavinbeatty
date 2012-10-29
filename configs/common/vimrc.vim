@@ -244,7 +244,7 @@ if has("autocmd")
             autocmd FileType pandoc,markdown runtime ftplugin/txt.vim
             autocmd FileType c,objc,objcpp runtime ftplugin/cpp.vim
             autocmd FileType perl       setlocal smartindent
-            autocmd FileType make       setlocal noexpandtab shiftwidth=8
+            autocmd FileType make       setlocal noexpandtab sw=8 ts=8
         augroup end
     endif
     if !exists('filetypedetect_loaded')
