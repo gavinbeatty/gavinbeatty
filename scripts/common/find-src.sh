@@ -44,21 +44,21 @@ EOF
 }
 help() {
     cat <<EOF
- -h             print this help message and exit
- -T             print the list of <type>s supported and exit
- -C <complete>  use the given clang_complete file for additional directories
+    -h              print this help message and exit
+    -T              print the list of <type>s supported and exit
+    -C <complete>   use the given clang_complete file for additional directories
 
 Options
- -0             use -print0 with find, instead of -print
- -a             give absolute paths (non-normalized)
- -f             find only files
- -c             find only C/C++ files. Equivalent to \`-t cppc'
- -t <type>      find only files of the given <type>
- -d             print some debugging of the find command
+    -0          use -print0 with find, instead of -print
+    -a          give absolute paths (non-normalized)
+    -f          find only files
+    -c          find only C/C++ files -- equivalent to \`-t cppc'
+    -t <type>   find only files of the given <type>
+    -d          print some debugging of the find command
 
 Arguments
- <find_dir>     the directory to search in. If not given, the current directory is used
- <find_args>    extra options that can be given directly to find
+    <find_dir>  the directory to search in -- if not given, the current directory is used
+    <find_args> extra options that can be given directly to find
 EOF
 }
 
