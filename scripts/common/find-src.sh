@@ -162,6 +162,27 @@ find_src() {
                 -a \( -iname '*.jam' -o -name 'project-root.jam' -o -iname 'Jamfile' -o -iname 'Jamroot' \) \
                 "$printer"
             ;;
+        xml)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.xml' \) \
+                "$printer"
+            ;;
+        xsd)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.xsd' \) \
+                "$printer"
+            ;;
+        allxml)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.xml' -o -name '*.xsd' \) \
+                "$printer"
+            ;;
         esac
     done
 }
@@ -222,7 +243,7 @@ main() {
         exit 0
     fi
     if test -n "$types" ; then
-        echo "all c cpp cppc cs py python pl perl lua sh bash java jam"
+        echo "all c cpp cppc cs py python pl perl lua sh bash java jam xml xsd allxml"
         exit 0
     fi
 
@@ -248,7 +269,7 @@ main() {
     fi
 
     case "$type" in
-    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam) files=1 ;;
+    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml) files=1 ;;
     esac
 
     findfiles=""
