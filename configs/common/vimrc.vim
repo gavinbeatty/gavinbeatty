@@ -132,6 +132,8 @@ endif
 set autoindent
 set nohlsearch
 set incsearch
+" minimum number of lines the search result may be from the top/bottom
+set scrolloff=10
 set smartcase
 set undolevels=200
 set history=100
@@ -378,8 +380,6 @@ let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 " Plugin key-mappings.
-imap <C-k> <Plug>(neocomplcache_snippets_expand)
-smap <C-k> <Plug>(neocomplcache_snippets_expand)
 inoremap <expr><C-g> neocomplcache#undo_completion()
 inoremap <expr><C-l> neocomplcache#complete_common_string()
 " Recommended key-mappings.
