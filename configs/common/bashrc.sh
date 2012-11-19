@@ -501,13 +501,16 @@ if test "${isinteractive:-0}" -ne 0 ; then
     if ! echo | $XARGS_R >/dev/null 2>&1 ; then
         XARGS_R="$XARGS"
     fi
+    grepsrc() { find-src.sh -0f | $XARGS -0 grep -Hn "$@" ; }
+    grepall() { local t="$1" ; shift ; find-src.sh -0f -t "$t" | $XARGS -0 grep -Hn "$@" ; }
     grepcpp() { find-src.sh -0fc | $XARGS -0 grep -Hn "$@" ; }
     greppy() { find-src.sh -0f -t python | $XARGS -0 grep -Hn "$@" ; }
-    # note it's actually for .bash and .sh extensions
     grepsh() { find-src.sh -0f -t bash | $XARGS -0 grep -Hn "$@" ; }
-    grepsrc() { find-src.sh -0f | $XARGS -0 grep -Hn "$@" ; }
     grepcs() { find-src.sh -0f -t cs | $XARGS -0 grep -Hn "$@" ; }
     grepjam() { find-src.sh -0f -t jam | $XARGS -0 grep -Hn "$@" ; }
+    grepxml() { find-src.sh -0f -t xml | $XARGS -0 grep -Hn "$@" ; }
+    grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 grep -Hn "$@" ; }
+    grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 grep -Hn "$@" ; }
 
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svngext() {
