@@ -3,6 +3,7 @@
 SHELL = /bin/sh
 
 INSTALL_EXE ?= install -m 0755
+DASHINSTALL_EXE ?= ./dashinstall.sh -m 0755
 INSTALL_DIR ?= install -m 0755 -d
 
 DESTDIR ?=
@@ -86,16 +87,18 @@ whatdebsneeded.sh
 
 help:
 	@echo 'Targets: install uninstall'
-
 install:
 	@$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
-	if dash="$$(which dash)" ; then for i in $(SOURCES) ; do ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/$$i ; done ; ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh ; fi
-
+	if dash="$$(which dash)" ; then \
+	  $(DASHINSTALL_EXE) "$$dash" $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
+	  $(DASHINSTALL_EXE) "$$dash" sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh ; \
+	  $(DASHINSTALL_EXE) "$$dash" sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh ; \
+	else \
+	  $(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
+	  $(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh ; \
+	  $(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh ; \
+	fi
 uninstall:
 	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
 	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
-
 .PHONY: help install uninstall
