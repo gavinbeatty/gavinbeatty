@@ -68,7 +68,11 @@ abspath() {
     /*) ;;
     *) abs="$(pwd)"
        abs="${abs%/}/$1"
-       echo "${abs%/.}"
+       local prev=
+       while test "$abs" != "$prev" ; do
+           prev="$abs" ; abs="${abs%/.}"
+       done
+       echo "${abs:-/}"
        return 0 ;;
     esac
     echo "$1"
