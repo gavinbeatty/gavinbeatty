@@ -5,7 +5,7 @@ trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
 trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 trap ' echo Unexpected exit >&2 ; exit 1 ; ' 0
 prog="$(basename -- "$0")"
-pax() { trap '' 0 ; exit 0 ; }
+pax() { trap '' 0 ; exit "$@" ; }
 usage() { echo "usage: $prog [-m <mod>] <absdash> <shellscript>... <destination>" ; }
 die() { echo "error: $@" >&2 ; pax 1 ; }
 udie() { usage >&2 ; die "$@" ; }
