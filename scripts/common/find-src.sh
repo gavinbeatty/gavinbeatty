@@ -63,16 +63,13 @@ EOF
 }
 
 abspath() {
-    if ! test $# -eq 1; then
-        echo "abspath: assert(\$# -eq 1) failed."
-        exit 1
-    fi
+    local abs=
     case "$1" in
-    /*);;
-    *)
-        echo "$(pwd)/$1"
-        return 0
-        ;;
+    /*) ;;
+    *) abs="$(pwd)"
+       abs="${abs%/}/$1"
+       echo "${abs%/.}"
+       return 0 ;;
     esac
     echo "$1"
 }
