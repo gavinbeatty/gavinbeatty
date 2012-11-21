@@ -12,6 +12,7 @@ types=${types-}
 absolute=${absolute-}
 files=${files-}
 type=${type-}
+ext=${ext-}
 zero=${zero-}
 complete="${complete:-}"
 debug=${debug-}
@@ -54,6 +55,7 @@ Options
     -f          find only files
     -c          find only C/C++ files -- equivalent to \`-t cppc'
     -t <type>   find only files of the given <type>
+    -e <ext>    find only files with <ext> file extension
     -d          print some debugging of the find command
 
 Arguments
@@ -78,6 +80,14 @@ abspath() {
     echo "$1"
 }
 find_src() {
+    if test -n "$ext" ; then
+        test -z "$debug" || set -x
+        find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            -a \( -name '*.'"$ext" \) \
+            "$printer"
+        return 0
+    fi
     for t in $(echo "$type" | tr '[A-Z]' '[a-z]' | sed -e 's/[:,;]/ /g') ; do
         case "$t" in
         all)
@@ -207,7 +217,7 @@ find_src_complete() {
 main() {
     if test -z "${NO_GETOPT:-}" ; then
         if getopt_works ; then
-            getopts="hTafct:0C:d"
+            getopts="hTafct:e:0C:d"
             opts="$("$getopt" -n "$prog" -o "$getopts" -- "$@")"
             eval set -- "$opts"
             while test $# -gt 0 ; do
@@ -218,6 +228,7 @@ main() {
                 -f) files=1 ;;
                 -c) type="cppc" ;;
                 -t) type="$2" ; shift ;;
+                -e) ext="$2" ; shift ;;
                 -0) zero=1 ;;
                 -C) complete="$2" ; shift ;;
                 -d) debug=1 ;;
@@ -272,6 +283,10 @@ main() {
     case "$type" in
     all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml) files=1 ;;
     esac
+    if test -n "$ext" ; then
+        files=1
+        ext="$(echo "$ext" | sed -e 's/^\.*//')" # strip leading .s
+    fi
 
     findfiles=""
     if test -n "$files" ; then
@@ -282,7 +297,7 @@ main() {
         forcedir="-f"
     fi
 
-    if test -z "$type" ; then type="all" ; fi
+    if test -z "$type" && test -z "$ext" ; then type="all" ; fi
     if test -n "$complete" ; then
         find_src_complete "$complete" "$@"
     else
