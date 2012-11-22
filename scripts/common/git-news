@@ -1,22 +1,40 @@
 #!/bin/sh
-# vi: set ft=sh expandtab shiftwidth=4 tabstop=4:
+# vi: set ft=sh et sw=4 ts=4 tw=80:
+# git-news: Log what's new in the remote tracking branch, or vice-versa.
+# Copyright (c) 2012 Gavin Beatty <gavinbeatty@gmail.com>
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 set -e
 set -u
-trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
-trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
+pax() { trap '' 0 ; exit "$@" ; }
+die() { echo "error: $@" >&2 ; pax 1 ; }
+udie() { usage >&2 ; die "$@" ; }
+trap ' die Caught SIGINT ; ' INT
+trap ' die Caught SIGTERM ; ' TERM
 trap ' echo Unexpected exit >&2 ; exit 1 ; ' 0
 prog="$(basename -- "$0")"
 subprog="${prog##git-}"
 niceprog="git $subprog"
 test "$prog" != "$subprog" || niceprog="$prog"
-die() { trap '' 0 ; echo "error: $@" >&2 ; exit 1 ; }
-udie() { trap '' 0 ; usage >&2 ; echo "error: $@" >&2 ; exit 1 ; }
-pax() { trap '' 0 ; exit 0 ; }
 usage() {
     cat <<EOF
+$prog: Log what's new in the remote tracking branch, or vice-versa.
 usage: $niceprog [options] -- [<command>]
-    -n, --dry-run   print the final command, but don't execute it
-    -v, --verbose   print and execute the final command
     -r, --remote    find changes from remote not in local (HEAD..remote) (default)
     -l, --local     find changes from local not in remote (remote..HEAD)
     -c, --chrono    list the changes in chronological order (default)
@@ -24,6 +42,8 @@ usage: $niceprog [options] -- [<command>]
     -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
     -b, --bi        all differences since last merge base (HEAD...remote) (bidirectional)
     -p, --patch     when the command is log, pass -p (to show the diffs as well)
+    -n, --dry-run   print the final command, but don't execute it
+    -v, --verbose   print and execute the final command
 EOF
 }
 testrun=
@@ -82,4 +102,4 @@ if test -n "$reverse" ; then
 else
     go git "$command" $extra "$@" $dir"${r}/$rbr"
 fi
-pax
+if test -n "$testrun" ; then pax ; fi
