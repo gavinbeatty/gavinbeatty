@@ -41,6 +41,7 @@ usage: $niceprog [options] -- [<command>]
     -N, --new       list the changes, newest first
     -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
     -b, --bi        all differences since last merge base (HEAD...remote) (bidirectional)
+    --stat[=<arg>]  when the command is log, passed along directly
     -p, --patch     when the command is log, pass -p (to show the diffs as well)
     -n, --dry-run   print the final command, but don't execute it
     -v, --verbose   print and execute the final command
@@ -53,6 +54,7 @@ newest=
 dir=..
 extra=
 command=
+stat=
 patch=
 args=0
 odone=
@@ -71,6 +73,8 @@ while test $# -gt 0 ; do
             -N|--reverse-chrono|--reverse-chronological|--new|--newest|--newest-first) newest=1 ;;
             -u|--uni|--unidi|--unidir|--unidirectional) dir=.. ; extra= ;;
             -b|--bi|--bidi|--bidir|--bidirectional) dir=... ; extra="--left-right" ;;
+            --stat) stat="--stat" ;;
+            --stat=*) stat="$1" ;;
             -p|--patch) patch=1 ;;
             -h|-\?|--help) usage ; pax ;; # but not much point in --help since git catches it
             --) odone=1 ;;
@@ -82,6 +86,9 @@ while test $# -gt 0 ; do
     else break ; fi
     shift
 done
+if echo "$stat" | grep -Fq " " ; then
+    udie "Invalid --stat argument, $stat."
+fi
 go() {
     if test -n "$verbose" ; then echo "$*" ; fi
     if test -z "$testrun" ; then trap '' 0 ; exec "$@" ; fi
@@ -95,7 +102,10 @@ rbr_="$(git config branch."$br".merge)" || die "No remote branch for $br."
 rbr="${rbr_##refs/heads/}"
 test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
-if test "$command" = log && test -n "$patch" ; then extra="$extra -p" ; fi
+if test "$command" = log ; then
+    if test -n "$patch" ; then extra="$extra -p" ; fi
+    if test -n "$stat" ; then extra="$extra $stat" ; fi
+fi
 if test -z "$newest" ; then extra="$extra --reverse" ; fi
 if test -n "$reverse" ; then
     go git "$command" $extra "$@" "${r}/$rbr"$dir
