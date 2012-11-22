@@ -25,7 +25,7 @@ main() {
             e=0
             local year="$(findyear "$f")" || e=$?
             if test $e -eq 0 ; then
-                printf "1i\n//Copyright (c) $year ${who}\n.\nw\nq\n" | ed -s -- "$f"
+                printf "1i\n// Copyright (c) $year ${who}\n.\nw\nq\n" | ed -s -- "$f"
             fi
         fi
     done
