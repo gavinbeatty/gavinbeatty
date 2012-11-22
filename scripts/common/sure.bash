@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (C) 2012 by Gavin Beatty

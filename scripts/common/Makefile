@@ -90,12 +90,12 @@ help:
 install:
 	@$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
-	if dash="$$(which dash)" ; then for i in $(SOURCES) ; do ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/$$i ; done ; ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh ; fi
+	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureyes.bash
+	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
+	if dash="$$(which dash)" ; then for i in $(SOURCES) ; do ./dashify.sh "$$dash" $(DESTDIR)$(PREFIX)/bin/$$i ; done ; fi
 
 uninstall:
 	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
-	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
+	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
 
 .PHONY: help install uninstall
