@@ -5,10 +5,10 @@ trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
 trap ' echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 trap ' echo Unexpected exit >&2 ; exit 1 ; ' 0
 prog="$(basename -- "$0")"
-pax() { trap '' 0 ; exit 0 ; }
+pax() { trap '' 0 ; exit "$@" ; }
 usage() { echo "usage: $prog <absdash> <shellscript>..." ; }
-die() { trap '' 0 ; echo "error: $@" >&2 ; exit 1 ; }
-udie() { trap '' 0 ; usage >&2 ; echo "error: $@" >&2 ; exit 1 ; }
+die() { echo "error: $@" >&2 ; pax 1 ; }
+udie() { usage >&2 ; die "$@" ; }
 test $# -gt 1 || udie "Not enough arguments."
 absdash="$1"
 shift
