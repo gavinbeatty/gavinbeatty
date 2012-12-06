@@ -4,12 +4,15 @@ set -e
 set -u
 trap " echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
-if test $# -ne 0 ; then
-    if test "$1" = "--" ; then shift ; fi
+git="${GIT:-git}"
+if test $# -eq 2 ; then
+    if test "$1" = "--" ; then
+        shift
+    fi
 fi
-if test $# -eq 0 ; then set -- .
-elif test $# -gt 1 ; then
-    echo "error: Must give one or zero path arguments." >&2
-    exit 1
+test $# -ne 0 || set -- .
+if test $# -gt 1 ; then
+    echo "Must give zero or one <path> arguments." >&2 ; exit 1
 fi
-(cd -- "$1" && git log -1  >/dev/null 2>&1)
+(if cd -- "$1" ; then exec $git log -1 >/dev/null 2>&1 ; else echo "$1 is inaccessible." >&2 ; fi)
+exit 1

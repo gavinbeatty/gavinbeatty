@@ -170,6 +170,8 @@ alias_section() {
     gitconfig alias.prebase "pull --rebase"
     gitconfig alias.cpick "cherry-pick"
     gitconfig alias.br "branch -v"
+    gitconfig alias.thisbr "thisbranch"
+    gitconfig alias.rbr "remotebranch"
     gitconfig alias.bigdiff "diff --find-copies-harder -B -C"
     gitconfig alias.bindiff "diff --binary"
     gitconfig alias.cdiff "diff --cached"

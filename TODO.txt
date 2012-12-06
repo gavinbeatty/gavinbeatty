@@ -4,5 +4,6 @@
 
 # repo
 
+- maybe use Shake as an experiment
 - build and install: use Makefiles for simple stuff and C, Boost.Build for C++
 

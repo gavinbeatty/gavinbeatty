@@ -1,8 +1,9 @@
 .SUFFIXES:
-
+default: help
 SHELL = /bin/sh
 
 INSTALL_EXE ?= install -m 0755
+DASHINSTALL_EXE ?= ./dashinstall.sh -m 0755
 INSTALL_DIR ?= install -m 0755 -d
 
 DESTDIR ?=
@@ -15,11 +16,14 @@ asciitable.sh \
 bangcheck.sh \
 battery.sh \
 buf.sh \
+cc-includes.sh \
 codepretty.py \
 configure-git.sh \
 cscope.sh \
 ctags.sh \
 daemonize.sh \
+dashify.sh \
+dashinstall.sh \
 differ.sh \
 dnsnameexists.sh \
 doubleclick.sh \
@@ -29,10 +33,14 @@ findpid.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
+git-news \
 git-release \
+git-remotebranch \
+git-thisbranch \
 giturl.sh \
 gitwcroot.sh \
 gpg-add.sh \
+ifnargs.sh \
 ipof.sh \
 isgitrepo.sh \
 isiface.sh \
@@ -45,8 +53,6 @@ lsmaketargets.sh \
 mathbang.sh \
 merge.sh \
 move-home.sh \
-mydate.sh \
-mydatetime.sh \
 net-check.sh \
 pager.sh \
 poke.sh \
@@ -80,12 +86,17 @@ vimpatch.sh \
 whatdebsneeded.sh
 
 help:
-	@echo 'Targets: install'
-
+	@echo 'Targets: install uninstall'
 install:
 	@$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureyes.sh
-	$(INSTALL_EXE) sure.sh $(DESTDIR)$(PREFIX)/bin/sureno.sh
-
-.PHONY: help install
+	if dash="$$(which dash)" ; then \
+	  $(DASHINSTALL_EXE) "$$dash" $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
+	else \
+	  $(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
+	fi
+	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureyes.bash
+	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
+uninstall:
+	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
+	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
+.PHONY: default help install uninstall
