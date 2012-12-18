@@ -16,8 +16,8 @@ if test -r ~/.bashrc.pre.sh ; then
 fi
 
 if test "$isinteractive" -ne 0 ; then
-    cat -- /tmp/gavinbeatty-du.log 2>/dev/null || true
-    if type -- df >/dev/null 2>&1 ; then
+    cat /tmp/gavinbeatty-du.log 2>/dev/null || true
+    if type df >/dev/null 2>&1 ; then
         df -h
     fi
 fi
@@ -152,8 +152,8 @@ test -z "${PATH:-}" || v_=":$PATH"
 if (test -d "${HOME}/.rvm") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${n_}${v_}" ; export PATH
 fi
-#if (type -- ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
-#&& (type -- awk >/dev/null 2>&1) && (type -- sed >/dev/null 2>&1) ; then
+#if (type ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
+#&& (type awk >/dev/null 2>&1) && (type sed >/dev/null 2>&1) ; then
 #    if test -z "${RUBY_VERSION:-}" ; then
 #        RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
 #    fi
@@ -176,12 +176,12 @@ unset n_
 ########################################################################
 # Set anything depending on PATH etc.
 ########################################################################
-if type -- less >/dev/null 2>&1 ; then
+if type less >/dev/null 2>&1 ; then
     PAGER="less" ; export PAGER
 fi
 
 for i_ in vim vi nano pico ; do
-    if type -- "$i_" >/dev/null 2>&1 ; then
+    if type "$i_" >/dev/null 2>&1 ; then
         VISUAL="$i_" ; export VISUAL
         break
     fi
@@ -189,16 +189,16 @@ done
 unset i_
 EDITOR="${VISUAL:-}" ; export EDITOR
 SVN_EDITOR="${VISUAL:-}" ; export SVN_EDITOR
-if type -- google-chrome >/dev/null 2>&1 ; then
+if type google-chrome >/dev/null 2>&1 ; then
     BROWSER="google-chrome" ; export BROWSER
-elif type -- iceweasel >/dev/null 2>&1 ; then
+elif type iceweasel >/dev/null 2>&1 ; then
     BROWSER="iceweasel" ; export BROWSER
-elif type -- firefox >/dev/null 2>&1 ; then
+elif type firefox >/dev/null 2>&1 ; then
     BROWSER="firefox" ; export BROWSER
 fi
 
 if test "${isinteractive:-0}" -ne 0 ; then
-    if type -- keychain >/dev/null 2>&1 ; then
+    if type keychain >/dev/null 2>&1 ; then
         KEYCHAIN_DIR="${HOME}/.keychain"
         if test ! -d "$KEYCHAIN_DIR" ; then
             if test ! -e "$KEYCHAIN_DIR" ; then
@@ -216,7 +216,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
             unset i_
         fi
     fi
-    if type -- tty >/dev/null 2>&1 ; then
+    if type tty >/dev/null 2>&1 ; then
         GPG_TTY=$(tty) ; export GPG_TTY
     fi
 fi
@@ -524,8 +524,6 @@ if test "${isinteractive:-0}" -ne 0 ; then
     svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | grep -v '^X  ' ; }
     svnstm() { svnst "$@" | grep '^M' ; }
     svnstma() { svn status "$@" | grep '^M' ; }
-    svnstq() { svnst "$@" | grep '^\?' ; }
-    svnstqa() { svn status "$@" | grep '^\?' ; }
     svnlog() { svnl log -vr HEAD:1 "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
@@ -537,7 +535,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
 
     bj() {
         local testfile="/tmp/gavinbeatty-bjtestcap-$(uuidgen)"
-        bjam -j6 --verbose-test "$@" 2>&1 | tee -- "$testfile"
+        bjam -j6 --verbose-test "$@" 2>&1 | tee "$testfile"
         local e="${PIPESTATUS[0]}"
         cat <<EOF
 XXXXXXXXXXXXXXXXXXX
@@ -545,12 +543,12 @@ XXX TEST OUTPUT XXX
 XXXXXXXXXXXXXXXXXXX
 EOF
         local ge=0
-        grep -E -- '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
+        grep -E '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
         case $ge in
             0|1) ;;
             *) return $ge ; ;;
         esac
-        rm -- "$testfile" || return $?
+        rm "$testfile" || return $?
         return $e
     }
     bjin() {
@@ -561,12 +559,12 @@ EOF
     }
     bjerrs() {
         local errsfile="/tmp/gavinbeatty-bjerrs-$(uuidgen)"
-        bj "$@" | tee -- "$errsfile"
+        bj "$@" | tee "$errsfile"
         local e="${PIPESTATUS[0]}"
-        fgrep error: -- "$errsfile" | wc -l
+        fgrep error: "$errsfile" | wc -l
         local ge="${PIPESTATUS[0]}"
         local we="${PIPESTATUS[1]}"
-        rm -- "$errsfile" || return $?
+        rm "$errsfile" || return $?
         test $e -ne 0 && return $e
         test $ge -ne 0 && return $ge
         test $we -ne 0 && return $we
@@ -574,9 +572,9 @@ EOF
     }
     xxxs() {
         local xxxsfile="/tmp/gavinbeatty-xxxs-$(uuidgen)"
-        sfgrep XXX | tee -- "$xxxsfile"
+        sfgrep XXX | tee "$xxxsfile"
         wc -l < "$xxxsfile"
-        rm -- "$xxxsfile" || :
+        rm "$xxxsfile" || :
     }
 
     ismounted() { mount | grep -Fq " on ${1} type " ; }
@@ -591,18 +589,18 @@ EOF
             bash_alias_ls="${bash_alias_ls} "'${LS_OPTIONS}'
         fi
         if uname | grep -Eqi '(bsd|darwin)' ; then
-            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +-[A-Za-z0-9]*G' ; then
+            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +-[A-Za-z0-9]*G' ; then
                 # defining CLICOLOR has the same effect as -G option and is more
                 # foolproof (if -G isn't supported, say)
                 CLICOLOR=1 ; export CLICOLOR
                 #LS_OPTIONS="${LS_OPTIONS} -G"
             fi
         else
-            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +--colou?r(=| +)(auto|tty)' ; then
+            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +--colou?r(=| +)(auto|tty)' ; then
                 LS_OPTIONS="${LS_OPTIONS} --color=auto"
             fi
         fi
-        if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq -- ' +(-[A-Za-z0-9]*F|--classify)' ; then
+        if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +(-[A-Za-z0-9]*F|--classify)' ; then
             LS_OPTIONS="${LS_OPTIONS} -F"
         fi
         export LS_OPTIONS
