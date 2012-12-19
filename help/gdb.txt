@@ -4,3 +4,10 @@
 info locals
 info args
 
+# SIGPIPE
+
+gdb will handle all SIGPIPE by default, even when the application has done
+`signal(SIGPIPE, SIG_IGN);`. Change gdb to ignore them as well with:
+
+    signal(SIGPIPE, SIG_IGN);
+
