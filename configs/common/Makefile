@@ -44,8 +44,7 @@ install-ackrc: $(DESTDIR)$(HOME) ackrc
 	$(INSTALL_DATA) ackrc $(DESTDIR)$(HOME)/.ackrc
 .PHONY: install-ackrc
 
-install-bashrc: $(DESTDIR)$(HOME) bash_completion.sh bash_logout.sh bash_profile.sh bashrc.sh
-	$(INSTALL_DATA) bash_completion.sh $(DESTDIR)$(HOME)/.bash_completion
+install-bashrc: $(DESTDIR)$(HOME) bash_logout.sh bash_profile.sh bashrc.sh
 	$(INSTALL_DATA) bash_logout.sh $(DESTDIR)$(HOME)/.bash_logout
 	$(INSTALL_DATA) bash_profile.sh $(DESTDIR)$(HOME)/.bash_profile
 	$(INSTALL_DATA) bashrc.sh $(DESTDIR)$(HOME)/.bashrc

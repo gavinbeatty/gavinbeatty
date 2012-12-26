@@ -96,7 +96,7 @@ fi
 ########################################################################
 # Set PATH and associated variables
 ########################################################################
-if test "${isinteractive:-0}" -ne 0 ; then
+if test "$isinteractive" -ne 0 ; then
     v_="${PATH:-}"
     if ! regexelem '\.' "$v_" ; then
         PATH="${v_}${v_:+:}." ; export PATH
@@ -108,19 +108,25 @@ if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${v_}${v_:+:}$n_" ; export PATH
 fi
 
-HOME_PREFIX="${HOME}/.local/usr" ; export HOME_PREFIX
+HOME_PREFIX="${HOME}/.local" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
-    v_="${PATH:-}"
-    n_="${HOME_PREFIX}/sbin"
-    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-        PATH="${n_}${v_:+:}${v_}" ; export PATH
-    fi
-    v_="${PATH:-}"
-    n_="${HOME_PREFIX}/bin"
-    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-        PATH="${n_}${v_:+:}${v_}" ; export PATH
-    fi
+    for n_ in "${HOME_PREFIX}/"{sbin,bin} ; do
+        v_="${PATH:-}"
+        if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
+            PATH="${n_}${v_:+:}${v_}" ; export PATH
+        fi
+    done
 fi
+p_="${HOME}/.local/usr"
+if test -d "${p_}" ; then
+    for n_ in "${p_}/"{sbin,bin} ; do
+        v_="${PATH:-}"
+        if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
+            PATH="${n_}${v_:+:}${v_}" ; export PATH
+        fi
+    done
+fi
+unset p_
 n_="${HOME}/.cabal/bin"
 v_=
 test -z "${PATH:-}" || v_=":$PATH"
@@ -197,7 +203,7 @@ elif type firefox >/dev/null 2>&1 ; then
     BROWSER="firefox" ; export BROWSER
 fi
 
-if test "${isinteractive:-0}" -ne 0 ; then
+if test "$isinteractive" -ne 0 ; then
     if type keychain >/dev/null 2>&1 ; then
         KEYCHAIN_DIR="${HOME}/.keychain"
         if test ! -d "$KEYCHAIN_DIR" ; then
@@ -221,7 +227,7 @@ if test "${isinteractive:-0}" -ne 0 ; then
     fi
 fi
 
-if test "${isinteractive:-0}" -ne 0 ; then
+if test "$isinteractive" -ne 0 ; then
     if test -r "${HOME}/.git-completion.bash" ; then
         . "${HOME}/.git-completion.bash"
     else
@@ -332,7 +338,7 @@ if test "${TERM:-}" != 'dumb' && test -n "${BASH:-}" ; then
     else
         PS1="$PS1_FUNC" ; export PS1
     fi
-elif test "${isinteractive:-0}" -ne 0 ; then
+elif test "$isinteractive" -ne 0 ; then
     PS1="$PS1_NOCOLOR" ; export PS1
 fi
 SUDO_PS1="$PS1_NOCOLOR" ; export SUDO_PS1
@@ -352,8 +358,7 @@ n_="/Applications/MacVim.app/Contents/MacOS"
 if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
     PATH="$n_${v_:+:}$v_" ; export PATH
 fi
-if test "${isinteractive:-0}" -ne 0 ; then
-    if type Vim >/dev/null 2>&1 ; then alias vim=Vim ; fi
+if test "$isinteractive" -ne 0 ; then
     if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
 fi
 
@@ -366,7 +371,7 @@ if (test -r "$n_") && (! echo "${v_:-}" | grep -Fq "$n_") ; then
     export SGML_CATALOG_FILES
 fi
 
-if test "${isinteractive:-0}" -ne 0 ; then
+if test "$isinteractive" -ne 0 ; then
     alias spotlight-on='sudo mdutil -a -i on'
     alias spotlight-off='sudo mdutil -a -i off'
 fi
@@ -410,7 +415,7 @@ if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
     fi
 fi
 
-if test "${isinteractive:-0}" -ne 0 ; then
+if test "$isinteractive" -ne 0 ; then
     if test -r /etc/bash_completion ; then
         # /etc/bash_completion sources "${HOME}/.bash_completion" for me
         . /etc/bash_completion
