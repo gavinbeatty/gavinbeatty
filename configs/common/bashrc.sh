@@ -361,6 +361,14 @@ fi
 if test "$isinteractive" -ne 0 ; then
     if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
 fi
+pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
+if test -n "$pyver_" ; then
+    n_="${HOME}/Library/Python/${pyver_}/bin"
+    v_="${PATH:-}"
+    if test -d "$n_" ; then
+        PATH="$n_${v_:+:}$v_" ; export PATH
+    fi
+fi
 
 # don't set MANPATH as it needs to contain all default manpage paths
 # as well as MacPort's
