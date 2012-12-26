@@ -184,6 +184,9 @@ alias_section() {
     gitconfig alias.lol "log --graph --oneline --decorate --abbrev-commit"
     gitconfig alias.lola "log --graph --oneline --decorate --abbrev-commit --all"
 }
+credential_section() {
+    gitconfig credential.helper cache
+}
 
 main() {
     if have "$getopt" ; then
@@ -229,7 +232,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,color,core,alias,mail"
+        echo "user,color,core,alias,mail,credential"
         exit 0
     fi
 
@@ -255,11 +258,13 @@ main() {
         core) core_section ;;
         alias) alias_section ;;
         color) color_section ;;
+        credential) credential_section ;;
         all) user_section
             mail_section
             core_section
             alias_section
             color_section
+            credential_section
             ;;
         *)
             die "Unknown section: $sec"
