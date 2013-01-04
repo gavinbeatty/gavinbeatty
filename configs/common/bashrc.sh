@@ -97,16 +97,6 @@ if test -d "${HOME_PREFIX}" ; then
         fi
     done
 fi
-p_="${HOME}/.local/usr"
-if test -d "${p_}" ; then
-    for n_ in "${p_}/"{sbin,bin} ; do
-        v_="${PATH:-}"
-        if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
-            PATH="${n_}${v_:+:}${v_}" ; export PATH
-        fi
-    done
-fi
-unset p_
 n_="${HOME}/.cabal/bin"
 v_=
 test -z "${PATH:-}" || v_=":$PATH"
