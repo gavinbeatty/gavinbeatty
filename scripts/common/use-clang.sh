@@ -93,7 +93,7 @@ main() {
         die "Must give a <onoff> argument."
     fi
     if test -z "$bindir" ; then
-        bindir="${PREFIX:-${HOME}/.local/usr}/bin"
+        bindir="${PREFIX:-${HOME}/.local}/bin"
     fi
     onoff="$(echo "$1" | tr "[A-Z]" "[a-z]")"
     case "$1" in

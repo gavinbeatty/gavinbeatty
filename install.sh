@@ -18,7 +18,7 @@ HOST="$(hostname -f 2>/dev/null || true)"
 if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
 
 dirname="$(dirname -- "$0")"
-PREFIX="${PREFIX:-${HOME}/.local/usr}"
+PREFIX="${PREFIX:-${HOME}/.local}"
 if test $# -gt 0 ; then
     PREFIX="$1"
 fi

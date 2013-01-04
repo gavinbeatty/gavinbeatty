@@ -1,5 +1,5 @@
 HOME="XXX"
-PREFIX="${HOME}/.local/usr"
+PREFIX="${HOME}/.local"
 CRONSCRIPTDIR="${HOME}/.local/cron"
 # fields:
 # - minute (0 - 59)

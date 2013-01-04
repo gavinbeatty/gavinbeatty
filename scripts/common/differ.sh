@@ -92,7 +92,7 @@ main() {
         else
             test "$verbose" -lt 1 || set -x
             for infile in "$@" ; do
-                $perl -we "open F,\$ARGV[0] or die \$!;while(<F>){${perlcode};${print}}" "$infile" | $diff ${diffopts} -- "$infile" -
+                $perl -we "open F,\$ARGV[0] or die \$!;while(<F>){${perlcode};${print}}" "$infile" | $diff ${diffopts} -- "$infile" - || true
             done
         fi
     elif test -n "$awkcode" ; then
