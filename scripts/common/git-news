@@ -1,7 +1,7 @@
 #!/bin/sh
 # vi: set ft=sh et sw=4 ts=4 tw=80:
 # git-news: Log what's new in the remote tracking branch, or vice-versa.
-# Copyright (c) 2012 Gavin Beatty <gavinbeatty@gmail.com>
+# Copyright (c) 2012, 2013 Gavin Beatty <gavinbeatty@gmail.com>
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -37,6 +37,8 @@ $prog: Log what's new in the remote tracking branch, or vice-versa.
 usage: $niceprog [options] -- [<command>]
     -r, --remote    find changes from remote not in local (HEAD..remote) (default)
     -l, --local     find changes from local not in remote (remote..HEAD)
+    -B, --branch <branch>
+                    use <branch> for comparison (current branch is the default)
     -c, --chrono    list the changes in chronological order (default)
     -N, --new       list the changes, newest first
     -u, --uni       news in b since last merge base (HEAD..remote) (unidirectional) (default)
@@ -51,6 +53,7 @@ testrun=
 verbose=
 reverse=
 newest=
+branch=
 dir=..
 extra=
 command=
@@ -69,12 +72,15 @@ while test $# -gt 0 ; do
             -v|--verbose) verbose=1 ;;
             -r|--remote) reverse= ;;
             -l|--local) reverse=1 ;;
+            -B|--branch)
+                test $# -ge 2 || udie "Missing <branch> argument for ${1}."
+                branch="$2" ; shift ;;
+            --branch=*) branch="${1#--branch=}" ;;
             -c|--chrono|--chronological|--old|--oldest|--oldest-first) newest= ;;
             -N|--reverse-chrono|--reverse-chronological|--new|--newest|--newest-first) newest=1 ;;
             -u|--uni|--unidi|--unidir|--unidirectional) dir=.. ; extra= ;;
             -b|--bi|--bidi|--bidir|--bidirectional) dir=... ; extra="--left-right" ;;
-            --stat) stat="--stat" ;;
-            --stat=*) stat="$1" ;;
+            --stat|--stat=*) stat="$1" ;;
             -p|--patch) patch=1 ;;
             -h|-\?|--help) usage ; pax ;; # but not much point in --help since git catches it
             --) odone=1 ;;
@@ -93,14 +99,16 @@ go() {
     if test -n "$verbose" ; then echo "$*" ; fi
     if test -z "$testrun" ; then trap '' 0 ; exec "$@" ; fi
 }
-br="$(git rev-parse --abbrev-ref HEAD)"
-if test "$br" = HEAD ; then
-    die "Not on any branch so I cannot find the remote branch."
+if test -z "$branch" ; then
+    branch="$(git rev-parse --abbrev-ref HEAD)"
+    if test "$branch" = HEAD ; then
+        die "Not on any branch so I cannot find the remote branch."
+    fi
 fi
-r="$(git config branch."$br".remote)" || die "No remote for $br."
-rbr_="$(git config branch."$br".merge)" || die "No remote branch for $br."
-rbr="${rbr_##refs/heads/}"
-test "$rbr" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
+r="$(git config branch."$branch".remote)" || die "No remote for ${branch}."
+rbr_="$(git config branch."$branch".merge)" || die "No remote branch for ${branch}."
+rbranch="${rbr_##refs/heads/}"
+test "$rbranch" != "$rbr_" || die "Expected remote branch $rbr_ to be in refs/heads/."
 command="${command:-log}"
 if test "$command" = log ; then
     if test -n "$patch" ; then extra="$extra -p" ; fi
@@ -108,8 +116,8 @@ if test "$command" = log ; then
 fi
 if test -z "$newest" ; then extra="$extra --reverse" ; fi
 if test -n "$reverse" ; then
-    go git "$command" $extra "$@" "${r}/$rbr"$dir
+    go git "$command" $extra "$@" "${r}/$rbranch"$dir
 else
-    go git "$command" $extra "$@" $dir"${r}/$rbr"
+    go git "$command" $extra "$@" $dir"${r}/$rbranch"
 fi
 if test -n "$testrun" ; then pax ; fi

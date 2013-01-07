@@ -44,6 +44,10 @@ install-ackrc: $(DESTDIR)$(HOME) ackrc
 	$(INSTALL_DATA) ackrc $(DESTDIR)$(HOME)/.ackrc
 .PHONY: install-ackrc
 
+install-venv: $(DESTDIR)$(HOME) venv
+	$(INSTALL_DATA) venv $(DESTDIR)$(HOME)/.venv
+.PHONY: install-venv
+	
 install-bashrc: $(DESTDIR)$(HOME) bash_logout.sh bash_profile.sh bashrc.sh
 	$(INSTALL_DATA) bash_logout.sh $(DESTDIR)$(HOME)/.bash_logout
 	$(INSTALL_DATA) bash_profile.sh $(DESTDIR)$(HOME)/.bash_profile
@@ -103,6 +107,6 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.unicode.vim vim/ftplugin/cpp.vi
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 .PHONY: install-vimrc
 
-install: install-ackrc install-bashrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
+install: install-ackrc install-venv install-bashrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
 .PHONY: install
 

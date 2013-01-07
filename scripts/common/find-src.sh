@@ -28,7 +28,7 @@ getopt_works() {
 }
 if test -z "$getopt" ; then
     for getopt in getopt /usr/local/bin/getopt /opt/local/bin/getopt getopt-enhanced getopt-enhanced.py \
-            "${HOME}/.local/usr/bin/getopt" "${HOME}/bin/getopt" ; do
+            "${HOME}/.local/bin/getopt" "${HOME}/bin/getopt" ; do
         if type "$getopt" >/dev/null 2>&1 ; then
             if getopt_works ; then break ; fi
         fi

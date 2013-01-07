@@ -1,0 +1,17 @@
+# vi: set ft=sh et sw=2 ts=2:
+main() {
+  local venv="${HOME}/.local/venv"
+  local base="${venv}/base"
+  local defaultenv=work
+  if test -d "${venv}/base" ; then
+    . "${venv}/base/bin/activate" || return
+  fi
+  if test -r "${venv}/base/bin/virtualenvwrapper.sh" ; then
+    export WORKON_HOME="$venv"
+    . "${venv}/base/bin/virtualenvwrapper.sh" || return
+    if lsvirtualenv | grep -Fq work ; then
+      workon work
+    fi
+  fi
+}
+main

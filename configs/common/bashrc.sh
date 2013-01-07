@@ -57,41 +57,21 @@ BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
 GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
 
 LESS="${LESS:-}"
-if ! echo "$LESS" | grep -q '\<-F\>' ; then LESS="${LESS} -F" ; fi
-if ! echo "$LESS" | grep -q '\<-X\>' ; then LESS="${LESS} -X" ; fi
-if ! echo "$LESS" | grep -q '\<-R\>' ; then LESS="${LESS} -R" ; fi
-if ! echo "$LESS" | grep -q '\<-r\>' ; then LESS="${LESS} -r" ; fi
-if ! echo "$LESS" | grep -q '\<-S\>' ; then LESS="${LESS} -S" ; fi
+if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*F\>' ; then LESS="${LESS} -F" ; fi
+if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*X\>' ; then LESS="${LESS} -X" ; fi
+if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*R\>' ; then LESS="${LESS} -R" ; fi
+if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*r\>' ; then LESS="${LESS} -r" ; fi
+if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*S\>' ; then LESS="${LESS} -S" ; fi
 export LESS
 
 # line-wrap minicom by default
 MINICOM="${MINICOM:-}"
-if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*w' ; then
+if ! echo "$MINICOM" | grep -q -- '-[[:alnum:]]*w' ; then
     MINICOM="${MINICOM}${MINICOM:+ }-w" ; export MINICOM
 fi
-if ! echo "$MINICOM" | grep -q -- '-[a-zA-Z0-9]*c +on' ; then
+if ! echo "$MINICOM" | grep -q -- '-[[:alnum:]]*c +on' ; then
     MINICOM="${MINICOM}${MINICOM:+ }-c on" ; export MINICOM
 fi
-
-########################################################################
-# XDG
-# http://standards.freedesktop.org/basedir-spec/
-########################################################################
-#if ! test -f "/etc/SuSE-release" ; then
-#    v_="${XDG_DATA_HOME:-}"
-#    XDG_DATA_HOME="${v_}${v_:+:}${HOME}/.local/share"
-#    export XDG_DATA_HOME
-#    v_="${XDG_DATA_DIRS:-}"
-#    XDG_DATA_DIRS="${v_}${v_:+:}/usr/local/share/:/usr/share/"
-#    export XDG_DATA_DIRS
-#    v_="${XDG_CONFIG_HOME:-}"
-#    XDG_CONFIG_HOME="${v_}${v_:+:}${HOME}/.config"
-#    export XDG_CONFIG_HOME
-#    v_="${XDG_CONFIG_DIRS:-}"
-#    XDG_CONFIG_DIRS="${v_}${v_:+:}/etc/xdg"
-#    export XDG_CONFIG_DIRS
-#    unset v_
-#fi
 
 ########################################################################
 # Set PATH and associated variables
@@ -117,16 +97,6 @@ if test -d "${HOME_PREFIX}" ; then
         fi
     done
 fi
-p_="${HOME}/.local/usr"
-if test -d "${p_}" ; then
-    for n_ in "${p_}/"{sbin,bin} ; do
-        v_="${PATH:-}"
-        if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
-            PATH="${n_}${v_:+:}${v_}" ; export PATH
-        fi
-    done
-fi
-unset p_
 n_="${HOME}/.cabal/bin"
 v_=
 test -z "${PATH:-}" || v_=":$PATH"
@@ -143,14 +113,13 @@ fi
 if type manpath >/dev/null 2>&1 ; then
     MANPATH="${MANPATH:-}${MANPATH:+:}$(manpath)" ; export MANPATH
 fi
-for n_ in "${HOME}/Library/Haskell/ghc/lib/"*"/share/man" ; do
+for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
     v_=
     test -z "${MANPATH:-}" || v_=":$MANPATH"
     if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
         MANPATH="${n_}${v_}" ; export MANPATH
     fi
 done
-
 # use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
 n_="${HOME}/.rvm/bin"
 v_=
@@ -158,26 +127,67 @@ test -z "${PATH:-}" || v_=":$PATH"
 if (test -d "${HOME}/.rvm") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${n_}${v_}" ; export PATH
 fi
-#if (type ruby >/dev/null 2>&1) && (test -d "${HOME}/.gem") \
-#&& (type awk >/dev/null 2>&1) && (type sed >/dev/null 2>&1) ; then
-#    if test -z "${RUBY_VERSION:-}" ; then
-#        RUBY_VERSION="$(ruby --version | awk ' { print $2 } ' | sed -e 's/\.[0-9][0-9]*$//')"
-#    fi
-#    n_="${HOME}/.gem/ruby/${RUBY_VERSION}/bin"
-#    v_="${PATH:-}"
-#    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-#        PATH="${n_}${v_:+:}${v_}" ; export PATH
-#    fi
-#    unset v_
-#fi
-n_="${HOME}/.cabal/bin"
-v_=
-test -z "${PATH:-}" || v_=":$PATH"
-if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
-    PATH="${n_}${v_}" ; export PATH
-fi
 unset v_
 unset n_
+# macports
+if (test -d "/opt/local/bin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/bin") ; then
+    PATH="${PATH:-}${PATH:+:}/opt/local/bin}" ; export PATH
+fi
+if (test -d "/opt/local/sbin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/sbin") ; then
+    PATH="${PATH:-}${PATH:+:}/opt/local/sbin}" ; export PATH
+fi
+v_="${PATH:-}"
+n_="/Applications/MacVim.app/Contents/MacOS"
+if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
+    PATH="$n_${v_:+:}$v_" ; export PATH
+fi
+if test "$isinteractive" -ne 0 ; then
+    if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
+fi
+#pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
+#if test -n "$pyver_" ; then
+#    n_="${HOME}/Library/Python/${pyver_}/bin"
+#    v_="${PATH:-}"
+#    if test -d "$n_" ; then
+#        PATH="$n_${v_:+:}$v_" ; export PATH
+#    fi
+#fi
+
+# XXX how to detect msys/mingw properly? what's the difference?
+if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
+    if test -z "$USER" ; then
+        USER="${USERNAME:-}" ; export USER # export even if empty
+    fi
+    if ! type python >/dev/null 2>&1 ; then
+        python="$(find "/c" -maxdepth 1 -type d \
+            -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
+        v_="${PATH:-}"
+        n_="$python"
+        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
+            PATH="${v_}${v_:+:}$n_"
+            export PATH
+        fi
+        unset python
+    fi
+    # find the best vim available, even if one is already in PATH
+    if test -d "/c/Program Files/Vim/" ; then
+        vim="$(find "/c/Program Files/Vim" -maxdepth 1 -type d \
+            -iregex '.*/vim[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
+        v_="${PATH:-}"
+        n_="$vim"
+        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
+            PATH="${v_}${v_:+:}$n_"
+            export PATH
+        fi
+        unset vim
+    fi
+    v_="${PATH:-}"
+    n_="/c/Program Files/GnuWin32/bin"
+    if test -r "$n_" && ! echo "${v_}" | grep -Fq "$n_" ; then
+        PATH="${v_}${v_:+:}$n_"
+        export PATH
+    fi
+fi
 
 ########################################################################
 # Set anything depending on PATH etc.
@@ -348,30 +358,6 @@ SUDO_PS1="$PS1_NOCOLOR" ; export SUDO_PS1
 ########################################################################
 # Darwin
 ########################################################################
-# macports
-if (test -d "/opt/local/bin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/bin") ; then
-    PATH="${PATH:-}${PATH:+:}/opt/local/bin}" ; export PATH
-fi
-if (test -d "/opt/local/sbin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/sbin") ; then
-    PATH="${PATH:-}${PATH:+:}/opt/local/sbin}" ; export PATH
-fi
-v_="${PATH:-}"
-n_="/Applications/MacVim.app/Contents/MacOS"
-if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
-    PATH="$n_${v_:+:}$v_" ; export PATH
-fi
-if test "$isinteractive" -ne 0 ; then
-    if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
-fi
-pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
-if test -n "$pyver_" ; then
-    n_="${HOME}/Library/Python/${pyver_}/bin"
-    v_="${PATH:-}"
-    if test -d "$n_" ; then
-        PATH="$n_${v_:+:}$v_" ; export PATH
-    fi
-fi
-
 # don't set MANPATH as it needs to contain all default manpage paths
 # as well as MacPort's
 v_="${SGML_CATALOG_FILES:-}"
@@ -384,48 +370,7 @@ fi
 if test "$isinteractive" -ne 0 ; then
     alias spotlight-on='sudo mdutil -a -i on'
     alias spotlight-off='sudo mdutil -a -i off'
-fi
 
-########################################################################
-# MSYS/mingw
-########################################################################
-# XXX how to detect msys/mingw properly? what's the difference?
-if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
-    if test -z "$USER" ; then
-        USER="${USERNAME:-}" ; export USER # export even if empty
-    fi
-    if ! type python >/dev/null 2>&1 ; then
-        python="$(find "/c" -maxdepth 1 -type d \
-            -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        v_="${PATH:-}"
-        n_="$python"
-        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
-            PATH="${v_}${v_:+:}$n_"
-            export PATH
-        fi
-        unset python
-    fi
-    # find the best vim available, even if one is already in PATH
-    if test -d "/c/Program Files/Vim/" ; then
-        vim="$(find "/c/Program Files/Vim" -maxdepth 1 -type d \
-            -iregex '.*/vim[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        v_="${PATH:-}"
-        n_="$vim"
-        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
-            PATH="${v_}${v_:+:}$n_"
-            export PATH
-        fi
-        unset vim
-    fi
-    v_="${PATH:-}"
-    n_="/c/Program Files/GnuWin32/bin"
-    if test -r "$n_" && ! echo "${v_}" | grep -Fq "$n_" ; then
-        PATH="${v_}${v_:+:}$n_"
-        export PATH
-    fi
-fi
-
-if test "$isinteractive" -ne 0 ; then
     if test -r /etc/bash_completion ; then
         # /etc/bash_completion sources "${HOME}/.bash_completion" for me
         . /etc/bash_completion
@@ -621,7 +566,6 @@ EOF
         export LS_OPTIONS
         alias ls="${bash_alias_ls}"
     fi
-    alias tmux='tmux -2u'
     alias dash='PS1=\$\  dash'
     alias sl='ls'
     alias ks='ls'
@@ -632,20 +576,14 @@ EOF
     alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
     alias dir='ls --format=vertical'
     alias vdir='ls --format=long'
-
     alias encrypt='gpg -c'
-
     alias btftp='tftp -m binary'
-
     if ! type gmake >/dev/null 2>&1 ; then
         alias gmake='make'
     fi
-
     if type colordiff >/dev/null 2>&1 ; then
         alias diff='colordiff'
     fi
 fi
 
-if test -r ~/.bashrc.post.sh ; then
-    . ~/.bashrc.post.sh
-fi
+if test -r ~/.bashrc.post.sh ; then . ~/.bashrc.post.sh ; fi
