@@ -230,13 +230,18 @@ fi
 if test "$isinteractive" -ne 0 ; then
     if test -r "${HOME}/.git-completion.bash" ; then
         . "${HOME}/.git-completion.bash"
+        git_ps1_() {
+            local p="$(__git_ps1 "$@")"
+            test -n "$p" || return 1
+            echo "$p"
+        }
     else
     # taken from git/contrib/completion/git-completion.bash
     #
     # __git_ps1 accepts 0 or 1 arguments (i.e., format string)
     # returns text to add to bash PS1 prompt (includes branch name)
-    __git_ps1() {
-        local g="$(git rev-parse --git-dir 2>/dev/null)"
+    git_ps1_() {
+        local g="$(git rev-parse --git-dir 2>/dev/null)" || return 1
         if [ -n "$g" ]; then
             local r
             local b
@@ -299,26 +304,23 @@ if test "$isinteractive" -ne 0 ; then
             else
                 printf " (%s)" "${b##refs/heads/}$w$i$r"
             fi
+        else return 1
         fi
     }
     fi
-
+    svn_ps1_() {
+        if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
+            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)((/[^/]*)?).*!$1$2!;s/^trunk.*/trunk/;print;}exit')"
+            if test -n "$v" ; then printf "$1" "$v" && return 0 ; fi
+        fi
+        return 1
+    }
+    ps1_() {
+        ! git_ps1_ "$@" || return 0
+        ! svn_ps1_ "$@" || return 0
+        return 0
+    }
 fi
-svn_ps1_() {
-    local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)"
-    if test $? -eq 0 ; then
-        v="$(echo "$v" | perl -wne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)((/[^/]*)?).*!$1$2!;s/^trunk.*/trunk/;print;}')"
-        if test -n "$v" ; then printf "$1" "$v" && return 0 ; fi
-    fi
-    return 1
-}
-ps1_() {
-    local i=
-    for i in __git_ps1 svn_ps1_ ; do
-        local v="$("$i" "$@")"
-        if test -n "$v" ; then echo "$v" && break ; fi
-    done
-}
 #export -f ps1_ # BASH only
 PS1_ROOT='\[\e[01;31m\]\h \[\e[01;34m\]\w \[\e[1;32m\]\$\[\e[00m\] '
 export PS1_ROOT
