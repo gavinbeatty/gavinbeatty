@@ -216,20 +216,13 @@ fi
 if test "$isinteractive" -ne 0 ; then
     if type keychain >/dev/null 2>&1 ; then
         KEYCHAIN_DIR="${HOME}/.keychain"
-        if test ! -d "$KEYCHAIN_DIR" ; then
-            if test ! -e "$KEYCHAIN_DIR" ; then
-                mkdir -p "$KEYCHAIN_DIR"
+        mkdir "$KEYCHAIN_DIR" 2>/dev/null
+        if keychain --inherit any-once --noask --quick --host gavinbeatty >/dev/null 2>&1 ; then
+            if . "${KEYCHAIN_DIR}/gavinbeatty-sh" 2>/dev/null ; then
+                iecho "keychain/gavinbeatty-sh"
+            elif . "${KEYCHAIN_DIR}/gavinbeatty-sh-gpg" 2>/dev/null ; then
+                iecho "keychain/gavinbeatty-sh-gpg"
             fi
-        fi
-        if test -d "$KEYCHAIN_DIR" ; then
-            keychain --inherit any-once --noask --quick --host gavinbeatty >/dev/null 2>&1
-            for i_ in "sh" "sh-gpg" ; do
-                if test -r "${KEYCHAIN_DIR}/gavinbeatty-${i_}" ; then
-                    iecho "gavinbeatty-${i_}"
-                    . "${KEYCHAIN_DIR}/gavinbeatty-${i_}"
-                fi
-            done
-            unset i_
         fi
     fi
     if type tty >/dev/null 2>&1 ; then
