@@ -110,8 +110,8 @@ test -z "${PATH:-}" || v_=":$PATH"
 if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
     PATH="${n_}${v_}" ; export PATH
 fi
-if type manpath >/dev/null 2>&1 ; then
-    MANPATH="${MANPATH:-}${MANPATH:+:}$(manpath)" ; export MANPATH
+if test -z "${MANPATH:-}" && type manpath >/dev/null 2>&1 ; then
+    MANPATH="$(manpath)" ; export MANPATH
 fi
 for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
     v_=
@@ -437,6 +437,7 @@ if test "$isinteractive" -ne 0 ; then
         history | tail -n "$(expr "$1" + 1)" | head -n "$1"
     }
 
+    bak() { mv -n "$1" "${1}.bak" ; }
     doin() {
         if test $# -lt 2 ; then
             echo "usage: in <dir> <command> [<args>...]" >&2

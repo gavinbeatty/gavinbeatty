@@ -88,6 +88,7 @@ if has('syntax')
         highlight DiffChange ctermfg=0 ctermbg=3 guibg='yellow'
     endif
 endif
+let g:solarized_termcolors=256
 set t_Co=256
 set background=dark
 " see :h filetype-overview
