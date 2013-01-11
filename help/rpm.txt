@@ -1,5 +1,11 @@
 % RPM
 % Gavin Beatty <gavinbeatty@gmail.com>
 
-    rpm2cpio some.rpm | cpio -idmv      Extract the rpm into current directory
+## Use $rpmroot instead of /usr for finding /usr/src/redhat/...
+
+    rpmbuild --define="_usr $rpmroot" ...
+
+## Extract the rpm into the current directory
+
+    rpm2cpio some.rpm | cpio -idmv
 
