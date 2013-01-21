@@ -313,7 +313,7 @@ if test "$isinteractive" -ne 0 ; then
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
-            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)((/[^/]*)?).*!$1$2!;s/^trunk.*/trunk/;print;}exit')"
+            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)((/[^/]*)?).*!$1$2!;s/^trunk.*/trunk/;print;exit;}')"
             if test -n "$v" ; then printf "$1" "$v" && return 0 ; fi
         fi
         return 1
@@ -377,7 +377,7 @@ if test "$isinteractive" -ne 0 ; then
     }
     if type xdg-open >/dev/null 2>&1 ; then
         OPENER="xdg-open"
-    elif type open >/dev/null 2>&1 && test "$(echo "$UNAME" | tr '[A-Z]' '[a-z]')" = "darwin" ; then
+    elif type open >/dev/null 2>&1 && test "$(echo "$UNAME")" = "darwin" ; then
         OPENER="command open"
     # elif windows, OPENER="start" ?
     fi
@@ -462,6 +462,7 @@ if test "$isinteractive" -ne 0 ; then
     grepsh() { find-src.sh -0f -t bash | $XARGS -0 grep -Hn "$@" ; }
     grepcs() { find-src.sh -0f -t cs | $XARGS -0 grep -Hn "$@" ; }
     grepjam() { find-src.sh -0f -t jam | $XARGS -0 grep -Hn "$@" ; }
+    grepcmake() { find-src.sh -0f -n CMakeLists.txt | $XARGS -0 grep -Hn "$@" ; }
     grepxml() { find-src.sh -0f -t xml | $XARGS -0 grep -Hn "$@" ; }
     grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 grep -Hn "$@" ; }
     grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 grep -Hn "$@" ; }
@@ -500,7 +501,7 @@ EOF
         grep -E '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
         case $ge in
             0|1) ;;
-            *) return $ge ; ;;
+            *) return $ge ;;
         esac
         rm "$testfile" || return $?
         return $e
