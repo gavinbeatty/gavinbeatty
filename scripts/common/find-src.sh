@@ -13,6 +13,7 @@ absolute=${absolute-}
 files=${files-}
 type=${type-}
 ext=${ext-}
+name=${name-}
 zero=${zero-}
 complete="${complete:-}"
 debug=${debug-}
@@ -56,6 +57,7 @@ Options
     -c          find only C/C++ files -- equivalent to \`-t cppc'
     -t <type>   find only files of the given <type>
     -e <ext>    find only files with <ext> file extension
+    -n <name>   find only files matching -name <name>
     -d          print some debugging of the find command
 
 Arguments
@@ -87,6 +89,12 @@ find_src() {
             -a \( -name '*.'"$ext" \) \
             "$printer"
         return 0
+    elif test -n "$name" ; then
+        test -z "$debug" || set -x
+        find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+            -a -name "$name" \
+            "$printer"
     fi
     for t in $(echo "$type" | tr '[A-Z]' '[a-z]' | sed -e 's/[:,;]/ /g') ; do
         case "$t" in
@@ -217,7 +225,7 @@ find_src_complete() {
 main() {
     if test -z "${NO_GETOPT:-}" ; then
         if getopt_works ; then
-            getopts="hTafct:e:0C:d"
+            getopts="hTafct:e:n:0C:d"
             opts="$("$getopt" -n "$prog" -o "$getopts" -- "$@")"
             eval set -- "$opts"
             while test $# -gt 0 ; do
@@ -229,6 +237,7 @@ main() {
                 -c) type="cppc" ;;
                 -t) type="$2" ; shift ;;
                 -e) ext="$2" ; shift ;;
+                -n) name="$2" ; shift ;;
                 -0) zero=1 ;;
                 -C) complete="$2" ; shift ;;
                 -d) debug=1 ;;
@@ -287,6 +296,9 @@ main() {
         files=1
         ext="$(echo "$ext" | sed -e 's/^\.*//')" # strip leading .s
     fi
+    if test -n "$name" ; then
+        files=1
+    fi
 
     findfiles=""
     if test -n "$files" ; then
@@ -297,7 +309,12 @@ main() {
         forcedir="-f"
     fi
 
-    if test -z "$type" && test -z "$ext" ; then type="all" ; fi
+    local t=
+    test -z "$type" || t="${t}t"
+    test -z "$ext" || t="${t}e"
+    test -z "$name" || t="${t}n"
+    if test "${#t}" -gt 1 ; then udie "Must give none or one of <type>, <ext>, <name>" ; fi
+    if test -z "$type" && test -z "$ext" && test -z "$name" ; then type="all" ; fi
     if test -n "$complete" ; then
         find_src_complete "$complete" "$@"
     else
