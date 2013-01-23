@@ -3,4 +3,4 @@ gavinbeatty
 
 Mostly just my own dotfiles and scripts. Not meant to be much use to others.
 
-Though this is not a showcase repository by any means, my occasionally up-to-date [CV is here](https://github.com/gavinbeatty/gavinbeatty/raw/master/CV.mkd).
+Though this is not a showcase repository by any means, my occasionally up-to-date [CV is here](https://github.com/gavinbeatty/gavinbeatty/blob/master/CV.mkd).
