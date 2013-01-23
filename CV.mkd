@@ -1,0 +1,33 @@
+% CV
+% Gavin Beatty <gavinbeatty@gmail.com>
+% 2013-01-23
+
+Gavin Beatty <gavinbeatty@gmail.com> +31647916862
+
+High performance, low latency, C++, linux, networking, software engineer with over 5 years experience in backend and finance roles, maintaining large libraries.
+
+## Employment
+
+### Optiver Amsterdam: Senior Software Engineer
+
+**2010 to present**
+
+### Attached to Studio Sophisti, Amsterdam: Freelance iOS developer
+
+**Summer of 2010**
+
+### Klas Ltd., Dublin: Software Engineer
+
+**2008 to 2010**
+
+### Google Summer of Code: Student Software Engineer
+
+**Summer of 2007**
+
+## Education
+
+### Trinity College, Dublin University: Mathematics
+
+**2004 to 2008**
+
+
