@@ -1,5 +1,5 @@
 ---
-title: CV Gavin Beatty
+title: CV
 author: Gavin Beatty <gavinbeatty@gmail.com> +31647916862
 modified: 2013-01-23
 
@@ -31,7 +31,7 @@ I designed and developed a daemon to implement GRE Keepalives on POSIX-compatibl
 
 **Summer of 2007**
 
-I applied for and successfully completed my Google Summer of Code (see http://code.google.com/soc/2007) project entitled “KDEPrint – add support for LinuxPrinting's on-line drivers query.” I implemented a very speedy GUI-wizard to query, download and install the correct driver for the user's given printer, written entirely in C++, using a web query language, streamed XML parsing and the KDE/Qt libraries (all cross-platform). This was a Unix-only application by design, at the time there being no printer driver repository for other platforms. It installed packages in the given Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
+I applied for and successfully completed my [Google Summer of Code](http://code.google.com/soc/2007) project entitled “KDEPrint – add support for LinuxPrinting's on-line drivers query.” I implemented a very speedy GUI-wizard to query, download and install the correct driver for the user's given printer, written entirely in C++, using a web query language, streamed XML parsing and the KDE/Qt libraries (all cross-platform). This was a Unix-only application by design, at the time there being no printer driver repository for other platforms. It installed packages in the given Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
 
 ## Education
 
