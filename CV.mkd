@@ -1,6 +1,9 @@
-% CV
-% Gavin Beatty <gavinbeatty@gmail.com>
-% 2013-01-23
+---
+title: CV Gavin Beatty
+author: Gavin Beatty <gavinbeatty@gmail.com>
+modified: 2013-01-23
+
+---
 
 Gavin Beatty <gavinbeatty@gmail.com> +31647916862
 
