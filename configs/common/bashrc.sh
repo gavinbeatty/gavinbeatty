@@ -474,6 +474,7 @@ if test "$isinteractive" -ne 0 ; then
     svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | grep -v '^X  ' ; }
     svnstm() { svnst "$@" | grep '^M' ; }
     svnstma() { svn status "$@" | grep '^M' ; }
+    svnstqa() { svn status "$@" | grep '^?' ; }
     svnlog() { svnl log -vr HEAD:1 "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
