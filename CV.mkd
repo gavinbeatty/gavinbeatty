@@ -5,7 +5,8 @@ modified: 2013-01-23
 
 ---
 
-High performance, low latency, C++, linux, networking, software engineer with over 5 years experience in backend and finance roles, maintaining large libraries.
+High performance, low latency, C++, linux, networking, software engineer with over 5 years
+experience in backend and finance roles, maintaining large libraries.
 
 ## Employment
 
@@ -13,25 +14,39 @@ High performance, low latency, C++, linux, networking, software engineer with ov
 
 **2010 to present**
 
-I write high performance gateways connecting our auto-traders with multiple exchanges/platforms: including complex order logic, extremely high volume multicast traffic. I co-maintain our core in-house global library, I solely maintain several gateways, components, and own-initiative innovation projects.
+I write high performance gateways connecting our auto-traders with multiple
+exchanges/platforms: including complex order logic, extremely high volume multicast
+traffic. I co-maintain our core in-house global library, I solely maintain several
+gateways, components, and own-initiative innovation projects.
 
 ### Attached to Studio Sophisti, Amsterdam: Freelance iOS developer
 
 **Summer of 2010**
 
-I wrote the backend for the popular and extremely well-reviewed Booking.com app, intensive in XML and SQLite processing and efficient network usage. I wrote the backend for Flora NL, a categorization app for the flora of the Netherlands.
+I wrote the backend for the popular and extremely well-reviewed Booking.com app, intensive
+in XML and SQLite processing and efficient network usage. I wrote the backend for Flora
+NL, a categorization app for the flora of the Netherlands.
 
 ### Klas Ltd., Dublin: Software Engineer
 
 **2008 to 2010**
 
-I designed and developed a daemon to implement GRE Keepalives on POSIX-compatible OSes. Previously, this was only available on Cisco routers. This involved raw socket programming, a state machine and manual modification of IP headers.
+I designed and developed a daemon to implement GRE Keepalives on POSIX-compatible OSes.
+Previously, this was only available on Cisco routers. This involved raw socket
+programming, a state machine and manual modification of IP headers.
 
 ### Google Summer of Code: Student Software Engineer
 
 **Summer of 2007**
 
-I applied for and successfully completed my [Google Summer of Code](http://code.google.com/soc/2007) project entitled “KDEPrint – add support for LinuxPrinting's on-line drivers query.” I implemented a very speedy GUI-wizard to query, download and install the correct driver for the user's given printer, written entirely in C++, using a web query language, streamed XML parsing and the KDE/Qt libraries (all cross-platform). This was a Unix-only application by design, at the time there being no printer driver repository for other platforms. It installed packages in the given Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
+I applied for and successfully completed my [Google Summer of
+Code](http://code.google.com/soc/2007) project entitled "KDEPrint – add support for
+LinuxPrinting's on-line drivers query." I implemented a very speedy GUI-wizard to query,
+download and install the correct driver for the user's given printer, written entirely in
+C++, using a web query language, streamed XML parsing and the KDE/Qt libraries (all
+cross-platform). This was a Unix-only application by design, at the time there being no
+printer driver repository for other platforms. It installed packages in the given
+Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
 
 ## Education
 
@@ -39,5 +54,7 @@ I applied for and successfully completed my [Google Summer of Code](http://code.
 
 **2004 to 2008**
 
-Aside from my studies, I gave basic tutorials in Numerical Analysis through C and Unix from 2nd year.
+Aside from my studies, I gave basic tutorials in Numerical Analysis through C and Unix
+from 2nd year.
 
+<!-- vi: set et sw=2 ts=2 tw=90 -->
