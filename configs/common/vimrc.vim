@@ -63,19 +63,19 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'nvie/vim-flake8'
-Bundle 'dag/vim2hs'
+"Bundle 'dag/vim2hs'
 Bundle 'scrooloose/syntastic'
-Bundle 'ujihisa/neco-ghc'
-Bundle 'eagletmt/ghcmod-vim'
+"Bundle 'ujihisa/neco-ghc'
+"Bundle 'eagletmt/ghcmod-vim'
 Bundle 'godlygeek/tabular'
 Bundle 'wincent/Command-T'
 Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-surround'
 Bundle 'chikamichi/mediawiki.vim'
-Bundle 'vim-pandoc/vim-pandoc'
-Bundle 'Rip-Rip/clang_complete'
-Bundle 'Shougo/neocomplcache'
-Bundle 'osyo-manga/neocomplcache-clang_complete'
+"Bundle 'vim-pandoc/vim-pandoc'
+"Bundle 'Rip-Rip/clang_complete'
+"Bundle 'Shougo/neocomplcache'
+"Bundle 'osyo-manga/neocomplcache-clang_complete'
 Bundle 'Shougo/vimshell'
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'vim-scripts/sudo.vim'
@@ -370,29 +370,29 @@ nnoremap <Leader>grf :Rfgrep<CR>
 nnoremap <Leader>gre :Regrep<CR>
 nnoremap <Leader>gra :Ragrep<CR>
 
-" neocomplcache
-let g:acp_enableAtStartup = 0
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_enable_camel_case_completion = 1
-" Use underbar completion.
-let g:neocomplcache_enable_underbar_completion = 1
-" Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-" Plugin key-mappings.
-inoremap <expr><C-g> neocomplcache#undo_completion()
-inoremap <expr><C-l> neocomplcache#complete_common_string()
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+"" neocomplcache
+"let g:acp_enableAtStartup = 0
+"let g:neocomplcache_enable_at_startup = 1
+"let g:neocomplcache_enable_smart_case = 1
+"let g:neocomplcache_enable_camel_case_completion = 1
+"" Use underbar completion.
+"let g:neocomplcache_enable_underbar_completion = 1
+"" Set minimum syntax keyword length.
+"let g:neocomplcache_min_syntax_length = 3
+"let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+"" Plugin key-mappings.
+"inoremap <expr><C-g> neocomplcache#undo_completion()
+"inoremap <expr><C-l> neocomplcache#complete_common_string()
+"" Recommended key-mappings.
+"" <CR>: close popup and save indent.
+"inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+"" <TAB>: completion.
+"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+"" <C-h>, <BS>: close popup and delete backword char.
+"inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+"inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+"inoremap <expr><C-y>  neocomplcache#close_popup()
+"inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
 " gvim specific options
 if has('gui_running')
