@@ -6,14 +6,12 @@ case $- in
 *i*) isinteractive=1 ; iecho() { echo "$@" ; } ;;
 *) isinteractive=0 ; iecho() { true ; } ;;
 esac
+. ~/.bashrc.pre.sh 2>/dev/null || true
+
 iecho ".bashrc"
 # XXX perhaps use this to add to PATH etc.
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
 regexelem() { echo "$2" | grep -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
-
-if test -r ~/.bashrc.pre.sh ; then
-    . ~/.bashrc.pre.sh
-fi
 
 if test "$isinteractive" -ne 0 ; then
     cat /tmp/gavinbeatty-du.log 2>/dev/null || true
@@ -564,6 +562,11 @@ EOF
     alias la='l -a'
     alias lsquote='ls --quoting-style=shell-always'
     alias lsescape='ls --quoting-style=escape'
+    o_=
+    if echo $TERM | grep -q -- '-256color' ; then o_="${o_:--}2" ; fi
+    if echo $LANG | grep -iq -- '\.UTF-8$' ; then o_="${o_:--}u" ; fi
+    alias tmux="tmux $o_"
+    unset o_
     alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
     alias dir='ls --format=vertical'
     alias vdir='ls --format=long'
@@ -577,4 +580,4 @@ EOF
     fi
 fi
 
-if test -r ~/.bashrc.post.sh ; then . ~/.bashrc.post.sh ; fi
+. ~/.bashrc.post.sh 2>/dev/null || true
