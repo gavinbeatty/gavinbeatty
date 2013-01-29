@@ -1,9 +1,19 @@
 % RPM
 % Gavin Beatty <gavinbeatty@gmail.com>
 
-## Use $rpmroot instead of /usr for finding /usr/src/redhat/...
+## Find SPECS etc. in a different location than /usr/src/redhat
 
-    rpmbuild --define="_usr $rpmroot" ...
+By default, _usrsrc=/usr/src and _topdir=%{_usrsrc}/redhat.
+
+    rpmbuild --define="_topdir $rpmroot" "$@"
+
+## Install an rpm locally
+
+    prefix="${HOME}/.local"
+    db="${prefix}/lib/rpm"
+    mkdir -p "$db"
+    rpm --dbpath "$db" --initdb
+    rpm --dbpath "$db" --relocate /usr="${prefix}" --nodeps -ivh foo.rpm
 
 ## Extract the rpm into the current directory
 
