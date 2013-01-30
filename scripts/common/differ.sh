@@ -99,12 +99,12 @@ main() {
         if test -n "$inplace" ; then
             test "$verbose" -lt 1 || set -x
             for infile in "$@" ; do
-                cat -- "$infile" | $awk "{${awkcode};}" | $diff ${diffopts} -- "$infile" | $patch -p0
+                cat -- "$infile" | $awk "{${awkcode};}" | $diff ${diffopts} -- "$infile" - | $patch -p0
             done
         else
             test "$verbose" -lt 1 || set -x
             for infile in "$@" ; do
-                cat -- "$infile" | $awk "{${awkcode};}" | $diff ${diffopts} -- "$infile"
+                cat -- "$infile" | $awk "{${awkcode};}" | $diff ${diffopts} -- "$infile" - || true
             done
         fi
     elif test -n "$sedcode" ; then
@@ -115,12 +115,12 @@ main() {
         if test -n "$inplace" ; then
             test "$verbose" -lt 1 || set -x
             for infile in "$@" ; do
-                cat -- "$infile" | $sed $opt -- "$sedcode" | $diff ${diffopts} -- "$infile" | $patch -p0
+                cat -- "$infile" | $sed $opt -- "$sedcode" | $diff ${diffopts} -- "$infile" - | $patch -p0
             done
         else
             test "$verbose" -lt 1 || set -x
             for infile in "$@" ; do
-                cat -- "$infile" | $sed $opt -- "$sedcode" | $diff ${diffopts} -- "$infile"
+                cat -- "$infile" | $sed $opt -- "$sedcode" | $diff ${diffopts} -- "$infile" - || true
             done
         fi
     else
