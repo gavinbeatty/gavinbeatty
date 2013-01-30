@@ -306,7 +306,7 @@ if test "$isinteractive" -ne 0 ; then
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
-            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/+[^/]*)!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
+            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
             if test -n "$v" ; then printf "${1:- (%s)}" "$v" && return 0 ; fi
         fi
         return 1
@@ -475,7 +475,12 @@ if test "$isinteractive" -ne 0 ; then
     svnstqa() { svn status "$@" | grep '^?' ; }
     svnlog() { svnl log -vr HEAD:1 "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
-    svndiff() { ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; }
+    svndiff() {
+        if test -z "${DIFF:-}" && (test -p /dev/stdout || test -f /dev/stdout) ; then
+            DIFF=diff ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]}
+        else          ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]} ; fi
+    }
+    svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
     svntags() { svnlist.sh -t "$@" ; }
