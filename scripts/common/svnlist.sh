@@ -87,7 +87,7 @@ svnnameurl() {
         die "URL does not contain trunk, tags or branches: $1"
     fi
 
-    url=$(echo "$url" | perl -wne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
+    url=$(echo "$url" | perl -ne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
     # XXX why only test trunk?
     if (test "$2" = "trunk") && (! LC_ALL=C ${SVN_EXE} info "$url" >/dev/null 2>&1) ; then
         die "URL does not exist: $url"
@@ -97,9 +97,9 @@ svnnameurl() {
 }
 svnls() {
     if test -n "$full" ; then
-        ${SVN_EXE} ls "$1" | perl -we 'while(<STDIN>){s|^|$ARGV[0]|;print;}' "$1"
+        ${SVN_EXE} ls "$1" | perl -e 'while(<STDIN>){s|^|$ARGV[0]|;s|/+$||;print;}' "$1"
     else
-        ${SVN_EXE} ls "$1"
+        ${SVN_EXE} ls "$1" | sed 's|//*$||'
     fi
 }
 
@@ -180,7 +180,7 @@ main() {
     elif test -n "$branches" ; then
         svnls "$(svnnameurl "$1" "branches")"
     else
-        svnnameurl "$1" "trunk"
+        svnnameurl "$1" "trunk" | sed 's|//*$||'
     fi
 }
 main "$@"
