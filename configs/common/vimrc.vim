@@ -38,19 +38,19 @@ if filereadable(getcwd().'/cscope.out')
     exec 'cscope add '.Gav_fnameescape(getcwd()).'/cscope.out'
 endif
 set listchars=
-if has('multi_byte')
-    if matchend(v:lang, '[Uu][Tt][Ff][-_]\?8')
-        set encoding=utf-8
-        set nobomb
-        let g:trail = '␣'
-        set listchars=nbsp:·,tab:»\ ,precedes:<,extends:>
-        exec 'set listchars+=trail:' . g:trail
-        if has('autocmd')
-            autocmd InsertEnter * exec 'set listchars-=trail:' . g:trail
-            autocmd InsertLeave * exec 'set listchars+=trail:' . g:trail
-        endif
-    endif
-endif
+"if has('multi_byte')
+"    if matchend(v:lang, '[Uu][Tt][Ff][-_]\?8')
+"        set encoding=utf-8
+"        set nobomb
+"        let g:trail = '␣'
+"        set listchars=nbsp:·,tab:»\ ,precedes:<,extends:>
+"        exec 'set listchars+=trail:' . g:trail
+"        if has('autocmd')
+"            autocmd InsertEnter * exec 'set listchars-=trail:' . g:trail
+"            autocmd InsertLeave * exec 'set listchars+=trail:' . g:trail
+"        endif
+"    endif
+"endif
 if &listchars == ''
     set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
 endif
