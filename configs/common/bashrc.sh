@@ -477,8 +477,8 @@ if test "$isinteractive" -ne 0 ; then
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() {
         if test -z "${DIFF:-}" && (test -p /dev/stdout || test -f /dev/stdout) ; then
-            DIFF=diff ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]}
-        else          ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]} ; fi
+                DIFF=diff ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]}
+        else DIFFEXTRA=-b ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]} ; fi
     }
     svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
