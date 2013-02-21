@@ -169,6 +169,7 @@ alias_section() {
     gitconfig alias.get "fetch -v"
     gitconfig alias.prebase "pull --rebase"
     gitconfig alias.rebaseup "rebase -i @{u}"
+    gitconfig alias.fmerge "merge --no-ff" # feature merge
     gitconfig alias.cpick "cherry-pick"
     gitconfig alias.br "branch -v"
     gitconfig alias.thisbr "thisbranch"
