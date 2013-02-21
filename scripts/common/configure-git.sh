@@ -168,6 +168,7 @@ alias_section() {
     gitconfig alias.cia "commit -a"
     gitconfig alias.get "fetch -v"
     gitconfig alias.prebase "pull --rebase"
+    gitconfig alias.rebaseup "rebase -i @{u}"
     gitconfig alias.cpick "cherry-pick"
     gitconfig alias.br "branch -v"
     gitconfig alias.thisbr "thisbranch"
