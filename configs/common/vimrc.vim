@@ -63,6 +63,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'nvie/vim-flake8'
+Bundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
 "Bundle 'dag/vim2hs'
 Bundle 'scrooloose/syntastic'
 "Bundle 'ujihisa/neco-ghc'
