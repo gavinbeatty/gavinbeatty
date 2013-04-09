@@ -82,6 +82,7 @@ tune.sh \
 udevinfo.sh \
 use-clang.sh \
 use-colorgcc.sh \
+videodur.sh \
 vimpatch.sh \
 whatdebsneeded.sh
 
