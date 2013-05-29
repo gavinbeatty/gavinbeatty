@@ -18,7 +18,16 @@ zero=${zero-}
 complete="${complete:-}"
 debug=${debug-}
 
+usage() {
+    cat <<EOF
+usage: $prog -h
+   or: $prog -T
+   or: $prog [options] -C <complete> [-- <find_args>...]
+   or: $prog [options] [<find_dir> [-- <find_args>...]]
+EOF
+}
 have() { type "$@" >/dev/null 2>&1 ; }
+udie() { usage >&2 ; die "$@" ; }
 die() { echo "error: $@" >&2 ; exit 1 ; }
 warn() { echo "warning: $@" >&2 ; }
 getopt_works() {
@@ -36,14 +45,6 @@ if test -z "$getopt" ; then
     done
 fi
 
-usage() {
-    cat <<EOF
-usage: $prog -h
-   or: $prog -T
-   or: $prog [options] -C <complete> [-- <find_args>...]
-   or: $prog [options] [<find_dir> [-- <find_args>...]]
-EOF
-}
 help() {
     cat <<EOF
     -h              print this help message and exit
