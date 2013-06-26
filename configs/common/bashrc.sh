@@ -363,6 +363,13 @@ if test "$isinteractive" -ne 0 ; then
     elif test -r "${HOME}/.bash_completion" ; then
         . "${HOME}/.bash_completion"
     fi
+    jhome() {
+        if test $# -ge 1 && test -n "$1" ; then
+            readlink -f "$1" | perl -e 'while(<STDIN>){s|/*[^/]*/$ARGV[0]$||;print;}' "$(basename "$1")"
+        fi
+    }
+    jrehome() { jhome "$(which java)" ; }
+    jdkhome() { jhome "$(which javac)" ; }
 
     r() {
         # must be on own line because of '&', I think
