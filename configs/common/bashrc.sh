@@ -11,7 +11,7 @@ esac
 iecho ".bashrc"
 # XXX perhaps use this to add to PATH etc.
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
-regexelem() { echo "$2" | grep -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
+regexelem() { echo "$2" | "${GREP:-grep}" -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
 
 if test "$isinteractive" -ne 0 ; then
     cat /tmp/gavinbeatty-du.log 2>/dev/null || true
@@ -75,23 +75,17 @@ fi
 # Set PATH and associated variables
 ########################################################################
 if test "$isinteractive" -ne 0 ; then
-    v_="${PATH:-}"
     if ! regexelem '\.' "$v_" ; then
-        PATH="${v_}${v_:+:}." ; export PATH
+        PATH="${PATH:-}${PATH:+:}." ; export PATH
     fi
 fi
-v_="${PATH:-}"
-n_="${HOME}/bin"
-if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-    PATH="${v_}${v_:+:}$n_" ; export PATH
-fi
+PATH="${HOME}/bin${PATH:+:}${PATH:-}" ; export PATH
 
 HOME_PREFIX="${HOME}/.local" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
     for n_ in "${HOME_PREFIX}/"{sbin,bin} ; do
-        v_="${PATH:-}"
-        if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
-            PATH="${n_}${v_:+:}${v_}" ; export PATH
+        if test -d "$n_" ; then
+            PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
         fi
     done
 fi
@@ -455,17 +449,17 @@ if test "$isinteractive" -ne 0 ; then
     if ! echo | $XARGS_R >/dev/null 2>&1 ; then
         XARGS_R="$XARGS"
     fi
-    grepsrc() { find-src.sh -0f | $XARGS -0 grep -Hn "$@" ; }
-    grepall() { local t="$1" ; shift ; find-src.sh -0f -t "$t" | $XARGS -0 grep -Hn "$@" ; }
-    grepcpp() { find-src.sh -0fc | $XARGS -0 grep -Hn "$@" ; }
-    greppy() { find-src.sh -0f -t python | $XARGS -0 grep -Hn "$@" ; }
-    grepsh() { find-src.sh -0f -t bash | $XARGS -0 grep -Hn "$@" ; }
-    grepcs() { find-src.sh -0f -t cs | $XARGS -0 grep -Hn "$@" ; }
-    grepjam() { find-src.sh -0f -t jam | $XARGS -0 grep -Hn "$@" ; }
-    grepcmake() { find-src.sh -0f -n CMakeLists.txt | $XARGS -0 grep -Hn "$@" ; }
-    grepxml() { find-src.sh -0f -t xml | $XARGS -0 grep -Hn "$@" ; }
-    grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 grep -Hn "$@" ; }
-    grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 grep -Hn "$@" ; }
+    grepsrc() { find-src.sh -0f | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepall() { local t="$1" ; shift ; find-src.sh -0f -t "$t" | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcpp() { find-src.sh -0fc | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    greppy() { find-src.sh -0f -t python | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepsh() { find-src.sh -0f -t bash | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcs() { find-src.sh -0f -t cs | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepjam() { find-src.sh -0f -t jam | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcmake() { find-src.sh -0f -n CMakeLists.txt | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepxml() { find-src.sh -0f -t xml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
 
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svngext() {
@@ -476,10 +470,10 @@ if test "$isinteractive" -ne 0 ; then
         if test $# -eq 0 ; then set -- . ; fi
         ${SVN_EXE:-svn} pe svn:externals "$@"
     }
-    svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | grep -v '^X  ' ; }
-    svnstm() { svnst "$@" | grep '^M' ; }
-    svnstma() { svn status "$@" | grep '^M' ; }
-    svnstqa() { svn status "$@" | grep '^?' ; }
+    svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | "${GREP:-grep}" -v '^X  ' ; }
+    svnstm() { svnst "$@" | "${GREP:-grep}" '^M' ; }
+    svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
+    svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
     svnlog() { svnl log -vr HEAD:1 "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() {
@@ -504,7 +498,7 @@ XXX TEST OUTPUT XXX
 XXXXXXXXXXXXXXXXXXX
 EOF
         local ge=0
-        grep -E '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
+        "${GREP:-grep}" -E '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
         case $ge in
             0|1) ;;
             *) return $ge ;;
@@ -538,7 +532,7 @@ EOF
         rm "$xxxsfile" || :
     }
 
-    ismounted() { mount | grep -Fq " on ${1} type " ; }
+    ismounted() { mount | "${GREP:-grep}" -Fq " on ${1} type " ; }
 
     if (type sed >/dev/null 2>&1) && (type grep >/dev/null 2>&1) \
     && (echo | grep -Eq ''); then
