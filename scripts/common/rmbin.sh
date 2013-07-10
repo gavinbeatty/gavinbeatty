@@ -60,7 +60,7 @@ main() {
     fi
     if test -z "$variant" ; then
         test -n "$quiet" || set -x
-        find $symlinks "$@" -type d \( -name 'bin' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 rm -r --
+        find $symlinks "$@" -type d \( -name 'bin' -o -name 'bin.v2' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 rm -r --
     else
         test -n "$quiet" || set -x
         find $symlinks "$@" -type d -name "$variant" -prune -print0 | $xargs -r0 rm -r --
