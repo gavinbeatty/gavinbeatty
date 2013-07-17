@@ -481,6 +481,7 @@ if test "$isinteractive" -ne 0 ; then
                 DIFF=diff ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]}
         else DIFFEXTRA=-b ${SVN_EXE:-svn} diff "$@" | "$PAGER" ; return ${PIPESTATUS[0]} ; fi
     }
+    alt() { ! type colordiff >/dev/null 2>&1 || DIFF=colordiff ; p "${DIFF:-diff}" -U10 -brN "$@" ; }
     svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }

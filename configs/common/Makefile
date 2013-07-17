@@ -107,6 +107,9 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.unicode.vim vim/ftplugin/cpp.vi
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 .PHONY: install-vimrc
 
-install: install-ackrc install-venv install-bashrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc
+install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
+	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
+
+install: install-ackrc install-venv install-bashrc install-devscripts install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
 .PHONY: install
 
