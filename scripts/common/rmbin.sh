@@ -58,12 +58,15 @@ main() {
     if test $# -eq 0 ; then
         set -- .
     fi
+    sh='just() { "$@" ; } ; echodo() { echo "$@" ; "$@" ; } ; for i in "$@" ; do if ! echo "$i" | grep -q "/x_\(boost\|xerces\|google\|gmock\|gtest\)" ; then "${0:-just}" rm -r -- "$i" ; fi ; done'
+    do=echodo
+    test -z "$quiet" || do=just
     if test -z "$variant" ; then
         test -n "$quiet" || set -x
-        find $symlinks "$@" -type d \( -name 'bin' -o -name 'bin.v2' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 rm -r --
+        find $symlinks "$@" -type d \( -name 'bin' -o -name 'bin.v2' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
     else
         test -n "$quiet" || set -x
-        find $symlinks "$@" -type d -name "$variant" -prune -print0 | $xargs -r0 rm -r --
+        find $symlinks "$@" -type d -name "$variant" -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
     fi
 }
 main "$@"
