@@ -24,7 +24,7 @@ CC="${CC:-gcc}"
 s="${CC%%++}"
 if test -n "$CC" && test "$CC" != "$s" ; then SRC="${SRC:-c++}" ; fi
 case "$CC" in
-    cc*|-cc*|gcc*|*-gcc*|g++*|*-g++*|clang*|*-clang*|clang++*|*-clang++*) ;;
+    cc*|-cc*|c++*|-c++*|gcc*|*-gcc*|g++*|*-g++*|clang*|*-clang*|clang++*|*-clang++*) ;;
     *) echo "warn: unrecognized CC=$CC." >&2 ;;
 esac
 e="$(echo | "$CC" -v -x "${SRC:-c}" -c - 2>&1 >/dev/null)" || die "error running CC=$CC."
