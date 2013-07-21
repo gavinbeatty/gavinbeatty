@@ -62,14 +62,15 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'Shougo/vimproc'
 Bundle 'nvie/vim-flake8'
 Bundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
-"Bundle 'dag/vim2hs'
+Bundle 'dag/vim2hs'
 Bundle 'scrooloose/syntastic'
 Bundle 'Rip-Rip/clang_complete'
 "Bundle 'Valloric/YouCompleteMe'
-"Bundle 'ujihisa/neco-ghc'
-"Bundle 'eagletmt/ghcmod-vim'
+Bundle 'ujihisa/neco-ghc'
+Bundle 'eagletmt/ghcmod-vim'
 Bundle 'godlygeek/tabular'
 Bundle 'wincent/Command-T'
 Bundle 'tpope/vim-git'
@@ -363,6 +364,9 @@ nnoremap <Leader>grg :Rgrep<CR>
 nnoremap <Leader>grf :Rfgrep<CR>
 nnoremap <Leader>gre :Regrep<CR>
 nnoremap <Leader>gra :Ragrep<CR>
+
+"" haskell
+let g:haddock_browser = 'open'
 
 "" neocomplcache
 "let g:acp_enableAtStartup = 0

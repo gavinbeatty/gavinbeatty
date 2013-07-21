@@ -11,6 +11,7 @@ let g:haskell_ffi = 1
 let g:hpaste_author = 'gavinbeatty'
 let g:haddock_browser = 'sensible-browser'
 let g:pandoc_no_folding = 1
+setlocal omnifunc=necoghc#omnifunc
 nnoremap <leader>hl :HLint<cr>
 nnoremap <leader>hs :%!stylish-haskell<cr>
 nnoremap <leader>hp :HPaste<cr>
