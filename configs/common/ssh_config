@@ -6,6 +6,8 @@ Host ssh.github.com
 	TCPKeepAlive yes
 	IdentitiesOnly yes
 
+Host gavinbeatty
+    Hostname 46.249.46.85
 Host kdesvn
     Hostname svn.kde.org
     User gavinbt
