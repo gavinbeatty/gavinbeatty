@@ -15,6 +15,7 @@ addlicense.sh \
 asciitable.sh \
 bangcheck.sh \
 battery.sh \
+bjcomplete.sh \
 buf.sh \
 cc-includes.sh \
 codepretty.py \
@@ -46,6 +47,7 @@ isgitrepo.sh \
 isiface.sh \
 issvncheckout.sh \
 issvnrepo.sh \
+jamroot.sh \
 killpid.sh \
 logstamp.sh \
 logto.sh \
