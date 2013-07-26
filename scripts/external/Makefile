@@ -14,6 +14,7 @@ help:
 	@echo Targets: install
 
 SOURCES = \
+cc_args.py \
 checkbashisms \
 colordiff \
 colorgcc.pl \
