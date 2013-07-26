@@ -66,6 +66,8 @@ Bundle 'nvie/vim-flake8'
 Bundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
 "Bundle 'dag/vim2hs'
 Bundle 'scrooloose/syntastic'
+Bundle 'Rip-Rip/clang_complete'
+"Bundle 'Valloric/YouCompleteMe'
 "Bundle 'ujihisa/neco-ghc'
 "Bundle 'eagletmt/ghcmod-vim'
 Bundle 'godlygeek/tabular'
@@ -74,9 +76,6 @@ Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-surround'
 Bundle 'chikamichi/mediawiki.vim'
 "Bundle 'vim-pandoc/vim-pandoc'
-"Bundle 'Rip-Rip/clang_complete'
-"Bundle 'Shougo/neocomplcache'
-"Bundle 'osyo-manga/neocomplcache-clang_complete'
 Bundle 'Shougo/vimshell'
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'vim-scripts/sudo.vim'
@@ -233,12 +232,6 @@ if exists('g:clipboard') && g:clipboard == 'macosx'
 endif
 
 if has("autocmd")
-    "if exists("+omnifunc")
-    "    autocmd Filetype *
-    "        \   if &omnifunc == "" |
-    "        \       setlocal omnifunc=syntaxcomplete#Complete |
-    "        \   endif
-    "endif
     autocmd BufNew *
         \   if &buftype == 'quickfix' |
         \       setlocal wrap |
