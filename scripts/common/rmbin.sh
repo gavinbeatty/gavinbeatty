@@ -58,7 +58,7 @@ main() {
     if test $# -eq 0 ; then
         set -- .
     fi
-    sh='just() { "$@" ; } ; echodo() { echo "$@" ; "$@" ; } ; for i in "$@" ; do if ! echo "$i" | grep -q "/x_\(boost\|xerces\|google\|gmock\|gtest\)" ; then "${0:-just}" rm -r -- "$i" ; fi ; done'
+    sh='just() { "$@" ; } ; echodo() { echo "$@" ; "$@" ; } ; for i in "$@" ; do if ! echo "$i" | grep -q "/x_\(boost\|xerces\|google\|gmock\|gtest\|protobuf\)" ; then "${0:-just}" rm -r -- "$i" ; fi ; done'
     do=echodo
     test -z "$quiet" || do=just
     if test -z "$variant" ; then
