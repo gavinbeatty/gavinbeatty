@@ -492,6 +492,8 @@ if test "$isinteractive" -ne 0 ; then
     svnbr() { svnlist.sh -b "$@" ; }
     svntr() { svnlist.sh -T "$@" ; }
 
+    moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
+
     bj() {
         local testfile="/tmp/gavinbeatty-bjtestcap-$(uuidgen)"
         bjam -j6 --verbose-test "$@" 2>&1 | tee "$testfile"
