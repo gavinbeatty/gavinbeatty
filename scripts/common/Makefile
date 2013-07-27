@@ -64,6 +64,7 @@ rmr.sh \
 rmtmp.sh \
 runq.sh \
 run.sh \
+shify.sh \
 stripcolor.sh \
 svnaddcopyright.sh \
 svnblamefirst.sh \
@@ -92,14 +93,11 @@ help:
 	@echo 'Targets: install uninstall'
 install:
 	@$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/bin
-	if dash="$$(which dash)" ; then \
-	  $(DASHINSTALL_EXE) "$$dash" $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
-	else \
-	  $(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin/ ; \
-	fi
+	$(INSTALL_EXE) $(SOURCES) $(DESTDIR)$(PREFIX)/bin/
+	if dash="$$(which dash)" ; then ./shify.sh "$$dash" $(addprefix $(DESTDIR)$(PREFIX)/bin/,$(SOURCES)) ; fi
 	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureyes.bash
 	$(INSTALL_EXE) sure.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
 uninstall:
-	for i in $(SOURCES) ; do rm -f -- $(DESTDIR)$(PREFIX)/bin/$$i ; done
+	rm -f -- $(addprefix $(DESTDIR)$(PREFIX)/bin/,$(SOURCES)) ; done
 	rm -f -- $(DESTDIR)$(PREFIX)/bin/sureyes.bash $(DESTDIR)$(PREFIX)/bin/sureno.bash
 .PHONY: default help install uninstall
