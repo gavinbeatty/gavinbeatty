@@ -20,7 +20,11 @@ while test "$(pwd)" != / ; do
     else cd .. ; fi
 done
 getroot || die "jam root not found"
-# XXX use perl instead of gawk
+e=
+if type bear >/dev/null 2>&1 ; then
+    bear -- bjam "$@" || e=$?
+fi
+# XXX use perl instead of gawk: needs word boundaries
 gawk 'BEGIN{using=0}{
   if(using == 0 && /^(using$|using\y|[^#]*\yusing\y)/){using=1}
   printf("%s%s\n", using == 1 ? "#" : "", $0);
@@ -32,8 +36,7 @@ rollback() {
 }
 mv "$root" "${root}.complete.orig"
 cp "${root}.complete" "$root"
-e=
-vdo bjam "$@" || e=1
+vdo bjam "$@" || e=$?
 c=".clang_complete"
 if test -f "$c" ; then
     { rm $c && sort | uniq | awk '!/^[[:space:]]*$/{print}' > $c ; } < $c
