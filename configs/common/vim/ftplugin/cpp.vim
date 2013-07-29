@@ -15,7 +15,6 @@ else
 endif
 let g:neocomplcache_force_overwrite_completefunc = 1
 let g:clang_use_library = 1
-let g:clang_library_path = expand('~').'/.local/lib/libclang.so'
 let g:clang_complete_auto = 1
 
 iab #d #define
