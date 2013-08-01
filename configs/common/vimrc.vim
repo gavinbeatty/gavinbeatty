@@ -1,5 +1,7 @@
-" DON'T keep compatibility with vi
 set nocompatible
+if has('+shellslash')
+    set shellslash
+endif
 source ~/.vimrc.pre.vim
 if !exists('g:machine')
     let g:machine = 'unknown'
@@ -10,26 +12,6 @@ endif
 if !exists('g:cpp_textwidth')
     let g:cpp_textwidth = 100
 endif
-
-function! Gav_fnameescape(name)
-    if exists('*fnameescape')
-        return fnameescape(a:name)
-    endif
-    return a:name
-endfunction
-function! Gav_abspath(name)
-    if exists('*fnamemodify')
-        return fnamemodify(a:name, ':p')
-    endif
-    return getcwd().'/'.a:name
-endfunction
-function! Gav_leaf(path)
-    if exists('*fnamemodify')
-        return fnamemodify(a:path, ':p:t')
-    endif
-    echoerr 'fnamemodify required'
-    return a:path
-endfunction
 
 if filereadable(getcwd().'/tags')
     exec 'set tags+='.Gav_fnameescape(getcwd()).'/tags'
@@ -61,24 +43,38 @@ filetype on
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-Bundle 'altercation/vim-colors-solarized'
+" dependencies
 Bundle 'Shougo/vimproc'
-Bundle 'nvie/vim-flake8'
-Bundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
-Bundle 'dag/vim2hs'
+Bundle 'Shougo/vimshell'
+Bundle 'tpope/vim-repeat'
+Bundle 'thinca/vim-quickrun'
+" syntax
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'chikamichi/mediawiki.vim'
+Bundle 'tpope/vim-markdown'
+Bundle 'vim-scripts/Boost-Build-v2-BBv2-syntax'
+" programming
+Bundle 'tpope/vim-git'
+Bundle 'Shougo/unite.vim'
 Bundle 'scrooloose/syntastic'
+Bundle 'ujihisa/repl.vim'
+Bundle 'Lokaltog/powerline'
+Bundle 'thinca/vim-ref'
+" haskell
+Bundle 'Twinside/vim-haskellConceal'
+Bundle 'eagletmt/ghcmod-vim'
+Bundle 'ujihisa/neco-ghc'
+" c++
 "Bundle 'Rip-Rip/clang_complete'
 Bundle 'Valloric/YouCompleteMe'
-Bundle 'ujihisa/neco-ghc'
-Bundle 'eagletmt/ghcmod-vim'
+"Bundle 'Shougo/neocomplete.vim'
+" python
+Bundle 'nvie/vim-flake8'
+" text
 Bundle 'godlygeek/tabular'
-Bundle 'wincent/Command-T'
-Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-surround'
-Bundle 'chikamichi/mediawiki.vim'
-"Bundle 'vim-pandoc/vim-pandoc'
-Bundle 'Shougo/vimshell'
 Bundle 'Lokaltog/vim-easymotion'
+" files
 Bundle 'vim-scripts/sudo.vim'
 " Syntax highlighting on
 if has('syntax')
@@ -151,7 +147,7 @@ set printoptions=paper:a4
 if exists('+autochdir')
     set autochdir
 elseif has("autocmd")
-    autocmd BufEnter * silent! lcd Gav_fnameescape(expand('%:p:h'))
+    autocmd BufEnter * silent! lcd fnameescape(expand('%:p:h'))
 endif
 set novisualbell
 set noerrorbells
@@ -298,7 +294,7 @@ nnoremap <Leader>tb :call Gav_SwitchBufMove()<CR>
 call Gav_SwitchBufMove()
 
 function! AutoGitCommit(filename)
-	execute 'silent! !git commit -m autocommit\ '.Gav_fnameescape(Gav_leaf(a:filename)).' '.Gav_fnameescape(a:filename)
+	execute 'silent! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
 endfunction
 " 'AutoGitCommitWrites %:t' will run AutoGitCommit on each write
 " Could be used in conjunction with set autowriteall
@@ -334,7 +330,7 @@ nnoremap <Leader>sr :call GavFound(":Search", "MultipleSearch", ":SearchReset")<
 nnoremap <Leader>sb :if exists(":Search") <Bar> :SearchBuffers <Bar> else <Bar> :call GavMultipleSearchNotFound()<CR> <Bar> endif<CR>
 nnoremap <Leader>sbr :call GavFound(":Search", "MultipleSearch", ":SearchBuffersReset")<CR>
 nnoremap <Leader>si :call GavFound(":Search", "MultipleSearch", ":SearchReinit")<CR>
-" fswitch plugin macro
+" fswitch plugin macros
 nnoremap <Leader>fs :call GavFound(":FSHere", "fswitch")<CR>
 nnoremap <Leader>fv :call GavFound(":FSSplitRight", "fswitch")<CR>
 nnoremap ,t :call GavFound(":CommandT", "CommandT")<cr>
@@ -364,6 +360,8 @@ nnoremap <Leader>grg :Rgrep<CR>
 nnoremap <Leader>grf :Rfgrep<CR>
 nnoremap <Leader>gre :Regrep<CR>
 nnoremap <Leader>gra :Ragrep<CR>
+" Unite plugin macros
+nnoremap <Leader>p :call GavFound(":Unite", "Unit", ":Unite -start-insert file")<CR>
 
 " gvim specific options
 if has('gui_running')
