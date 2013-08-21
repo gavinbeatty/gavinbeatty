@@ -484,6 +484,7 @@ if test "$isinteractive" -ne 0 ; then
         else "${PAGER:-less}" "$@" ; fi
     }
     svndiff() { DIFFEXTRA=-b ${SVN_EXE:-svn} diff "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
+    svnmkpatch() { ${SVN_EXE:-svn} diff --internal-diff --notice-ancestry --show-copies-as-adds "$@" ; }
     alt() { ! type colordiff >/dev/null 2>&1 || DIFF=colordiff ; p "${DIFF:-diff}" -U10 -brN "$@" ; }
     svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
