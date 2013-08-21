@@ -44,6 +44,7 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 " dependencies
+Bundle 'gmarik/vundle'
 Bundle 'Shougo/vimproc'
 Bundle 'Shougo/vimshell'
 Bundle 'tpope/vim-repeat'
@@ -60,6 +61,10 @@ Bundle 'scrooloose/syntastic'
 Bundle 'ujihisa/repl.vim'
 Bundle 'Lokaltog/powerline'
 Bundle 'thinca/vim-ref'
+Bundle 'bogado/file-line'
+Bundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
+let g:rainbow_active = 1
+let g:rainbow_operators = 1
 " haskell
 Bundle 'Twinside/vim-haskellConceal'
 Bundle 'eagletmt/ghcmod-vim'
