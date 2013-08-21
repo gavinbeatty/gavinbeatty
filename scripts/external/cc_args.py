@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
-
 import sys
 import os
 import io
@@ -36,4 +35,4 @@ args = parseArguments(sys.argv[1:])
 appendConfiguration(CONFIG_NAME, args)
 os.execvp(sys.argv[1], sys.argv[1:])
 
-# vim: set ts=2 sts=2 sw=2 expandtab :
+# vim: set et ts=2 sts=2 sw=2:
