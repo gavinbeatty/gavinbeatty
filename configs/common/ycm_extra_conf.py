@@ -15,7 +15,7 @@ def is_root_dir(d):
 
 def get_root_dir(cwd=None):
   if cwd is None: cwd = getcwd()
-  while (normpath(splitdrive(cwd)[1]) not in ('/', '')):
+  while (normpath(splitdrive(cwd)[1]) not in ('/', '\\', '')):
     if is_root_dir(cwd):
       return cwd
     cwd = join(cwd, '..')
@@ -35,10 +35,13 @@ if not database.DatabaseSuccessfullyLoaded():
 
 def DefaultFlags():
   paths = (absp for absp in abslistdir(root) if isdir(absp) and not basename(absp).startswith('.'))
-  fs = []
+  fs = ['-I', root]
   for path in paths:
     fs.extend(['-I', path])
-  fs.extend(['-x', 'c++', '-std=gnu++98'])
+    includes = (p for p in abslistdir(path) if isdir(p) and basename(p) in ('include', 'inc'))
+    for inc in includes:
+      fs.extend(['-I', inc])
+  fs.extend(['-x', 'c++', '-std=gnu++11'])
   return fs
 
 def MakeRelativePathsInFlagsAbsolute(fs, working_directory):
