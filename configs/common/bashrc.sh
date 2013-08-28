@@ -112,14 +112,12 @@ for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
         MANPATH="${n_}${v_}" ; export MANPATH
     fi
 done
+unset v_
 # use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
 n_="${HOME}/.rvm/bin"
-v_=
-test -z "${PATH:-}" || v_=":$PATH"
-if (test -d "${HOME}/.rvm") && (! echo "$v_" | grep -Fq "$n_") ; then
-    PATH="${n_}${v_}" ; export PATH
+if (test -d "${HOME}/.rvm") && (! echo "${PATH:-}" | grep -Fq "$n_") ; then
+    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
 fi
-unset v_
 unset n_
 # macports
 if (test -d "/opt/local/bin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/bin") ; then
@@ -135,6 +133,10 @@ if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
 fi
 if test "$isinteractive" -ne 0 ; then
     if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
+fi
+n_="/Applications/threadscope.app/Contents/MacOS"
+if test -d "$n_" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="$n_${PATH:+:}${PATH:-}" ; export PATH
 fi
 #pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
 #if test -n "$pyver_" ; then
