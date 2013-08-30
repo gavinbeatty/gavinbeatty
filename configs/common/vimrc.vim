@@ -69,9 +69,10 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'Lokaltog/vim-easymotion'
 "NeoBundle 'terryma/vim-multiple-cursors'
 " Files
-NeoBundle 'mhinz/vim-startify'
-NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Shougo/unite-sudo'
+NeoBundle 'mhinz/vim-startify'
+NeoBundle 'jamessan/vim-gnupg'
+NeoBundle 'Shougo/vimfiler.vim'
 " NeoBundle options
 call neobundle#config('unite.vim',{
       \ 'lazy' : 1,
