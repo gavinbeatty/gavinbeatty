@@ -7,13 +7,8 @@ setlocal makeprg=TERM=dumb\ bjam\ -j8
 setlocal makeef=bjam-build-errors.log
 " to ignore boost (since it's so big)
 "setlocal include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
-exec 'setlocal textwidth=' . g:cpp_textwidth
-if g:cpp_expandtab
-    setlocal et
-else
-    setlocal noet
-endif
-let g:neocomplcache_force_overwrite_completefunc = 1
+if exists('g:cpp_textwidth') | let &l:textwidth = g:cpp_textwidth | endif
+if exists('g:cpp_expandtab') | let &l:expandtab = g:cpp_expandtab | endif
 let g:clang_use_library = 1
 let g:clang_complete_auto = 1
 
