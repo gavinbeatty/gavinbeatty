@@ -70,10 +70,11 @@ def MakeRelativePathsInFlagsAbsolute(fs, working_directory):
 
 def FlagsForFile(filename):
   if not database:
-      return {'flags': DefaultFlags(), 'do_cache': True}
-  # GetCompilationInfoForFile returns a "list-like" StringVec object.
-  compilation_info = database.GetCompilationInfoForFile(abspath(filename))
-  final_flags = MakeRelativePathsInFlagsAbsolute(
-    compilation_info.compiler_flags_,
-    compilation_info.compiler_working_dir_ )
-  return {'flags': final_flags, 'do_cache': True}
+    flags = DefaultFlags()
+  else:
+    # GetCompilationInfoForFile returns a "list-like" StringVec object.
+    compilation_info = database.GetCompilationInfoForFile(abspath(filename))
+    flags = MakeRelativePathsInFlagsAbsolute(
+      compilation_info.compiler_flags_,
+      compilation_info.compiler_working_dir_ )
+  return {'flags': flags, 'do_cache': True}
