@@ -82,11 +82,6 @@ NeoBundle 'mhinz/vim-startify'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Shougo/unite-sudo'
 " Config
-call neobundle#config('neocomplete.vim', {
-      \ 'lazy' : 1,
-      \ 'autoload' : {
-      \   'insert' : 1,
-      \ }})
 call neobundle#config('unite.vim',{
       \ 'lazy' : 1,
       \ 'autoload' : {
