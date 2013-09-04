@@ -391,6 +391,14 @@ if test "$isinteractive" -ne 0 ; then
     p() { if test $# -gt 0 ; then "$@" | "$PAGER" ; fi ; }
     today() { date +"%Y%m%d" ; }
     todaytime() { date +"%Y%m%d-%H%M%S" ; }
+    # How much hardwhere concurrency exists.
+    nconc() { grep ^apicid /proc/cpuinfo | sort -u | wc -l ; }
+    # ${JCONC:-1} is a decent, high value for `make -j` etc.
+    n_="$(nconc 2>/dev/null || true)"
+    if test -n "$n_" && test "$n_" -gt 2 ; then
+        export JCONC=$(( $n_ - 2 ))
+    fi
+    unset n_
 
     case "$UNAME" in
         *mingw*|windows*|cygwin*)
@@ -499,7 +507,7 @@ if test "$isinteractive" -ne 0 ; then
 
     bj() {
         local testfile="/tmp/gavinbeatty-bjtestcap-$(uuidgen)"
-        bjam -j6 --verbose-test "$@" 2>&1 | tee "$testfile"
+        bjam "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
         local e="${PIPESTATUS[0]}"
         cat <<EOF
 XXXXXXXXXXXXXXXXXXX
