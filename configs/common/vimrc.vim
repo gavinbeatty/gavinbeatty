@@ -78,7 +78,7 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'Lokaltog/vim-easymotion'
 "NeoBundle 'terryma/vim-multiple-cursors'
 " Files
-NeoBundle 'bling/vim-startify'
+NeoBundle 'mhinz/vim-startify'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Shougo/unite-sudo'
 " Config
