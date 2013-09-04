@@ -285,6 +285,8 @@ if has("autocmd")
             autocmd FileType c,objc,objcpp runtime ftplugin/cpp.vim
             autocmd FileType perl       setlocal smartindent
             autocmd FileType make       setlocal noexpandtab sw=8 ts=8
+            " Redraw rainbow parens when going back to the buffer.
+            autocmd Syntax * call rainbow#load()
         augroup end
     endif
     if !exists('filetypedetect_loaded')
