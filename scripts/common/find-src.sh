@@ -105,6 +105,20 @@ find_src() {
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 "$printer"
             ;;
+        hs|haskell)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.hs' -o -name '*.lhs' \) \
+                "$printer"
+            ;;
+        lhs)
+            test -z "$debug" || set -x
+            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.lhs' \) \
+                "$printer"
+            ;;
         c)
             test -z "$debug" || set -x
             find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
@@ -265,7 +279,7 @@ main() {
         exit 0
     fi
     if test -n "$types" ; then
-        echo "all c cpp cppc cs py python pl perl lua sh bash java jam xml xsd allxml"
+        echo "all hs haskell lhs c cpp cppc cs py python pl perl lua sh bash java jam xml xsd allxml"
         exit 0
     fi
 
@@ -291,7 +305,7 @@ main() {
     fi
 
     case "$type" in
-    all|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml) files=1 ;;
+    all|hs|haskell|lhs|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml) files=1 ;;
     esac
     if test -n "$ext" ; then
         files=1
