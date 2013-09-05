@@ -153,12 +153,10 @@ set noerrorbells
 if s:is_macvim | set visualbell | endif
 " Sync with OS clipboard outside tmux.
 if exists('$TMUX') | set clipboard=
-else | set clipboard=unnamed | endif
-" I have no clue how to do single-line if-elseif-endif in vimscript.
-if exists('+autochdir')
-    set autochdir
-elseif has("autocmd")
-    autocmd BufEnter * sil! lcd fnameescape(expand('%:p:h'))
+else | set clipboard=unnamed
+endif
+if exists('+autochdir') | set autochdir
+else | au BufEnter * sil! lcd fnameescape(expand('%:p:h'))
 endif
 if s:is_windows && has('+shellslash') | set shellslash | endif
 
@@ -231,32 +229,30 @@ if has('gui_running')
     nmap <leader>fd :call DecrFontPt()<CR>
 endif
 
-autocmd BufNew *
-    \   if &buftype == 'quickfix' |
-    \       setlocal wrap |
-    \   endif
+au BufNew * if &buftype == 'quickfix' | setlocal wrap | endif
 if !exists('s:filetypedetect_loaded')
     let s:filetypedetect_loaded = 1
     augroup filetypedetect
-        autocmd BufRead,BufNewFile \
+        au BufRead,BufNewFile \
             \ *.text,*.txt,*.mail,*.email,*.followup,*.article,*.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt*
             \ setlocal filetype=txt
-        autocmd BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
+        au BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
         " .m files are objective c by default, not matlab
-        autocmd BufRead,BufNewFile *.m setlocal filetype=objc
+        au BufRead,BufNewFile *.m setlocal filetype=objc
         " .proto files for google protocol buffers
-        autocmd BufRead,BufNewFile *.proto setlocal filetype=proto
+        au BufRead,BufNewFile *.proto setlocal filetype=proto
     augroup end
 endif
 if !exists('s:filetypeextras_loaded')
     let s:filetypeextras_loaded = 1
     augroup filetypeextras
-        autocmd FileType pandoc,markdown runtime ftplugin/txt.vim
-        autocmd FileType c,objc,objcpp runtime ftplugin/cpp.vim
-        autocmd FileType perl       setlocal smartindent
-        autocmd FileType make       setlocal noet sw=8 ts=8
+        au FileType pandoc,markdown runtime ftplugin/txt.vim
+        au FileType c,objc,objcpp runtime ftplugin/cpp.vim
+        au FileType perl setlocal smartindent
+        au FileType make setlocal noet sw=8 ts=8
+        au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
         " Redraw rainbow parens when going back to the buffer.
-        autocmd Syntax * call rainbow#load()
+        au Syntax * call rainbow#load()
     augroup end
 endif
 
@@ -265,7 +261,7 @@ fu! AutoGitCommit(filename)
 endf
 " Could be used in conjunction with set autowriteall
 command! -nargs=0 -complete=file AutoGitCommitWrites
-      \ autocmd BufWritePost <args> call AutoGitCommit(expand('%:t:p'))
+      \ au BufWritePost <args> call AutoGitCommit(expand('%:t:p'))
 command! WUtf8 setlocal fenc=utf-8
 command! WUtf16 setlocal fenc=ucs-2le
 command! -bang -complete=file -nargs=? WUnix
@@ -318,7 +314,7 @@ nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=
 nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
-" Make and quickfix."
+" Make and quickfix.
 nnoremap <leader>cc :make!<CR> <Bar> :copen<CR>
 nnoremap <leader>cn :cnext<CR>
 nnoremap <leader>cp :cprev<CR>
@@ -332,20 +328,14 @@ vnoremap <leader>do :diffget <Bar> echo 'Left >>> Right'<CR>
 " ("diff put") do :diffput on range and report the change:
 vnoremap <leader>dp :diffput <Bar> echo 'Left <<< Right'<CR>
 
-" fswitch plugin macros
 nnoremap <leader>fs :FSHere<CR>
 nnoremap <leader>fv :FSSplitRight<CR>
-" gnupg options
-let g:GPGPreferArmor = 1
-" svndiff plugin macros
 nnoremap <silent> <leader>vn :call Svndiff("next")<CR>
 nnoremap <silent> <leader>vp :call Svndiff("prev")<CR>
 nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>
-" pyflakes-vim highlighting
-augroup pyflakesfiletypedetect
-    au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
-augroup END
-" Unite plugin
+let g:GPGPreferArmor = 1
+let g:delimitMate_matchpairs = "(:),[:],{:}"
+
 let g:unite_enable_start_insert = 1
 let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 5000
@@ -374,7 +364,7 @@ nnoremap <silent> <leader>b :<C-u>Unite -auto-resize -buffer-name=buffers buffer
 nnoremap <silent> <leader>/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
 nnoremap <silent> <leader>m :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
 nnoremap <silent> <leader>s :<C-u>Unite -quick-match buffer<cr>
-" vim-fugitive
+
 nnoremap <silent> <leader>gs :Gstatus<CR>
 nnoremap <silent> <leader>gd :Gdiff<CR>
 nnoremap <silent> <leader>gc :Gcommit<CR>
@@ -383,8 +373,8 @@ nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
 nnoremap <silent> <leader>gw :Gwrite<CR>
 nnoremap <silent> <leader>gr :Gremove<CR>
-autocmd BufReadPost fugitive://* set bufhidden=delete"
-" Various Haskell options.
+au BufReadPost fugitive://* set bufhidden=delete"
+
 let g:haskell_autotags = 1
 let g:haskell_tabular = 1
 let g:haskell_conceal = 1
@@ -397,7 +387,7 @@ let g:haskell_ffi = 1
 let g:hpaste_author = 'gavinbeatty'
 let g:haddock_browser = 'sensible-browser'
 let g:pandoc_no_folding = 1
-" vim-indent-guides
+
 let g:indent_guides_start_level=1
 let g:indent_guides_guide_size=1
 let g:indent_guides_enable_on_vim_startup=0
@@ -408,15 +398,16 @@ if !has('gui_running')
         hi IndentGuidesOdd ctermbg=235
         hi IndentGuidesEven ctermbg=236
     endf
-    autocmd VimEnter,Colorscheme * call s:indent_set_console_colors()
+    au VimEnter,Colorscheme * call s:indent_set_console_colors()
 endif
-" vim-startify
+
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
+
 let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 let g:ycm_filetype_blacklist={'unite': 1}
-" rainbow operators"
+
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
 
