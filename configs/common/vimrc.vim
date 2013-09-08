@@ -28,43 +28,63 @@ set rtp+=~/.vim/bundle/neobundle.vim/
 call neobundle#rc(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 " Dependencies
-NeoBundle 'Shougo/vimproc'
-NeoBundle 'Shougo/vimshell'
+NeoBundle 'Shougo/vimproc', {'build': {
+      \ 'windows': 'make -f make_mingw32.mak',
+      \ 'cygwin': 'make -f make_cygwin.mak',
+      \ 'mac': 'make -f make_mac.mak',
+      \ 'unix': 'make -f make_unix.mak',
+      \ }}
+NeoBundleLazy 'Shougo/vimshell', {'autoload': {
+      \   'commands': [{'name': 'VimShell',
+      \                 'complete': 'customlist,vimshell#complete'},
+      \                'VimShellExecute', 'VimShellInteractive',
+      \                'VimShellTerminal', 'VimShellPop'],
+      \   'mappings': ['<Plug>(vimshell_switch)']
+      \ }}
 NeoBundle 'tpope/vim-repeat'
-NeoBundle 'thinca/vim-quickrun'
+NeoBundle 'kana/vim-textobj-user'
 " Syntax
-NeoBundle 'http://svn.macports.org/repository/macports/contrib/mpvim/'
-NeoBundle 'vim-scripts/Boost-Build-v2-BBv2-syntax'
+NeoBundleLazy 'http://svn.macports.org/repository/macports/contrib/mpvim/', {'autoload': {'filetypes': 'portfile'}}
+NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
+NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
+NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'ujihisa/unite-colorscheme'
-NeoBundle 'chikamichi/mediawiki.vim'
-NeoBundle 'tpope/vim-markdown'
 NeoBundle 'bling/vim-airline'
 " Programming
 NeoBundle 'tpope/vim-git'
 NeoBundle 'bogado/file-line'
-NeoBundle 'Shougo/unite.vim'
+NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
+      \ 'commands': [{'name': 'Unite',
+      \                'complete': 'customlist,unite#complete_source'
+      \               }, 'UniteWithCursorWord', 'UniteWithInput'
+      \              ]}}
 NeoBundle 'chazy/cscope_maps'
+NeoBundle 'tpope/vim-endwise'
 NeoBundle 'Shougo/unite-build'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'Raimondi/delimitMate'
+NeoBundle 'kana/vim-textobj-diff'
 NeoBundle 'derekwyatt/vim-fswitch'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'nathanaelkane/vim-indent-guides'
+"NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
 " Haskell
-NeoBundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
 NeoBundle 'feuerbach/vim-hs-module-name'
-NeoBundle 'Twinside/vim-haskellConceal'
-NeoBundle 'eagletmt/unite-haddock'
-NeoBundle 'eagletmt/ghcmod-vim'
-NeoBundle 'ujihisa/neco-ghc'
+NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
+NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
+NeoBundleLazy 'eagletmt/unite-haddock', {'autoload': {'filetypes': 'haskell'}}
+NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
+NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
 NeoBundle 'Valloric/YouCompleteMe', {'vim_version':'7.3.584'}
+NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 " Python
-NeoBundle 'nvie/vim-flake8'
+NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
 " Text
+NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
 NeoBundle 'kana/vim-fakeclip'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'tpope/vim-surround'
@@ -76,14 +96,23 @@ NeoBundle 'mhinz/vim-startify'
 NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'regedarek/vim-bufexplorer'
+" Optional
+NeoBundleLazy 'thinca/vim-fontzoom', {
+      \ 'gui': 1,
+      \ 'autoload': {
+      \  'mappings': [
+      \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
+      \  ],
+      \ }}
+NeoBundleLazy 'ujihisa/unite-font', {
+      \ 'gui': 1,
+      \ 'autoload': {'unite_sources': 'font'}
+      \ }
+NeoBundleLazy 'add20/vim-conque', {'autoload': {'commands': ['ConqueTerm']}}
+NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
+      \ 'mappings': [['nxo', '<Plug>(quickrun)']],
+      \ }}
 " NeoBundle options
-call neobundle#config('unite.vim',{
-      \ 'lazy' : 1,
-      \ 'autoload' : {
-      \   'commands' : [{ 'name' : 'Unite',
-      \                   'complete' : 'customlist,unite#complete_source'},
-      \                 'UniteWithCursorWord', 'UniteWithInput']
-      \ }})
 call neobundle#config('vimproc', {
       \ 'build' : {
       \     'windows' : 'make -f make_mingw32.mak',
