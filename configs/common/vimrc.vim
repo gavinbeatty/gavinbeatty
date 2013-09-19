@@ -49,6 +49,7 @@ NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'Raimondi/delimitMate'
 NeoBundle 'derekwyatt/vim-fswitch'
+NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
 " Haskell
@@ -73,6 +74,7 @@ NeoBundle 'Shougo/unite-sudo'
 NeoBundle 'mhinz/vim-startify'
 NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'Shougo/vimfiler.vim'
+NeoBundle 'regedarek/vim-bufexplorer'
 " NeoBundle options
 call neobundle#config('unite.vim',{
       \ 'lazy' : 1,
@@ -315,10 +317,11 @@ nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
 " Make and quickfix.
-nnoremap <leader>cc :make!<CR> <Bar> :copen<CR>
-nnoremap <leader>cn :cnext<CR>
-nnoremap <leader>cp :cprev<CR>
-nnoremap <leader>ci :copen<CR>
+nnoremap <leader>bb :make!<CR> <Bar> :copen<CR>
+nnoremap <leader>bn :cnext<CR>
+nnoremap <leader>bp :cprev<CR>
+nnoremap <leader>bi :copen<CR>
+nnoremap <leader>bc :YcmDiags<CR>
 
 " ("diff no") turn off diff mode and report the change
 nnoremap <leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
@@ -353,17 +356,17 @@ elseif executable('ack')
 endif
 if s:is_windows
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec buffer file_mru bookmark<cr><c-u>
-    nnoremap <silent> <leader>f :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
+    nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
 else
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec/async buffer file_mru bookmark<cr><c-u>
-    nnoremap <silent> <leader>f :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec/async<cr><c-u>
+    nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec/async<cr><c-u>
 endif
-nnoremap <silent> <leader>y :<C-u>Unite -buffer-name=yanks history/yank<cr>
-nnoremap <silent> <leader>l :<C-u>Unite -auto-resize -buffer-name=line line<cr>
-nnoremap <silent> <leader>b :<C-u>Unite -auto-resize -buffer-name=buffers buffer<cr>
-nnoremap <silent> <leader>/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
-nnoremap <silent> <leader>m :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
-nnoremap <silent> <leader>s :<C-u>Unite -quick-match buffer<cr>
+nnoremap <silent> <leader>uy :<C-u>Unite -buffer-name=yanks history/yank<cr>
+nnoremap <silent> <leader>ul :<C-u>Unite -auto-resize -buffer-name=line line<cr>
+nnoremap <silent> <leader>ub :<C-u>Unite -auto-resize -buffer-name=buffers buffer<cr>
+nnoremap <silent> <leader>u/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
+nnoremap <silent> <leader>um :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
+nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
 
 nnoremap <silent> <leader>gs :Gstatus<CR>
 nnoremap <silent> <leader>gd :Gdiff<CR>
