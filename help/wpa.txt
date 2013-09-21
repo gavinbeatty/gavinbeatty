@@ -1,0 +1,9 @@
+# WPA setup
+
+    $ wpa_cli
+    > add_network
+    0
+    > set_network 0 ssid NAME
+    > set_network 0 psk PASS
+    > enable_network 0
+
