@@ -41,7 +41,7 @@ def DefaultFlags():
     includes = (p for p in abslistdir(path) if isdir(p) and basename(p) in ('include', 'inc'))
     for inc in includes:
       fs.extend(['-I', inc])
-  fs.extend(['-x', 'c++', '-std=gnu++11'])
+  fs.extend(['-x', 'c++', '-std=c++11'])
   return fs
 
 def MakeRelativePathsInFlagsAbsolute(fs, working_directory):
