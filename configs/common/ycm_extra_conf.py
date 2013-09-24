@@ -1,11 +1,14 @@
 # vi: set et ts=2 sw=2:
 import sys
-from os import listdir, getcwd
+from os import listdir, getcwd, environ, devnull
 from os.path import abspath, normpath, split, join, isfile, isdir, isabs, splitdrive
+import subprocess as sp
 import ycm_core
 
+cc = 'g++'
 dirname = lambda x: split(x)[0]
 basename = lambda x: split(x)[1]
+database = None
 
 def is_root_dir(d):
   for f in (basename(x) for x in listdir(d) if isfile(join(d, x))):
@@ -33,6 +36,50 @@ database = ycm_core.CompilationDatabase(root)
 if not database.DatabaseSuccessfullyLoaded():
   database = None
 
+path_flags = ['-isystem', '-I', '-iquote', '--sysroot=']
+def StripPathFlags(f):
+  for p in path_flags:
+    if f.startswith(p):
+      if len(f) > len(p): return f[len(p):]
+      else: return ''
+  return f
+
+def SplitPathFlags(fs):
+  new_fs = []
+  for f in fs:
+    new_f = [f]
+    for p in path_flags:
+      lenp = len(p)
+      if f.startswith(p) and len(f) > lenp:
+        new_f = [f[:lenp], f[lenp:]]
+        continue
+    new_fs.extend(new_f)
+  return new_fs
+
+def SystemIncludeFlags():
+  flags = []
+  try:
+    with open(devnull, 'rb+') as null:
+      env = environ.copy()
+      env['LC_ALL'] = 'C'
+      stdout = sp.check_output(
+        [cc, '-v', '-x', 'c++', '-c', '-'], env=env, universal_newlines=True
+        , stderr=sp.STDOUT, stdin=null.fileno()
+      )
+  except:
+    pass
+  else:
+    in_includes = False
+    for line in stdout.splitlines():
+      l = line.strip()
+      if l == 'End of search list.':
+        in_includes = False
+      elif in_includes and line.startswith(' '):
+        flags.extend(['-isystem', l])
+      elif l.endswith('search starts here:'):
+        in_includes = True
+  return flags
+
 def DefaultFlags():
   paths = (absp for absp in abslistdir(root) if isdir(absp) and not basename(absp).startswith('.'))
   fs = ['-I', root]
@@ -49,7 +96,6 @@ def MakeRelativePathsInFlagsAbsolute(fs, working_directory):
     return list(fs)
   new_flags = []
   make_next_absolute = False
-  path_flags = [ '-isystem', '-I', '-iquote', '--sysroot=' ]
   for flag in fs:
     new_flag = flag
     if make_next_absolute:
@@ -77,4 +123,4 @@ def FlagsForFile(filename):
     flags = MakeRelativePathsInFlagsAbsolute(
       compilation_info.compiler_flags_,
       compilation_info.compiler_working_dir_ )
-  return {'flags': flags, 'do_cache': True}
+  return {'flags': SplitPathFlags(flags) + SystemIncludeFlags(), 'do_cache': True}
