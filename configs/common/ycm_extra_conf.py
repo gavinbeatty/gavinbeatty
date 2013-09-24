@@ -1,7 +1,7 @@
 # vi: set et ts=2 sw=2:
 import sys
 from os import listdir, getcwd, environ, devnull
-from os.path import abspath, normpath, split, join, isfile, isdir, isabs, splitdrive
+from os.path import abspath, normpath, split, join, expanduser, isfile, isdir, isabs, splitdrive
 import subprocess as sp
 import ycm_core
 
@@ -56,63 +56,142 @@ def SplitPathFlags(fs):
     new_fs.extend(new_f)
   return new_fs
 
-def SystemIncludeFlags():
-  flags = []
-  try:
-    with open(devnull, 'rb+') as null:
-      env = environ.copy()
-      env['LC_ALL'] = 'C'
-      stdout = sp.check_output(
-        [cc, '-v', '-x', 'c++', '-c', '-'], env=env, universal_newlines=True
-        , stderr=sp.STDOUT, stdin=null.fileno()
-      )
-  except:
-    pass
-  else:
-    in_includes = False
-    for line in stdout.splitlines():
-      l = line.strip()
-      if l == 'End of search list.':
-        in_includes = False
-      elif in_includes and line.startswith(' '):
-        flags.extend(['-isystem', l])
-      elif l.endswith('search starts here:'):
-        in_includes = True
-  return flags
+#def YcmIncludeFlags():
+#  """Pointless: done automatically."""
+#  return ['-I', join(expanduser('~'), '.vim', '.bundle', 'YouCompleteMe', 'python', 'clang_includes')]
+
+#def SystemIncludeFlags():
+#  """Pointless? Automatically get std library with automatic Ycm-clang_includes."""
+#  flags = []
+#  try:
+#    with open(devnull, 'rb') as null:
+#      env = environ.copy()
+#      env['LC_ALL'] = 'C'
+#      stdout = sp.check_output(
+#        [cc, '-v', '-x', 'c++', '-c', '-'], env=env, universal_newlines=True
+#        , stderr=sp.STDOUT, stdin=null.fileno()
+#      )
+#  except:
+#    pass
+#  else:
+#    in_includes = False
+#    for line in stdout.splitlines():
+#      l = line.strip()
+#      if l == 'End of search list.':
+#        in_includes = False
+#      elif in_includes and line.startswith(' '):
+#        flags.extend(['-isystem', l])
+#      elif l.endswith('search starts here:'):
+#        in_includes = True
+#  return flags
 
 def DefaultFlags():
   paths = (absp for absp in abslistdir(root) if isdir(absp) and not basename(absp).startswith('.'))
-  fs = ['-I', root]
+  fs = ['-x', 'c++', '-std=c++11', '-I', root]
   for path in paths:
-    fs.extend(['-I', path])
-    includes = (p for p in abslistdir(path) if isdir(p) and basename(p) in ('include', 'inc'))
-    for inc in includes:
-      fs.extend(['-I', inc])
-  fs.extend(['-x', 'c++', '-std=c++11'])
+    includes = [p for p in abslistdir(path) if isdir(p) and basename(p) in ('include', 'inc')]
+    if not includes:
+      fs.extend(['-I', path])
+    else:
+      for inc in includes:
+        fs.extend(['-I', inc])
   return fs
 
 def MakeRelativePathsInFlagsAbsolute(fs, working_directory):
   if not working_directory:
     return list(fs)
-  new_flags = []
+  new_fs = []
   make_next_absolute = False
-  for flag in fs:
-    new_flag = flag
+  for f in fs:
+    new_f = f
     if make_next_absolute:
       make_next_absolute = False
-      if not flag.startswith('/'):
-        new_flag = join(working_directory, flag)
-    for path_flag in path_flags:
-      if flag == path_flag:
+      if not f.startswith('/'):
+        new_f = join(working_directory, f)
+    for p in path_flags:
+      if f == p:
         make_next_absolute = True
         break
-      if flag.startswith(path_flag):
-        path = flag[len(path_flag):]
-        new_flag = path_flag + join(working_directory, path)
+      if f.startswith(p):
+        path = f[len(p):]
+        new_f = p + join(working_directory, path)
         break
-    if new_flag:
-      new_flags.append(new_flag)
-  return new_flags
+    if new_f:
+      new_fs.append(new_f)
+  return new_fs
+
+def StripNonFlags(fs):
+  """Please rewrite this: check for desired flags instead of removing unwanted ones."""
+  if not fs:
+    return []
+  non_flag_opts = ('-c', '-o')
+  non_flag_args = ('-W', '-O', '-f', '-pipe', '-g', '-m')
+  new_fs = [fs[0]]
+  is_arg = False
+  skip_next = False
+  for f in fs[1:]:
+    if skip_next:
+      skip_next = False
+    elif not is_arg and f in non_flag_opts:
+      skip_next = True
+    elif not any((f.startswith(a) for a in non_flag_args)):
+      if is_arg:
+        is_arg = False
+        new_fs.append(f)
+      elif f.startswith('-') and len(f) > 1:
+        is_arg = True
+        new_fs.append(f)
+      elif not f.startswith('-'):
+        pass
+  return new_fs
+
+def AddSourceStdFlags(fs):
+  if not fs:
+    return []
+  fs = fs[:]
+  explicit_std = False
+  std = None
+  for f in fs:
+    if f.startswith('-std='):
+      explicit_std = True
+      std = f
+  explicit_src = False
+  src = None
+  is_arg = False
+  is_src = False
+  for f in fs:
+    if is_src:
+      explicit_src = True
+      src = f
+      break
+    elif not is_arg and f == '-x':
+      is_src = True
+    elif f.startswith('-') and len(f) > 1:
+      is_arg = True
+    elif is_arg:
+      is_arg = False
+  cc = fs[0]
+  if not src:
+    if cc.endswith('++') or cc.startswith('cl'):
+      src = 'c++'
+    elif cc.startswith('cc') or cc.endswith('cc') or cc.startswith('clang'):
+      src = 'c'
+  if not src and std:
+    if std.find('++') >= 0:
+      src = 'c++'
+    else:
+      src = 'c'
+  elif src and not std:
+    std = '-std=' + src + '11'
+  elif not src and not std:
+    src = 'c++'
+    std = '-std=c++11'
+  if not explicit_std and std:
+    fs.insert(1, std)
+  if not explicit_src and src:
+    fs.insert(1, src)
+    fs.insert(1, '-x')
+  return fs
 
 def FlagsForFile(filename):
   if not database:
@@ -120,7 +199,7 @@ def FlagsForFile(filename):
   else:
     # GetCompilationInfoForFile returns a "list-like" StringVec object.
     compilation_info = database.GetCompilationInfoForFile(abspath(filename))
-    flags = MakeRelativePathsInFlagsAbsolute(
+    flags = AddSourceStdFlags(StripNonFlags(MakeRelativePathsInFlagsAbsolute(
       compilation_info.compiler_flags_,
-      compilation_info.compiler_working_dir_ )
-  return {'flags': SplitPathFlags(flags) + SystemIncludeFlags(), 'do_cache': True}
+      compilation_info.compiler_working_dir_ )))[1:]
+  return {'flags': SplitPathFlags(flags), 'do_cache': True}
