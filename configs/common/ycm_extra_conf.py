@@ -32,9 +32,10 @@ here = dirname(abspath(__file__))
 root = get_root_dir(here)
 if not root:
   root = here[:]
-database = ycm_core.CompilationDatabase(root)
-if not database.DatabaseSuccessfullyLoaded():
-  database = None
+if isfile(join(root, 'compile_commands.json')):
+  database = ycm_core.CompilationDatabase(root)
+  if not database.DatabaseSuccessfullyLoaded():
+    database = None
 
 path_flags = ['-isystem', '-I', '-iquote', '--sysroot=']
 def StripPathFlags(f):
