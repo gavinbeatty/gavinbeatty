@@ -409,10 +409,15 @@ endif
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 
+let g:ycm_confirm_extra_conf = 0
 "let g:ycm_min_num_of_chars_for_completion = 1
-"let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
-"let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
-let g:ycm_filetype_blacklist={'unite': 1, 'markdown': 1, 'notes': 1, 'text': 1, 'txt': 1}
+let g:ycm_filetype_whitelist = {
+  \ 'c': 1, 'cpp': 1, 'objcpp': 1
+  \ }
+"let g:ycm_filetype_blacklist = {
+"  \ 'unite': 1, 'markdown': 1, 'notes': 1, 'text': 1, 'txt': 1,
+"  \ 'gitcommit': 1, 'svn': 1,
+"  \ }
 
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
