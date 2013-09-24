@@ -320,7 +320,10 @@ nnoremap <leader>bb :make!<CR> <Bar> :copen<CR>
 nnoremap <leader>bn :cnext<CR>
 nnoremap <leader>bp :cprev<CR>
 nnoremap <leader>bi :copen<CR>
-nnoremap <leader>bc :YcmDiags<CR>
+
+nnoremap <leader>bc :YcmDiags<cr>
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<cr>
+nnoremap <leader>jD :YcmCompleter GoToDeclaration<cr>
 
 " ("diff no") turn off diff mode and report the change
 nnoremap <leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
@@ -409,6 +412,9 @@ let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 let g:ycm_filetype_blacklist={'unite': 1}
+
+let g:syntastic_enable_highlighting = 1
+"let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
 
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
