@@ -507,8 +507,8 @@ if test "$isinteractive" -ne 0 ; then
     moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
 
     bj() {
-        local testfile="/tmp/gavinbeatty-bjtestcap-$(uuidgen)"
-        bjam "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
+        local testfile="/tmp/gavinbeatty-bjtestcap$(uuidgen 2>/dev/null || true)"
+        b2 "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
         local e="${PIPESTATUS[0]}"
         cat <<EOF
 XXXXXXXXXXXXXXXXXXX
@@ -516,7 +516,7 @@ XXX TEST OUTPUT XXX
 XXXXXXXXXXXXXXXXXXX
 EOF
         local ge=0
-        "${GREP:-grep}" -E '^(\*\*passed\*\*|\.\.\.failed)' "$testfile" || ge=$?
+        "${GREP:-grep}" '^\(\*\*passed\*\*\|\.\.\.failed\)' "$testfile" || ge=$?
         case $ge in
             0|1) ;;
             *) return $ge ;;
@@ -531,7 +531,7 @@ EOF
         doin "$d" bj "$@"
     }
     bjerrs() {
-        local errsfile="/tmp/gavinbeatty-bjerrs-$(uuidgen)"
+        local errsfile="/tmp/gavinbeatty-bjerrs$(uuidgen 2>/dev/null || true)"
         bj "$@" | tee "$errsfile"
         local e="${PIPESTATUS[0]}"
         fgrep error: "$errsfile" | wc -l
@@ -542,12 +542,6 @@ EOF
         test $ge -ne 0 && return $ge
         test $we -ne 0 && return $we
         return 0
-    }
-    xxxs() {
-        local xxxsfile="/tmp/gavinbeatty-xxxs-$(uuidgen)"
-        sfgrep XXX | tee "$xxxsfile"
-        wc -l < "$xxxsfile"
-        rm "$xxxsfile" || :
     }
 
     ismounted() { mount | "${GREP:-grep}" -Fq " on ${1} type " ; }
