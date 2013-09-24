@@ -58,7 +58,7 @@ Options
     -c          find only C/C++ files -- equivalent to \`-t cppc'
     -t <type>   find only files of the given <type>
     -e <ext>    find only files with <ext> file extension
-    -n <name>   find only files matching -name <name>
+    -n <name>   find only paths matching -name <name>
     -d          print some debugging of the find command
 
 Arguments
@@ -310,9 +310,6 @@ main() {
     if test -n "$ext" ; then
         files=1
         ext="$(echo "$ext" | sed -e 's/^\.*//')" # strip leading .s
-    fi
-    if test -n "$name" ; then
-        files=1
     fi
 
     findfiles=""
