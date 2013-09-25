@@ -138,11 +138,10 @@ main() {
             die "Cannot give <files> and <dir> at the same time"
         fi
         "$fxn" "$@"
-    elif test $# -eq 0 ; then
-        "$fxn" .
+    elif test -n "$files" ; then
+        "$fxn" -L "$files" "$@"
     else
-        # doesn't seem to only index these files though
-        "$fxn" -L "$files"
+        "$fxn" "$@"
     fi
 }
 main "$@"
