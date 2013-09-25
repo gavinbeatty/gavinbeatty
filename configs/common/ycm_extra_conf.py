@@ -1,7 +1,7 @@
 # vi: set et ts=2 sw=2:
 import sys
 from os import listdir, getcwd, environ, devnull
-from os.path import abspath, normpath, split, join, expanduser, isfile, isdir, isabs, splitdrive
+from os.path import abspath, normpath, split, join, expanduser, isfile, isdir, isabs, splitdrive, splitext
 import subprocess as sp
 import ycm_core
 
@@ -194,13 +194,30 @@ def AddSourceStdFlags(fs):
     fs.insert(1, '-x')
   return fs
 
+def HeaderToSources(filename):
+  """Convert a header filename into a sequence of potential source filenames."""
+  head = splitext(filename)[0]
+  if filename.endswith('.h'):
+    return (head + e for e in ('.cc', '.cpp', '.c'))
+  elif filename.endswith('.hh'):
+    return (head + '.cc',)
+  elif filename.endswith('.hpp'):
+    return (head + '.cpp',)
+  elif filename.endswith('.hxx'):
+    return (head + '.cxx',)
+  else:
+    return (filename,)
+
 def FlagsForFile(filename):
   if not database:
     flags = DefaultFlags()
   else:
-    # GetCompilationInfoForFile returns a "list-like" StringVec object.
-    compilation_info = database.GetCompilationInfoForFile(abspath(filename))
-    flags = AddSourceStdFlags(StripNonFlags(MakeRelativePathsInFlagsAbsolute(
-      compilation_info.compiler_flags_,
-      compilation_info.compiler_working_dir_ )))[1:]
+    for f in HeaderToSources(filename):
+      # GetCompilationInfoForFile returns a "list-like" StringVec object.
+      compilation_info = database.GetCompilationInfoForFile(abspath(f))
+      flags = AddSourceStdFlags(StripNonFlags(MakeRelativePathsInFlagsAbsolute(
+        compilation_info.compiler_flags_,
+        compilation_info.compiler_working_dir_ )))[1:]
+      if flags:
+        break
   return {'flags': SplitPathFlags(flags), 'do_cache': True}
