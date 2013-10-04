@@ -90,40 +90,34 @@ if test -d "${HOME_PREFIX}" ; then
     done
 fi
 n_="${HOME}/.cabal/bin"
-v_=
-test -z "${PATH:-}" || v_=":$PATH"
-if (test -d "${HOME}/.cabal") && (! echo "$v_" | grep -Fq "$n_") ; then
-    PATH="${n_}${v_}" ; export PATH
+if test -d "${HOME}/.cabal" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
 fi
 # mac specific, but put it here regardless
 n_="${HOME}/Library/Haskell/bin"
-v_=
-test -z "${PATH:-}" || v_=":$PATH"
-if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-    PATH="${n_}${v_}" ; export PATH
+if test -d "$n_" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
 fi
 if test -z "${MANPATH:-}" && type manpath >/dev/null 2>&1 ; then
     MANPATH="$(manpath)" ; export MANPATH
 fi
 for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
-    v_=
-    test -z "${MANPATH:-}" || v_=":$MANPATH"
-    if (test -d "$n_") && (! echo "$v_" | grep -Fq "$n_") ; then
-        MANPATH="${n_}${v_}" ; export MANPATH
+    if test -d "$n_" && ! echo "${MANPATH:-}" | grep -Fq "$n_" ; then
+        MANPATH="${n_}${MANPATH:+:}${MANPATH:-}" ; export MANPATH
     fi
 done
 unset v_
 # use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
 n_="${HOME}/.rvm/bin"
-if (test -d "${HOME}/.rvm") && (! echo "${PATH:-}" | grep -Fq "$n_") ; then
+if test -d "${HOME}/.rvm" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
 fi
 unset n_
 # macports
-if (test -d "/opt/local/bin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/bin") ; then
+if test -d "/opt/local/bin" && ! echo "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
     PATH="${PATH:-}${PATH:+:}/opt/local/bin}" ; export PATH
 fi
-if (test -d "/opt/local/sbin") && (! echo "${PATH:-}" | grep -Fq "/opt/local/sbin") ; then
+if test -d "/opt/local/sbin" && ! echo "${PATH:-}" | grep -Fq "/opt/local/sbin" ; then
     PATH="${PATH:-}${PATH:+:}/opt/local/sbin}" ; export PATH
 fi
 v_="${PATH:-}"
@@ -148,7 +142,7 @@ fi
 #fi
 
 # XXX how to detect msys/mingw properly? what's the difference?
-if (test x"$MSYSTEM" = x"MINGW32") || (test x"$OSTYPE" = x"msys") ; then
+if test x"${MSYSTEM:-}" = x"MINGW32" || test x"${OSTYPE:-}" = x"msys" ; then
     if test -z "$USER" ; then
         USER="${USERNAME:-}" ; export USER # export even if empty
     fi

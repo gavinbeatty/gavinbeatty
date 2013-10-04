@@ -113,24 +113,6 @@ NeoBundleLazy 'add20/vim-conque', {'autoload': {'commands': ['ConqueTerm']}}
 NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
       \ }}
-" NeoBundle options
-call neobundle#config('vimproc', {
-      \ 'build' : {
-      \     'windows' : 'make -f make_mingw32.mak',
-      \     'cygwin' : 'make -f make_cygwin.mak',
-      \     'mac' : 'make -f make_mac.mak',
-      \     'unix' : 'make -f make_unix.mak',
-      \    },
-      \ })
-call neobundle#config('vimshell', {
-      \ 'lazy' : 1,
-      \ 'autoload' : {
-      \   'commands' : [{ 'name' : 'VimShell',
-      \                   'complete' : 'customlist,vimshell#complete'},
-      \                 'VimShellExecute', 'VimShellInteractive',
-      \                 'VimShellTerminal', 'VimShellPop'],
-      \   'mappings' : ['<Plug>(vimshell_switch)']
-      \ }})
 NeoBundleCheck
 
 syntax enable
