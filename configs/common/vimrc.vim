@@ -83,6 +83,7 @@ NeoBundle 'Valloric/YouCompleteMe', {'vim_version':'7.3.584'}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 " Python
 NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
+NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
 " Text
 NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
 NeoBundle 'kana/vim-fakeclip'
