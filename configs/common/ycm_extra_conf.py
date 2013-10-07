@@ -10,10 +10,34 @@ dirname = lambda x: split(x)[0]
 basename = lambda x: split(x)[1]
 database = None
 
+def head_cat(p):
+  try:
+    with open(p, 'r') as f:
+      return f.readline()
+  except IOError:
+    return ''
+
+def default_cast(ttype, value, deflt=None):
+  try:
+    return ttype(value)
+  except ValueError:
+    if deflt is None:
+      return ttype()
+    return deflt
+
 def is_root_dir(d):
-  for f in (basename(x) for x in listdir(d) if isfile(join(d, x))):
-    if f == '.ycm_extra_conf.py':
+  if isdir(d) and (basename(abspath(d)) == 'trunk' or basename(abspath(join(d, '..'))) in ('tags', 'branches')):
+    return True
+  for f in listdir(d):
+    p = join(d, f)
+    if isfile(p) and f in ('.ycm_extra_conf.py', 'Jamroot', 'Jamroot.jam', 'project-root.jam'):
       return True
+    elif isdir(p):
+      if f in ('.git', '.hg', '.bzr'):
+        return True
+      # .svn/format >= 12 means svn client 1.7 with centralized meta-data.
+      elif f == '.svn' and default_cast(long, head_cat(join(p, 'format'))) >= 12:
+        return True
   return False
 
 def get_root_dir(cwd=None):
