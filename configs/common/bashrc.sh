@@ -516,7 +516,7 @@ XXX TEST OUTPUT XXX
 XXXXXXXXXXXXXXXXXXX
 EOF
         local ge=0
-        "${GREP:-grep}" '^\(\*\*passed\*\*\|\.\.\.failed\)' "$testfile" || ge=$?
+        "${GREP:-grep}" '^\(\*\*passed\*\*\|\.\.\.failed\|testing\..*\.passed$\)' "$testfile" || ge=$?
         case $ge in
             0|1) ;;
             *) return $ge ;;
