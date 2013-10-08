@@ -14,7 +14,9 @@ if !exists('mapleader') | let mapleader = ',' | endif
 if !exists('g:mapleader') | let g:mapleader = ',' | endif
 
 let &tags = getcwd().'/tags,'
-" cscope_maps will add 'cscope.out' if present, so no need to do it here.
+set nocscopeverbose
+exec 'cscope add '.fnameescape(getcwd().'/cscope.out')
+set cscopeverbose
 
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
