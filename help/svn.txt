@@ -1,0 +1,18 @@
+% Helpful tips for git
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Remove a branch from a shallow project checkout
+
+    $ svn co --depth=empty http://repo/project
+    $ cd project
+    $ svn up trunk
+    $ svnshallowup.sh branches/wip
+    $ cd !$
+    $ hack hack hack
+    $ cd ../..
+    $ svn merge ^/branches/wip trunk
+    $ svn up --set-depth exclude branches/wip
+
+The last line is better than `rm -rf branches/wip` because it doesn't lead to
+`svn status` reporting '!' for all tracked-but-missing files and directories.
+
