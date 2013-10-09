@@ -28,7 +28,7 @@ help() {
   cat <<EOF
 Options:
  -h${longopts_support:+|--help}:
-  Prints this help message and exits.
+  Print this help message and exit.
  -l${longopts_support:+|--leaf-depth} <depth>
   On the leaf, use --depth=<depth> if it's not the empty string.
  -v${longopts_support:+|--verbose}
@@ -39,10 +39,10 @@ Options:
 Arguments:
  <path>:
   The path to update in a "shallow" manner. That is,
-  \`svn up --depth empty\` on all the branches, and \`svn up\` on the leaf.
+  \`svn up --depth=empty\` on all the branches, and \`svn up\` on the leaf.
 EOF
 }
-error() { echo "error: $@" >&2 ; }
+error() { printf "error: %s\n" "$*" >&2 ; }
 die() { error "$@" ; exit 1 ; }
 getopt_works() { "$getopt" -n "test" -o "ab:c" -- -a -bc -c >/dev/null 2>&1 ; }
 
@@ -87,14 +87,14 @@ svnshallowup() {
 main() {
   if getopt_works ; then
     longopts=
-    test -n "$longopts_support" && longopts="-l help,leaf-depth:,verbose,dry-run"
+    test -n "$longopts_support" && longopts="-l help,leaf-depth:,depth:,verbose,dry-run"
     opts="$("$getopt" -n "$prog" -o "hlvn" $longopts -- "$@")"
     eval set -- $opts
 
     while test $# -gt 0 ; do
       case "$1" in
       -h|--help) help=1 ;;
-      -l|--leaf-depth) leaf_depth="$2" ; shift ;;
+      -l|--leaf-depth|--depth) leaf_depth="$2" ; shift ;;
       -v|--verbose) verbose=1 ;;
       -n|--dry-run) dry_run=1 ; verbose=1 ;;
       --) shift ; break ;;
