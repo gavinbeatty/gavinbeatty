@@ -74,6 +74,7 @@ svnlist.sh \
 svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
+svnshallowup.sh \
 svnswitch.sh \
 svnurl.sh \
 svnwcroot.sh \
