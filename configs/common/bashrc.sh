@@ -494,7 +494,9 @@ if test "$isinteractive" -ne 0 ; then
             colordiff | "${PAGER:-less}" "$@" ; return ${PIPESTATUS[0]}
         else "${PAGER:-less}" "$@" ; fi
     }
-    svndiff() { DIFFEXTRA=-b ${SVN_EXE:-svn} diff "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
+    svndiff() { ${SVN_EXE:-svn} diff -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
+    svnfdiff() { ${SVN_EXE:-svn} diff --ignore-properties -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
+    svnpdiff() { ${SVN_EXE:-svn} diff --properties-only -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
     svnmkpatch() { ${SVN_EXE:-svn} diff --internal-diff --notice-ancestry --show-copies-as-adds "$@" ; }
     alt() { ! type colordiff >/dev/null 2>&1 || DIFF=colordiff ; p "${DIFF:-diff}" -U10 -brN "$@" ; }
     svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
