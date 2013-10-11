@@ -4,6 +4,6 @@ set -e
 set -u
 DIFF="${DIFF:-colordiff}"
 DIFFCTX="${DIFFCTX:-10}"
-DIFFOPTS="${DIFFOPTS:--U$DIFFCTX -p}"
+DIFFOPTS="${DIFFOPTS:--U$DIFFCTX -p -b}"
 DIFFEXTRA="${DIFFEXTRA:-}"
 exec $DIFF $DIFFOPTS $DIFFEXTRA "$@"
