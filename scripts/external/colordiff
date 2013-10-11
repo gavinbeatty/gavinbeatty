@@ -22,11 +22,11 @@
 ########################################################################
 
 use strict;
-use Getopt::Long qw(:config pass_through);
+use Getopt::Long qw(:config require_order pass_through);
 use IPC::Open2;
 
 my $app_name     = 'colordiff';
-my $version      = '1.0.9';
+my $version      = '1.0.9.1';
 my $author       = 'Dave Ewart';
 my $author_email = 'davee@sungate.co.uk';
 my $app_www      = 'http://colordiff.sourceforge.net/';
@@ -141,6 +141,19 @@ foreach $config_file (@config_files) {
     }
 }
 
+my $specified_difftype;
+GetOptions(
+    "difftype=s" => \$specified_difftype,
+    "force" => \$color_patch
+);
+# TODO - check that specified type is valid, issue warning if not
+# FIXME - work out some magic here to make it rip off
+# colordiff-specific long options, such as:
+#
+#   --difftype={plain,context,unified,sideside,debdiff}
+#
+# then, optionally, throw away other options if in a pipe
+
 # If output is to a file, switch off colours, unless 'color_patch' is set
 # Relates to http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=378563
 if ((-f STDOUT) && ($color_patch == 0)) {
@@ -153,25 +166,12 @@ if ((-f STDOUT) && ($color_patch == 0)) {
     $colour{off} = '';
 }
 
-my $specified_difftype;
-GetOptions(
-    "difftype=s" => \$specified_difftype
-);
-# TODO - check that specified type is valid, issue warning if not
-
 # ----------------------------------------------------------------------------
 
 if ($show_banner == 1) {
     print STDERR "$app_name $version ($app_www)\n";
     print STDERR "$copyright $author, $author_email\n\n";
 }
-
-# FIXME - work out some magic here to make it rip off
-# colordiff-specific long options, such as:
-#
-#   --difftype={plain,context,unified,sideside,debdiff}
-#
-# then, optionally, throw away other options if in a pipe
 
 my @inputstream;
 
