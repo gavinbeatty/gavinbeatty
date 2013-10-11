@@ -486,6 +486,7 @@ if test "$isinteractive" -ne 0 ; then
     svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
     svnlog() { svnl log -vr HEAD:1 "$@" ; }
+    svnlogdiff() { svnl log -vr HEAD:1 --diff -x -u -x -b "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     _diffpager() {
         if test -z "${DIFF:-}" && (test -p /dev/stdout || test -f /dev/stdout) ; then
