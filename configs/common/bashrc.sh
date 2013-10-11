@@ -472,7 +472,11 @@ if test "$isinteractive" -ne 0 ; then
     grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
 
+    alt() { local d=diff ; ! type colordiff >/dev/null 2>&1 || d=colordiff ; p "${DIFF:-$d}" -U10 -bprN "$@" ; }
+    c() { DIFF="colordiff --force" "$@" ; }
+
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
+    svnd() { c svnl "$@" ; }
     svngext() {
         if test $# -eq 0 ; then set -- . ; fi
         ${SVN_EXE:-svn} pg svn:externals "$@"
@@ -485,22 +489,12 @@ if test "$isinteractive" -ne 0 ; then
     svnstm() { svnst "$@" | "${GREP:-grep}" '^M' ; }
     svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
-    svnlog() { svnl log -vr HEAD:1 "$@" ; }
-    svnlogdiff() { svnl log -vr HEAD:1 --diff -x -u -x -b "$@" ; }
+    svnlog() { svnd log -vr HEAD:1 "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
-    _diffpager() {
-        if test -z "${DIFF:-}" && (test -p /dev/stdout || test -f /dev/stdout) ; then
-            "${PAGER:-less}" "$@"
-        elif type colordiff >/dev/null 2>&1 ; then
-            colordiff | "${PAGER:-less}" "$@" ; return ${PIPESTATUS[0]}
-        else "${PAGER:-less}" "$@" ; fi
-    }
-    svndiff() { ${SVN_EXE:-svn} diff -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
-    svnfdiff() { ${SVN_EXE:-svn} diff --ignore-properties -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
-    svnpdiff() { ${SVN_EXE:-svn} diff --properties-only -x -u -x -b "$@" | _diffpager ; return ${PIPESTATUS[0]} ; }
+    svndiff() { svnd diff "$@" ; }
+    svnfdiff() { svndiff --ignore-properties "$@" ; }
+    svnpdiff() { svndiff --properties-only "$@" ; }
     svnmkpatch() { ${SVN_EXE:-svn} diff --internal-diff --notice-ancestry --show-copies-as-adds "$@" ; }
-    alt() { ! type colordiff >/dev/null 2>&1 || DIFF=colordiff ; p "${DIFF:-diff}" -U10 -brN "$@" ; }
-    svndiffstat() { svndiff "$@" | diffstat ; return ${PIPESTATUS[0]} ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
     svntags() { svnlist.sh -t "$@" ; }
