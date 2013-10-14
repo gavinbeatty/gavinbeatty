@@ -69,6 +69,7 @@ stripcolor.sh \
 svnaddcopyright.sh \
 svnblamefirst.sh \
 svndiffadaptor.sh \
+svngitdiff.py \
 svnhasprop.sh \
 svnlastcommit.sh \
 svnlist.sh \

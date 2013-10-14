@@ -472,8 +472,19 @@ if test "$isinteractive" -ne 0 ; then
     grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
 
-    alt() { local d=diff ; ! type colordiff >/dev/null 2>&1 || d=colordiff ; p "${DIFF:-$d}" -U10 -bprN "$@" ; }
-    c() { DIFF="colordiff --force" "$@" ; }
+    if type git >/dev/null 2>&1 && type svngitdiff.py >/dev/null 2>&1 ; then
+        export DIFF="svngitdiff.py -U10 -p -b --patience --color=auto"
+        export DIFFCOLOR="$DIFF --color=always"
+    elif type colordiff >/dev/null 2>&1 ; then
+        export DIFF="colordiff -U10 -p -b"
+        export DIFFCOLOR="colordiff --force -U10 -p -b"
+    else
+        export DIFF="diff -U10 -p -b"
+        export DIFFCOLOR="$DIFF"
+    fi
+
+    c() { DIFF="$DIFFCOLOR" "$@" ; }
+    alt() { c p $DIFF -rN "$@" ; }
 
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svnd() { c svnl "$@" ; }

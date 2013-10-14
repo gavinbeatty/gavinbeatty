@@ -1,9 +1,5 @@
 #!/bin/sh
-# vi: set ft=sh expandtab shiftwidth=4 tabstop=4:
+# vi: set ft=sh et sw=2 ts=2:
 set -e
 set -u
-DIFF="${DIFF:-colordiff}"
-DIFFCTX="${DIFFCTX:-10}"
-DIFFOPTS="${DIFFOPTS:--U$DIFFCTX -p -b}"
-DIFFEXTRA="${DIFFEXTRA:-}"
-exec $DIFF $DIFFOPTS $DIFFEXTRA "$@"
+exec ${DIFF:-diff -U10 -p -b} "$@"
