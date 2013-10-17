@@ -493,6 +493,7 @@ if test "$isinteractive" -ne 0 ; then
         ${SVN_EXE:-svn} pe svn:externals "$@"
     }
     svnst() { ${SVN_EXE:-svn} st --ignore-externals "$@" | "${GREP:-grep}" -v '^X  ' ; }
+    svnsti() { ${SVN_EXE:-svn} st --ignore-externals "$@" | "${GREP:-grep}" -v '^X  \|^?' ; }
     svnstm() { svnst "$@" | "${GREP:-grep}" '^M' ; }
     svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
