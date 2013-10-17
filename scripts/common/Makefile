@@ -68,6 +68,7 @@ shify.sh \
 stripcolor.sh \
 svnaddcopyright.sh \
 svnblamefirst.sh \
+svndepth.sh \
 svndiffadaptor.sh \
 svngitdiff.py \
 svnhasprop.sh \
