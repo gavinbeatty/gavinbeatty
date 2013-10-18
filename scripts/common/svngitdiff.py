@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # vi: set ft=python et sw=2 ts=2:
-from os import environ, fstat
+from os import environ, fstat, linesep
 from stat import S_ISFIFO
+from errno import EPIPE
 import subprocess as sp
 import sys
 
@@ -89,20 +90,45 @@ try:
   stdout, stderr = p.communicate(input=stdin)
 except OSError, e:
   sys.exit(str(e))
+
+def Write(p, fobj, *args, **kwargs):
+  """Write to `fobj`, and if we get `EPIPE`, `sys.exit(p.returncode)`.
+
+  This means we handle writing to unix-like `head`, etc., in the unix-like way:
+  - don't write "broken pipe" messages to `stderr`
+  - exit with the appropriate exit value (in our case, the diff output's exit value)
+  """
+  try:
+    return fobj.write(*args, **kwargs)
+  except IOError, e:
+    if e.errno == EPIPE:
+      sys.exit(p.returncode)
+    raise
+
+def GetLinesep(line, fallback=linesep):
+  """Go a little overboard trying to reproduce the original line separator."""
+  for separator in ('\r\n', '\n', '\r'):
+    idx = line.rfind(separator)
+    if idx >= 0:
+      return line[idx:]
+  return fallback
+
 # Print all of stdout, then all of stderr.
 # Lines 0 and 1 are diff and sha1 noise.
 # Lines 2 and 3 are where the labels go.
 # This way takes care of --color=always.
 # Don't try to colorize new '---' lines.
-lines = stdout.splitlines()
+lines = stdout.splitlines(True)
 idx = DiffIndex(lines)
-if idx >= 0 and len(ells) >= 2:
-  print('--- ' + ells[0])
-  print('+++ ' + ells[1])
-  for line in lines[idx:]:
-    print(line)
-else:
-  sys.stdout.write(stdout)
-if stderr.rstrip('\r\n'):
-  sys.stderr.write(stderr)
+try:
+  if idx >= 2 and len(ells) >= 2:
+    Write(p, sys.stdout, '--- ' + ells[0] + GetLinesep(lines[idx - 2]))
+    Write(p, sys.stdout, '+++ ' + ells[1] + GetLinesep(lines[idx - 1]))
+    for line in lines[idx:]:
+      Write(p, sys.stdout, line)
+  else:
+    Write(p, sys.stdout, stdout)
+finally:
+  if stderr.rstrip('\r\n'):
+    Write(p, sys.stderr, stderr)
 sys.exit(p.returncode)
