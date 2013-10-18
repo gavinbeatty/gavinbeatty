@@ -18,7 +18,7 @@ if ! type "$pager" >/dev/null 2>&1 ; then
     pager=""
 fi
 if test -z "$pager" ; then
-    for i in "more" "less" "cat"; do
+    for i in "less" "more" "cat"; do
         if type "$i" >/dev/null 2>&1 ; then
             pager="$i"
             break

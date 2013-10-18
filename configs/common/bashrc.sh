@@ -55,11 +55,12 @@ BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
 GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
 
 LESS="${LESS:-}"
-if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*F\>' ; then LESS="${LESS} -F" ; fi
-if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*X\>' ; then LESS="${LESS} -X" ; fi
-if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*R\>' ; then LESS="${LESS} -R" ; fi
-if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*r\>' ; then LESS="${LESS} -r" ; fi
-if ! echo "$LESS" | grep -q '\<-[[:alnum:]]*S\>' ; then LESS="${LESS} -S" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*X' ; then LESS="${LESS} -X" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*R' ; then LESS="${LESS} -R" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*r' ; then LESS="${LESS} -r" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*S' ; then LESS="${LESS} -S" ; fi
+if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*x' ; then LESS="${LESS} -x4" ; fi
 export LESS
 
 # line-wrap minicom by default
