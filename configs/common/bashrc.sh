@@ -470,13 +470,13 @@ if test "$isinteractive" -ne 0 ; then
     # DIFF may use a heuristic to try to colorize.
     # DIFFCOLOR should force color, if the tool supports colors.
     if type git >/dev/null 2>&1 && type svngitdiff.py >/dev/null 2>&1 ; then
-        export      DIFF="svngitdiff.py -U10 -p -b --patience --color=auto"
-        export DIFFCOLOR="svngitdiff.py -U10 -p -b --patience --color=always"
+        export      DIFF="svngitdiff.py -U10 -p --patience --color=auto"
+        export DIFFCOLOR="svngitdiff.py -U10 -p --patience --color=always"
     elif type colordiff >/dev/null 2>&1 ; then
-        export      DIFF="colordiff         -U10 -p -b"
-        export DIFFCOLOR="colordiff --force -U10 -p -b"
+        export      DIFF="colordiff         -U10 -p"
+        export DIFFCOLOR="colordiff --force -U10 -p"
     else
-        export      DIFF="diff -U10 -p -b"
+        export      DIFF="diff -U10 -p"
         export DIFFCOLOR="$DIFF"
     fi
 
@@ -503,7 +503,7 @@ if test "$isinteractive" -ne 0 ; then
     svndiff() { svnd diff "$@" ; }
     svnfdiff() { svndiff --ignore-properties "$@" ; }
     svnpdiff() { svndiff --properties-only "$@" ; }
-    svnmkpatch() { ${SVN_EXE:-svn} diff --internal-diff --notice-ancestry --show-copies-as-adds "$@" ; }
+    svnmkpatch() { ${SVN_EXE:-svn} diff --notice-ancestry --show-copies-as-adds "$@" ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
     svntags() { svnlist.sh -t "$@" ; }
