@@ -1,7 +1,6 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 if test -n "${bash_logout_guard-}" ; then return 0 ; fi
 bash_logout_guard=1
-#iecho ".bash_logout"
 
 # XXX this does not work when using tmux etc. -- you'll only have one login shell
 # XXX tmux list-sessions hangs for some reason when run from ~/.bash_logout
