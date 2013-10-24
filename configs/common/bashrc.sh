@@ -2,16 +2,17 @@
 test -z "${bashrc_guard:-}" || return 0
 bashrc_guard=1
 
+say() { printf "%s\n" "$*" ; }
 case $- in
-*i*) isinteractive=1 ; iecho() { echo "$@" ; } ;;
-*) isinteractive=0 ; iecho() { true ; } ;;
+*i*) isinteractive=1 ; isay() { printf "%s\n" "$*" ; } ;;
+*) isinteractive=0 ; isay() { true ; } ;;
 esac
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
-iecho ".bashrc"
+isay ".bashrc"
 # XXX perhaps use this to add to PATH etc.
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
-regexelem() { echo "$2" | "${GREP:-grep}" -q "\(^${1}:\\|:${1}:\\|:${1}\$\\|^${1}\$\)" ; }
+regexelem() { say "$2" | "${GREP:-grep}" -q "\\(^$1:\\|:$1:\\|:$1\$\\|^$1\$\\)" ; }
 
 if test "$isinteractive" -ne 0 ; then
     cat /tmp/gavinbeatty-du.log 2>/dev/null || true
@@ -26,11 +27,11 @@ fi
 #shopt -s checkwinsize # BASH only
 
 ulimit -c unlimited
-iecho "ulimit -c $(ulimit -c)"
+isay "ulimit -c $(ulimit -c)"
 # get rid of nosy others
 # 0027 => 'u=rwx,g=rx,o='
 umask 0027
-iecho "umask $(umask)"
+isay "umask $(umask)"
 
 if test -r "${HOME}/.dircolors" ; then
     eval $(dircolors "${HOME}/.dircolors") >/dev/null
@@ -55,90 +56,87 @@ BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
 GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
 
 LESS="${LESS:-}"
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*X' ; then LESS="${LESS} -X" ; fi
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*R' ; then LESS="${LESS} -R" ; fi
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*r' ; then LESS="${LESS} -r" ; fi
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*S' ; then LESS="${LESS} -S" ; fi
-if ! echo "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*x' ; then LESS="${LESS} -x4" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*X' ; then LESS="${LESS} -X" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*R' ; then LESS="${LESS} -R" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*r' ; then LESS="${LESS} -r" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*S' ; then LESS="${LESS} -S" ; fi
+if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*x' ; then LESS="${LESS} -x4" ; fi
 export LESS
 
 # line-wrap minicom by default
 MINICOM="${MINICOM:-}"
-if ! echo "$MINICOM" | grep -q -- '-[[:alnum:]]*w' ; then
-    MINICOM="${MINICOM}${MINICOM:+ }-w" ; export MINICOM
+if ! say "$MINICOM" | grep -q -- '-[[:alnum:]]*w' ; then
+    MINICOM="${MINICOM:+$MINICOM }-w" ; export MINICOM
 fi
-if ! echo "$MINICOM" | grep -q -- '-[[:alnum:]]*c +on' ; then
-    MINICOM="${MINICOM}${MINICOM:+ }-c on" ; export MINICOM
+if ! say "$MINICOM" | grep -q -- '-[[:alnum:]]*c +on' ; then
+    MINICOM="${MINICOM:+$MINICOM }-c on" ; export MINICOM
 fi
 
 ########################################################################
 # Set PATH and associated variables
 ########################################################################
 if test "$isinteractive" -ne 0 ; then
-    if ! regexelem '\.' "$v_" ; then
-        PATH="${PATH:-}${PATH:+:}." ; export PATH
+    if ! regexelem '\.' "${PATH:-}" ; then
+        PATH="${PATH:+$PATH:}." ; export PATH
     fi
 fi
-PATH="${HOME}/bin${PATH:+:}${PATH:-}" ; export PATH
+PATH="${HOME}/bin${PATH:+:$PATH}" ; export PATH
 
 HOME_PREFIX="${HOME}/.local" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
     for n_ in "${HOME_PREFIX}/"{sbin,bin} ; do
         if test -d "$n_" ; then
-            PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
+            PATH="${n_}${PATH:+:$PATH}" ; export PATH
         fi
     done
 fi
 n_="${HOME}/.cabal/bin"
-if test -d "${HOME}/.cabal" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
+if test -d "${HOME}/.cabal" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
 # mac specific, but put it here regardless
 n_="${HOME}/Library/Haskell/bin"
-if test -d "$n_" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
+if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
 if test -z "${MANPATH:-}" && type manpath >/dev/null 2>&1 ; then
     MANPATH="$(manpath)" ; export MANPATH
 fi
 for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
-    if test -d "$n_" && ! echo "${MANPATH:-}" | grep -Fq "$n_" ; then
-        MANPATH="${n_}${MANPATH:+:}${MANPATH:-}" ; export MANPATH
+    if test -d "$n_" && ! say "${MANPATH:-}" | grep -Fq "$n_" ; then
+        MANPATH="${n_}${MANPATH:+:$MANPATH}" ; export MANPATH
     fi
 done
-unset v_
 # use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
 n_="${HOME}/.rvm/bin"
-if test -d "${HOME}/.rvm" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:}${PATH:-}" ; export PATH
+if test -d "${HOME}/.rvm" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
 unset n_
 # macports
-if test -d "/opt/local/bin" && ! echo "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
-    PATH="${PATH:-}${PATH:+:}/opt/local/bin}" ; export PATH
+if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
+    PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
 fi
-if test -d "/opt/local/sbin" && ! echo "${PATH:-}" | grep -Fq "/opt/local/sbin" ; then
-    PATH="${PATH:-}${PATH:+:}/opt/local/sbin}" ; export PATH
+if test -d "/opt/local/sbin" && ! say "${PATH:-}" | grep -Fq "/opt/local/sbin" ; then
+    PATH="${PATH:+$PATH:}/opt/local/sbin}" ; export PATH
 fi
-v_="${PATH:-}"
 n_="/Applications/MacVim.app/Contents/MacOS"
-if test -d "$n_" && ! echo "$v_" | grep -Fq "$n_" ; then
-    PATH="$n_${v_:+:}$v_" ; export PATH
+if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
 if test "$isinteractive" -ne 0 ; then
     if type mvim >/dev/null 2>&1 ; then alias gvim=mvim ; fi
 fi
 n_="/Applications/threadscope.app/Contents/MacOS"
-if test -d "$n_" && ! echo "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="$n_${PATH:+:}${PATH:-}" ; export PATH
+if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
 #pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
 #if test -n "$pyver_" ; then
 #    n_="${HOME}/Library/Python/${pyver_}/bin"
-#    v_="${PATH:-}"
 #    if test -d "$n_" ; then
-#        PATH="$n_${v_:+:}$v_" ; export PATH
+#        PATH="$n_${PATH:+:$PATH}" ; export PATH
 #    fi
 #fi
 
@@ -150,11 +148,9 @@ if test x"${MSYSTEM:-}" = x"MINGW32" || test x"${OSTYPE:-}" = x"msys" ; then
     if ! type python >/dev/null 2>&1 ; then
         python="$(find "/c" -maxdepth 1 -type d \
             -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        v_="${PATH:-}"
         n_="$python"
-        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
-            PATH="${v_}${v_:+:}$n_"
-            export PATH
+        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+            PATH="${PATH:+$PATH:}$n_" ; export PATH
         fi
         unset python
     fi
@@ -162,19 +158,15 @@ if test x"${MSYSTEM:-}" = x"MINGW32" || test x"${OSTYPE:-}" = x"msys" ; then
     if test -d "/c/Program Files/Vim/" ; then
         vim="$(find "/c/Program Files/Vim" -maxdepth 1 -type d \
             -iregex '.*/vim[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        v_="${PATH:-}"
         n_="$vim"
-        if (test -r "$n_") && (! echo "${v_}" | grep -Fq "$n_") ; then
-            PATH="${v_}${v_:+:}$n_"
-            export PATH
+        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+            PATH="${PATH:+$PATH:}$n_" ; export PATH
         fi
         unset vim
     fi
-    v_="${PATH:-}"
     n_="/c/Program Files/GnuWin32/bin"
-    if test -r "$n_" && ! echo "${v_}" | grep -Fq "$n_" ; then
-        PATH="${v_}${v_:+:}$n_"
-        export PATH
+    if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+        PATH="${PATH:+$PATH:}$n_" ; export PATH
     fi
 fi
 
@@ -208,9 +200,9 @@ if test "$isinteractive" -ne 0 ; then
         mkdir "$KEYCHAIN_DIR" 2>/dev/null
         if keychain --inherit any-once --noask --quick --host gavinbeatty >/dev/null 2>&1 ; then
             if . "${KEYCHAIN_DIR}/gavinbeatty-sh" 2>/dev/null ; then
-                iecho "keychain/gavinbeatty-sh"
+                isay "keychain/gavinbeatty-sh"
             elif . "${KEYCHAIN_DIR}/gavinbeatty-sh-gpg" 2>/dev/null ; then
-                iecho "keychain/gavinbeatty-sh-gpg"
+                isay "keychain/gavinbeatty-sh-gpg"
             fi
         fi
     fi
@@ -225,7 +217,7 @@ if test "$isinteractive" -ne 0 ; then
         git_ps1_() {
             local p="$(__git_ps1 "$@")"
             test -n "$p" || return 1
-            echo "$p"
+            printf "%s\n" "$p"
         }
     else
     # taken from git/contrib/completion/git-completion.bash
@@ -297,7 +289,7 @@ if test "$isinteractive" -ne 0 ; then
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
-            v="$(echo "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
+            v="$(say "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
             if test -n "$v" ; then printf "${1:- (%s)}" "$v" && return 0 ; fi
         fi
         return 1
@@ -337,10 +329,9 @@ SUDO_PS1="$PS1_NOCOLOR" ; export SUDO_PS1
 ########################################################################
 # don't set MANPATH as it needs to contain all default manpage paths
 # as well as MacPort's
-v_="${SGML_CATALOG_FILES:-}"
 n_="/opt/local/share/xsl/docbook-xsl/catalog.xml"
-if (test -r "$n_") && (! echo "${v_:-}" | grep -Fq "$n_") ; then
-    SGML_CATALOG_FILES="${v_}${v_:+:}$n_"
+if test -r "$n_" && ! say "${SGML_CATALOG_FILES:-}" | grep -Fq "$n_" ; then
+    SGML_CATALOG_FILES="${SGML_CATALOG_FILES:+$SGML_CATALOG_FILES:}$n_"
     export SGML_CATALOG_FILES
 fi
 
@@ -368,13 +359,13 @@ if test "$isinteractive" -ne 0 ; then
     }
     if type xdg-open >/dev/null 2>&1 ; then
         OPENER="xdg-open"
-    elif type open >/dev/null 2>&1 && test "$(echo "$UNAME")" = "darwin" ; then
+    elif type open >/dev/null 2>&1 && test "$(say "$UNAME")" = "darwin" ; then
         OPENER="command open"
     # elif windows, OPENER="start" ?
     fi
     open() {
         if test -n "${OPENER:-}" ; then r $OPENER "$@"
-        else echo "No OPENER installed/configured." >&2
+        else say "No OPENER installed/configured." >&2
         fi
     }
     e() {
@@ -400,7 +391,7 @@ if test "$isinteractive" -ne 0 ; then
             abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
-                    case "$i" in /*|[A-Za-z]:*) echo "$i" ;; *) echo "$(pwd)/$i" ;; esac
+                    case "$i" in /*|[A-Za-z]:*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
             }
             winslash() {
@@ -414,7 +405,7 @@ if test "$isinteractive" -ne 0 ; then
         *) abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
-                    case "$i" in /*) echo "$i" ;; *) echo "$(pwd)/$i" ;; esac
+                    case "$i" in /*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
             }
             winslash() {
@@ -562,18 +553,18 @@ EOF
             bash_alias_ls="${bash_alias_ls} "'${LS_OPTIONS}'
         fi
         if uname | grep -Eqi '(bsd|darwin)' ; then
-            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +-[A-Za-z0-9]*G' ; then
+            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +-[A-Za-z0-9]*G' ; then
                 # defining CLICOLOR has the same effect as -G option and is more
                 # foolproof (if -G isn't supported, say)
                 CLICOLOR=1 ; export CLICOLOR
                 #LS_OPTIONS="${LS_OPTIONS} -G"
             fi
         else
-            if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +--colou?r(=| +)(auto|tty)' ; then
+            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +--colou?r(=| +)(auto|tty)' ; then
                 LS_OPTIONS="${LS_OPTIONS} --color=auto"
             fi
         fi
-        if ! echo "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +(-[A-Za-z0-9]*F|--classify)' ; then
+        if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +(-[A-Za-z0-9]*F|--classify)' ; then
             LS_OPTIONS="${LS_OPTIONS} -F"
         fi
         export LS_OPTIONS
@@ -587,8 +578,8 @@ EOF
     alias lsquote='ls --quoting-style=shell-always'
     alias lsescape='ls --quoting-style=escape'
     o_=
-    if echo $TERM | grep -q -- '-256color' ; then o_="${o_:--}2" ; fi
-    if echo $LANG | grep -iq -- '\.UTF-8$' ; then o_="${o_:--}u" ; fi
+    if say $TERM | grep -q -- '-256color' ; then o_="${o_:--}2" ; fi
+    if say $LANG | grep -iq -- '\.UTF-8$' ; then o_="${o_:--}u" ; fi
     alias tmux="tmux $o_"
     unset o_
     alias scr='screen -d -RR -s "${SCREEN_SHELL}"'
