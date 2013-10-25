@@ -58,6 +58,7 @@ move-home.sh \
 net-check.sh \
 pager.sh \
 poke.sh \
+p0.sh \
 rmbin.sh \
 rmgcov.sh \
 rmr.sh \
@@ -71,12 +72,14 @@ svnblamefirst.sh \
 svndepth.sh \
 svndiffadaptor.sh \
 svngitdiff.py \
+svngrepprop.sh \
 svnhasprop.sh \
 svnlastcommit.sh \
 svnlist.sh \
 svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
+svnrepowalk.sh \
 svnshallowup.sh \
 svnswitch.sh \
 svnurl.sh \
