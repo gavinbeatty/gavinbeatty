@@ -72,6 +72,7 @@ svnblamefirst.sh \
 svndepth.sh \
 svndiffadaptor.sh \
 svngitdiff.py \
+svngrep.sh \
 svngrepprop.sh \
 svnhasprop.sh \
 svnlastcommit.sh \
