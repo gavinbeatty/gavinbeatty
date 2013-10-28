@@ -2,7 +2,7 @@
 # vi: set ft=sh et sw=2 ts=2:
 set -e
 set -u
-usage() { printf "usage: %s [--|-m|-0|-q] <property> <path|url> <grepargs>...\n" "$(basename "$0")" ; }
+usage() { printf "usage: %s [-m|-0|-q] [--] <property> <path|url> <grepargs>...\n" "$(basename "$0")" ; }
 SVN_EXE="${SVN_EXE:-svn}"
 GREP_EXE="${GREP_EXE:-grep}"
 lf=
