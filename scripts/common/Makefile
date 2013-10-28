@@ -80,6 +80,7 @@ svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
 svnrepowalk.sh \
+svnresolve.sh \
 svnshallowup.sh \
 svnswitch.sh \
 svnurl.sh \
