@@ -15,4 +15,4 @@ case "$accept" in
   tf|theirsf|tfull|theirs-full) accept=theirs-full ;;
   *) die "Invalid <accept>, $accept" ;;
 esac
-${SVN_EXE} resolve --accept "$accept" "$@"
+$SVN_EXE resolve --accept "$accept" "$@"

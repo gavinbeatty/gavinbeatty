@@ -5,14 +5,14 @@ set -u
 trap " echo 'Caught SIGINT' >&2 ; exit 1 ; " INT
 trap " echo 'Caught SIGTERM' >&2 ; exit 1 ; " TERM
 
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-help=${help-}
-verbose=${verbose-0}
-ask=${ask-}
-branch=${branch-}
-tag=${tag-}
-trunk=${trunk-}
-dryrun=${dryrun-}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+help=${help:-}
+verbose=${verbose:-0}
+ask=${ask:-}
+branch=${branch:-}
+tag=${tag:-}
+trunk=${trunk:-}
+dryrun=${dryrun:-}
 
 prog="$(basename -- "$0")"
 usage() {
@@ -66,7 +66,7 @@ have() {
 # usage: svnurl <path>
 svnurl() {
     local e=0
-    local url="$(LC_ALL=C ${SVN_EXE} info -- "$1" 2>/dev/null || e=$?)"
+    local url="$(LC_ALL=C $SVN_EXE info -- "$1" 2>/dev/null || e=$?)"
     if test $e -ne 0 ; then
         return $e
     fi
@@ -172,21 +172,21 @@ main() {
     fi
 
     if test -n "$dryrun" ; then
-        echo "(cd -- "$1" && ${SVN_EXE} switch -- "$url")"
+        echo "(cd -- "$1" && $SVN_EXE switch -- "$url")"
     elif test -n "$ask" ; then
-        echo "${prog}: ${SVN_EXE} switch $url"
+        echo "${prog}: $SVN_EXE switch $url"
         while true ; do
             printf "Continue? y/n: "
             answer=
             read answer
             if echo "$answer" | grep -iq '^[yn]$' ; then
-                ${SVN_EXE} switch -- "$url"
+                $SVN_EXE switch -- "$url"
                 break
             fi
         done
     else
         verbose 1 "URL: $url"
-        ${SVN_EXE} switch -- "$url"
+        $SVN_EXE switch -- "$url"
     fi
 }
 main "$@"

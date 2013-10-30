@@ -8,10 +8,10 @@ trap " echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 # Gives an absolute path to the root of the working copy directory for an svn
 # repository.
 
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-getopt=${getopt-getopt}
-help=${help-}
-verbose=${verbose-0}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+getopt=${getopt:-getopt}
+help=${help:-}
+verbose=${verbose:-0}
 
 prog="$(basename -- "$0")"
 usage() {
@@ -55,12 +55,12 @@ main() {
     fi
     anyerr=0
     for i in "$@" ; do
-        if ! wc="$(LC_ALL=C ${SVN_EXE} info "$i" | sed -n 's/^Working Copy Root Path: //p')" ; then
+        if ! wc="$(LC_ALL=C $SVN_EXE info "$i" | sed -n 's/^Working Copy Root Path: //p')" ; then
             continue
         fi
         if test -z "$wc" ; then
             anyerr=1
-            error "\`${SVN_EXE} info\` does not have \"Working Copy Root Path\" field for $i"
+            error "\`$SVN_EXE info\` does not have \"Working Copy Root Path\" field for $i"
         else
             echo "$wc"
         fi

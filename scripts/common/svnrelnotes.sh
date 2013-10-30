@@ -6,14 +6,14 @@ trap " echo 'Caught SIGINT' >&2 ; exit 1 ; " INT
 trap " echo 'Caught SIGTERM' >&2 ; exit 1 ; " TERM
 
 # taken from the environment, set these in bashrc etc.
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-SVNRELNOTES_PYTHON=${SVNRELNOTES_PYTHON-python}
-SVN2LOG=${SVN2LOG-svn2log.py}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+SVNRELNOTES_PYTHON=${SVNRELNOTES_PYTHON:-python}
+SVN2LOG=${SVN2LOG:-svn2log.py}
 
 # these are arguments, _don't_ set them in bashrc
-verbose=${verbose-0}
-python=${python-$SVNRELNOTES_PYTHON}
-svn2log=${svn2log-$SVN2LOG}
+verbose=${verbose:-0}
+python=${python:-$SVNRELNOTES_PYTHON}
+svn2log=${svn2log:-$SVN2LOG}
 
 prog="$(basename -- "$0")"
 usage() {
@@ -73,6 +73,6 @@ main() {
     if test -z "$rev" ; then
         die "svnlastcommit.sh failed to find revision for $1"
     fi
-    ${SVN_EXE} log -v --xml -r"${rev}:HEAD" "$tourl" | $python $svn2log -O -H -s
+    $SVN_EXE log -v --xml -r"${rev}:HEAD" "$tourl" | $python $svn2log -O -H -s
 }
 main "$@"

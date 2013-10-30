@@ -5,11 +5,11 @@ set -u
 trap " echo 'Caught SIGINT' >&2 ; exit 1 ; " INT
 trap " echo 'Caught SIGTERM' >&2 ; exit 1 ; " TERM
 
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-help=${help-}
-verbose=${verbose-0}
-getopt=${getopt-getopt}
-GREPOPTS=${GREPOPTS-}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+help=${help:-}
+verbose=${verbose:-0}
+getopt=${getopt:-getopt}
+GREPOPTS=${GREPOPTS:-}
 
 prog="$(basename -- "$0")"
 usage() {
@@ -84,15 +84,15 @@ main() {
 
     # Get all svn revision numbers in which $filename
     # was involved, in ascending order.
-    all_rev_nums="$(${SVN_EXE} log -- "$filename" \
+    all_rev_nums="$($SVN_EXE log -- "$filename" \
         | grep -o -- '^r[0-9]\+' \
         | grep -o -- '[0-9]\+$' \
         | sort -n)"
 
     for revnum in $all_rev_nums ; do
         verbose 1 "Trying r$revnum"
-        if ${SVN_EXE} cat -r"$revnum" -- "$filename" 2>/dev/null | grep -q $GREPOPTS -- "$string" ; then
-            ${SVN_EXE} blame -r"$revnum" -- "$filename" 2>/dev/null | grep $GREPOPTS -- "$string"
+        if $SVN_EXE cat -r"$revnum" -- "$filename" 2>/dev/null | grep -q $GREPOPTS -- "$string" ; then
+            $SVN_EXE blame -r"$revnum" -- "$filename" 2>/dev/null | grep $GREPOPTS -- "$string"
             # Since they're in ascending order, we've found
             # the first one. So we can quit now.
             exit 0

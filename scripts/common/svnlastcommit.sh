@@ -5,17 +5,17 @@ set -e
 trap ' echo "Caught SIGINT" ; exit 1 ; ' INT
 trap ' echo "Caught SIGTERM" ; exit 1 ; ' TERM
 
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-getopt=${getopt-getopt}
-verbose=${verbose-0}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+getopt=${getopt:-getopt}
+verbose=${verbose:-0}
 # The last "real" commit is the one given by svn info's Last Changed Rev.
 # This is the last commit that isn't a copy, or at least it ignores copies such
 # as creating tags etc.
 #
 # As such, it's not usually what we want (as I use svnlastcommit.sh mainly for
 # finding a tag's commit revision for pegging externals).
-real=${real-}
-local=${local-}
+real=${real:-}
+local=${local:-}
 
 progname="$(basename -- "$0")"
 usage() {
@@ -52,7 +52,7 @@ main() {
 
     for i in "$@" ; do
         e=0
-        info="$(LC_ALL=C ${SVN_EXE} info -- "$i" 2>&1)" || e=$?
+        info="$(LC_ALL=C $SVN_EXE info -- "$i" 2>&1)" || e=$?
         if test $e -eq 0 ; then
             if test -z "$real" ; then
                 # includes copies etc.
@@ -65,7 +65,7 @@ main() {
                         loghead="${loghead}: $url"
                     fi
                 fi
-                rev="$(${SVN_EXE} log -l 1 -- "$url" 2>/dev/null | perl -wne 'if($.==2){s/^r(\d+).*/$1/;print;}')"
+                rev="$($SVN_EXE log -l 1 -- "$url" 2>/dev/null | perl -wne 'if($.==2){s/^r(\d+).*/$1/;print;}')"
                 via="log$loghead"
             else
                 # is the last "development" commit

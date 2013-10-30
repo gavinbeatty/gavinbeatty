@@ -78,10 +78,10 @@ svnshallowup() {
   local levels=$(dirlevels "$1")
   local n=$levels
   while test $n -ne 0 ; do
-    run ${SVN_EXE} update --depth=empty "$(dirnamelevel $n "$1")"
+    run $SVN_EXE update --depth=empty "$(dirnamelevel $n "$1")"
     n=$(( $n - 1 ))
   done
-  run ${SVN_EXE} update ${leaf_depth:+--depth=$leaf_depth} "$1"
+  run $SVN_EXE update ${leaf_depth:+--depth=$leaf_depth} "$1"
 }
 
 main() {
@@ -114,7 +114,7 @@ main() {
     usage >&2
     exit 1
   fi
-  if ! LC_ALL=C ${SVN_EXE} info . >/dev/null 2>&1 ; then
+  if ! LC_ALL=C $SVN_EXE info . >/dev/null 2>&1 ; then
     die "$1 is not an svn checkout!"
   fi
 

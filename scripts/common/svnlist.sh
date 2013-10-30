@@ -5,14 +5,14 @@ set -u
 trap " echo 'Caught SIGINT' >&2 ; exit 1 ; " INT
 trap " echo 'Caught SIGTERM' >&2 ; exit 1 ; " TERM
 
-SVN_EXE=${SVN_EXE-svn} ; export SVN_EXE
-help=${help-}
-getopt=${getopt-getopt}
-verbose=${verbose-0}
-tags=${tags-}
-branches=${branches-}
-trunk=${trunk-}
-full=${full-}
+SVN_EXE=${SVN_EXE:-svn} ; export SVN_EXE
+help=${help:-}
+getopt=${getopt:-getopt}
+verbose=${verbose:-0}
+tags=${tags:-}
+branches=${branches:-}
+trunk=${trunk:-}
+full=${full:-}
 
 longopts_support=
 e=0
@@ -74,7 +74,7 @@ getopt_works() {
 # usage: svnurl <path>
 svnurl() {
     local e=0
-    local url="$(LC_ALL=C ${SVN_EXE} info "$1" 2>/dev/null || e=$?)"
+    local url="$(LC_ALL=C $SVN_EXE info "$1" 2>/dev/null || e=$?)"
     if test $e -ne 0 ; then
         return $e
     fi
@@ -87,7 +87,7 @@ svnnameurl() {
         local i=
         local newurl=
         for i in trunk branches tags ; do
-            if ${SVN_EXE} ls "$url/$i" >/dev/null 2>&1 ; then
+            if $SVN_EXE ls "$url/$i" >/dev/null 2>&1 ; then
                 newurl="$url/$i"
                 break
             fi
@@ -104,7 +104,7 @@ svnnameurl() {
 
     url=$(echo "$url" | perl -ne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
     # XXX why only test trunk?
-    if test "$2" = "trunk" && ! LC_ALL=C ${SVN_EXE} info "$url" >/dev/null 2>&1 ; then
+    if test "$2" = "trunk" && ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
         if test "$url" != "$1" ; then
             local trail=" (from $1)"
         fi
@@ -115,9 +115,9 @@ svnnameurl() {
 }
 svnls() {
     if test -n "$full" ; then
-        ${SVN_EXE} ls "$1" | perl -e 'while(<STDIN>){s|^|$ARGV[0]|;s|/+$||;print;}' "$1"
+        $SVN_EXE ls "$1" | perl -e 'while(<STDIN>){s|^|$ARGV[0]|;s|/+$||;print;}' "$1"
     else
-        ${SVN_EXE} ls "$1" | sed 's|//*$||'
+        $SVN_EXE ls "$1" | sed 's|//*$||'
     fi
 }
 
@@ -189,7 +189,7 @@ main() {
         exit 1
     fi
 
-    if ! LC_ALL=C ${SVN_EXE} info "$1" >/dev/null 2>&1 ; then
+    if ! LC_ALL=C $SVN_EXE info "$1" >/dev/null 2>&1 ; then
         die "$1 is not an svn url or checkout!"
     fi
 

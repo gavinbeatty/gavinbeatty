@@ -13,4 +13,4 @@ case "$depth" in
   im|imm|immediate|immediates) depth=immediates ;;
   *) die "Invalid <depth>, $depth" ;;
 esac
-${SVN_EXE} update --set-depth "$depth" "$@"
+$SVN_EXE update --set-depth "$depth" "$@"
