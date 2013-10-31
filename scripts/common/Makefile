@@ -77,6 +77,7 @@ svngrepprop.sh \
 svnhasprop.sh \
 svnlastcommit.sh \
 svnlist.sh \
+svnmergerevs.sh \
 svnpeggedexternals.sh \
 svnrelnotes.sh \
 svnrepo.sh \
