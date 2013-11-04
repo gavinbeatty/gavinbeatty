@@ -13,6 +13,7 @@ tags=${tags:-}
 branches=${branches:-}
 trunk=${trunk:-}
 full=${full:-}
+append=${append:-}
 
 longopts_support=
 e=0
@@ -20,29 +21,33 @@ e=0
 test "$e" -eq 4 && longopts_support=1
 
 prog="$(basename -- "$0")"
+say() { printf "%s\n" "$*" ; }
 usage() {
     cat <<EOF
 usage: $prog [-h]
-   or: $prog [-v] [-f] -b [<path>]
-   or: $prog [-v] [-f] -t [<path>]
-   or: $prog [-v] [-f] -T [<path>]
+   or: $prog [-v] [-f] [-a] -b [<path>]
+   or: $prog [-v] [-f] [-a] -t [<path>]
+   or: $prog [-v] [-f] [-a] -T [<path>]
 EOF
 }
 help() {
     cat <<EOF
 Options:
- -h${longopts_support:|--help}:
+ -h${longopts_support:-|--help}:
   Prints this help message and exits.
- -v${longopts_support:|--verbose}:
+ -v${longopts_support:-|--verbose}:
   Give more verbose output.
- -b${longopts_support:|--branches}:
+ -b${longopts_support:-|--branches}:
   Print branches.
- -t${longopts_support:|--tags}:
+ -t${longopts_support:-|--tags}:
   Print tags.
- -T${longopts_support:|--trunk}:
+ -T${longopts_support:-|--trunk}:
   Print the trunk.
- -f${longopts_support:|--full}:
+ -f${longopts_support:-|--full}:
   Print full URLs.
+ -a${longopts_support:-|--append}:
+  Append the longest "valid" suffix of <path> to each output line.
+  ("Valid" is the first that works, and is blindly applied to each subsequent line.)
 
 Arguments:
  <path>:
@@ -51,13 +56,13 @@ Arguments:
 EOF
 }
 error() {
-    echo "error: $@" >&2
+    say "error: $*" >&2
 }
 #usage: verbose <level> <msg>...
 verbose() {
     if test $verbose -ge "$1" ; then
         shift
-        echo "verbose: $@" >&2
+        say "verbose: $@" >&2
     fi
 }
 die() {
@@ -78,12 +83,12 @@ svnurl() {
     if test $e -ne 0 ; then
         return $e
     fi
-    echo "$url" | sed -n 's/^URL: //p'
+    say "$url" | sed -n 's/^URL: //p'
 }
 # usage: svnnameurl <path> trunk|tags|branches
 svnnameurl() {
     local url=$(svnurl "$1")
-    if ! echo "$url" | grep -Eq '/(trunk|tags|branches)($|/)' ; then
+    if ! say "$url" | grep -Eq '/(trunk|tags|branches)($|/)' ; then
         local i=
         local newurl=
         for i in trunk branches tags ; do
@@ -102,7 +107,7 @@ svnnameurl() {
         fi
     fi
 
-    url=$(echo "$url" | perl -ne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
+    url=$(say "$url" | perl -ne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
     # XXX why only test trunk?
     if test "$2" = "trunk" && ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
         if test "$url" != "$1" ; then
@@ -111,7 +116,7 @@ svnnameurl() {
         die "URL does not exist: ${url}${trail:-}"
     fi
     verbose 1 "URL: $url"
-    echo "$url"
+    say "$url"
 }
 svnls() {
     if test -n "$full" ; then
@@ -120,41 +125,41 @@ svnls() {
         $SVN_EXE ls "$1" | sed 's|//*$||'
     fi
 }
+# Only prints something when we left-trimmed one-or-more slashes.
+ltrim() { say "$1" | sed -n 's#^[^/]*//*##p' ; }
+# Append the longest suffix of "$1" to each URL from stdin.
+appendLongest() {
+    if test -z "$append" ; then cat
+    else
+        # Only do the trim-and-ls for the first url, then apply to the rest.
+        read url
+        local trail="${1##/}"
+        while test -n "$trail" && ! $SVN_EXE ls "$url/$trail" >/dev/null 2>&1 ; do
+            trail="$(ltrim "$trail")"
+        done
+        trail="${trail:+/$trail}"
+        (say "$url" ; cat) | sed "s,\$,${trail%%/}," # don't forget the one we 'read'
+    fi
+}
 
 main() {
     if getopt_works ; then
         longopts=
-        test -n "$longopts_support" && longopts="-l help,verbose,tags,branches,trunk,full"
-        opts="$("$getopt" -n "$prog" -o "hvtbTf" $longopts -- "$@")"
+        test -z "$longopts_support" || longopts="-l help,verbose,tags,branches,trunk,full,append"
+        opts="$("$getopt" -n "$prog" -o "hvtbTfa" $longopts -- "$@")"
         eval set -- $opts
 
         while test $# -gt 0 ; do
             case "$1" in
-            -h|--help)
-                help=1
-                ;;
-            -v|--verbose)
-                verbose=$(($verbose + 1))
-                ;;
-            -t|--tags)
-                tags=1
-                ;;
-            -b|--branches)
-                branches=1
-                ;;
-            -T|--trunk)
-                trunk=1
-                ;;
-            -f|--full)
-                full=1
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "Unknown option: $1"
-                ;;
+            -h|--help) help=1 ;;
+            -v|--verbose) verbose=$((verbose + 1)) ;;
+            -t|--tags) tags=1 ;;
+            -b|--branches) branches=1 ;;
+            -T|--trunk) trunk=1 ;;
+            -f|--full) full=1 ;;
+            -a|--append) append=1 ;;
+            --) shift ; break ;;
+            *) die "Unknown option: $1" ;;
             esac
             shift
         done
@@ -195,14 +200,14 @@ main() {
 
     if test -n "$tags" ; then
         if url="$(svnnameurl "$1" "tags")" ; then
-            svnls "$url"
+            svnls "$url" | appendLongest "$1"
         fi
     elif test -n "$branches" ; then
         if url="$(svnnameurl "$1" "branches")" ; then
-            svnls "$url"
+            svnls "$url" | appendLongest "$1"
         fi
     else
-        svnnameurl "$1" "trunk" | sed 's|//*$||'
+        svnnameurl "$1" "trunk" | sed 's|//*$||' | appendLongest "$1"
     fi
 }
 main "$@"
