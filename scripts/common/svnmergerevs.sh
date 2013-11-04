@@ -2,13 +2,20 @@
 # vi: set ft=sh et sw=2 ts=2:
 set -e
 set -u
+trap 'echo Caught SIGINT >&2 ; exit 1 ; ' INT
+trap 'echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
 say() { printf "%s\n" "$*" ; }
 die() { printf "%s\n" "$*" >&2 ; exit 1 ; }
+prog="$(basename "$0")"
+getopt="${getopt:-getopt}"
+has_longopts=
+e=0
+"$getopt" -T >/dev/null 2>&1 || e=$?
+test "$e" -eq 4 && has_longopts=1
 usage() {
-  local app="$(basename "$0")"
-  printf "usage: %s [-r] [-R] [-t|-m|--] <branch-url> [<log-args>...]\n" "$app"
-  printf "   or: %s [-r] [-R] [-t|-m|--] <source-url>..<branch-url> [<log-args>...]\n" "$app"
-  printf "   or: %s [-r] [-R] [-t|-m|--] <source-url>...<branch-url> [<log-args>...]\n" "$app"
+  printf "usage: %s [-r] [-R] [-t|-m] [--] <branch-url> [<log-args>...]\n" "$prog"
+  printf "   or: %s [-r] [-R] [-t|-m] [--] <source-url>..<branch-url> [<log-args>...]\n" "$prog"
+  printf "   or: %s [-r] [-R] [-t|-m] [--] <source-url>...<branch-url> [<log-args>...]\n" "$prog"
 }
 SVN_EXE="${SVN_EXE:-svn}"
 svnurl() {
@@ -26,33 +33,22 @@ show=eligible
 revsonly=
 reverse=
 done=
-if test -z "$done" && test $# -gt 0 ; then
+longopts=
+test -z "$has_longopts" || longopts="-l help,theirs,eligible,mine,merged,revs,reverse"
+opts="$("$getopt" -n "$prog" -o "htmrR" $longopts -- "$@")"
+eval set -- $opts
+while test $# -gt 0 ; do
   case "$1" in
-    -t|--theirs|--eligible) show=eligible ; shift ;;
-    -m|--mine|--merged) show=merged ; shift ;;
-    -r|--revs) revsonly=1 ; shift ;;
-    -R|--reverse) reverse=1 ; shift ;;
-    --) done=1 ; shift ;;
+    -h|--help) usage ; exit 0 ;;
+    -t|--theirs|--eligible) show=eligible ;;
+    -m|--mine|--merged) show=merged ;;
+    -r|--revs) revsonly=1 ;;
+    -R|--reverse) reverse=1 ;;
+    --) shift ; break ;;
+    *) die "Unknown option: $1" ;;
   esac
-fi
-if test -z "$done" && test $# -gt 0 ; then
-  case "$1" in
-    -t|--theirs|--eligible) show=eligible ; shift ;;
-    -m|--mine|--merged) show=merged ; shift ;;
-    -r|--revs) revsonly=1 ; shift ;;
-    -R|--reverse) reverse=1 ; shift ;;
-    --) done=1 ; shift ;;
-  esac
-fi
-if test -z "$done" && test $# -gt 0 ; then
-  case "$1" in
-    -t|--theirs|--eligible) show=eligible ; shift ;;
-    -m|--mine|--merged) show=merged ; shift ;;
-    -r|--revs) revsonly=1 ; shift ;;
-    -R|--reverse) reverse=1 ; shift ;;
-    --) done=1 ; shift ;;
-  esac
-fi
+  shift
+done
 if test $# -lt 1 ; then usage >&2 ; exit 1 ; fi
 url="$1" ; shift
 if ! say "$url" | grep -F -q '..' ; then # handles "..." as well
@@ -69,7 +65,7 @@ test -n "$src" || die "<source-url> is empty."
 test -n "$branch" || die "<branch-url> is empty."
 
 mergeinfo() {
-  $SVN_EXE mergeinfo --show-revs $show "$1" "$2"
+  $SVN_EXE mergeinfo --show-revs $show -- "$1" "$2"
 }
 all() {
   mergeinfo "$1" "$2"
