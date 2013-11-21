@@ -42,31 +42,31 @@ NeoBundleLazy 'Shougo/vimshell', {'autoload': {
       \   'mappings': ['<Plug>(vimshell_switch)']
       \ }}
 NeoBundle 'tpope/vim-repeat'
-NeoBundle 'kana/vim-textobj-user'
+"NeoBundle 'kana/vim-textobj-user'
 " Syntax
 NeoBundleLazy 'http://svn.macports.org/repository/macports/contrib/mpvim/', {'autoload': {'filetypes': 'portfile'}}
 NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
 NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'ujihisa/unite-colorscheme'
+"NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'bling/vim-airline'
-" Programming
 NeoBundle 'tpope/vim-git'
+" Programming
 NeoBundle 'bogado/file-line'
-NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
-      \ 'commands': [{'name': 'Unite',
-      \                'complete': 'customlist,unite#complete_source'
-      \               }, 'UniteWithCursorWord', 'UniteWithInput'
-      \              ]}}
+NeoBundle 'vim-scripts/a.vim'
+"NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
+      "\ 'commands': [{'name': 'Unite',
+      "\                'complete': 'customlist,unite#complete_source'
+      "\               }, 'UniteWithCursorWord', 'UniteWithInput'
+      "\              ]}}
 NeoBundle 'chazy/cscope_maps'
 NeoBundle 'tpope/vim-endwise'
-NeoBundle 'Shougo/unite-build'
-NeoBundle 'tpope/vim-fugitive'
+"NeoBundle 'Shougo/unite-build'
+"NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'Raimondi/delimitMate'
-NeoBundle 'kana/vim-textobj-diff'
-NeoBundle 'derekwyatt/vim-fswitch'
+"NeoBundle 'kana/vim-textobj-diff'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 "NeoBundle 'Yggdroot/indentLine'
@@ -75,7 +75,7 @@ NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
 NeoBundle 'feuerbach/vim-hs-module-name'
 NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
-NeoBundleLazy 'eagletmt/unite-haddock', {'autoload': {'filetypes': 'haskell'}}
+"NeoBundleLazy 'eagletmt/unite-haddock', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
@@ -92,10 +92,11 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'Lokaltog/vim-easymotion'
 "NeoBundle 'terryma/vim-multiple-cursors'
 " Files
-NeoBundle 'Shougo/unite-sudo'
+"NeoBundle 'Shougo/unite-sudo'
 NeoBundle 'mhinz/vim-startify'
 NeoBundle 'jamessan/vim-gnupg'
-NeoBundle 'Shougo/vimfiler.vim'
+NeoBundle 'gmarik/sudo-gui.vim'
+"NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'regedarek/vim-bufexplorer'
 " Optional
 NeoBundleLazy 'thinca/vim-fontzoom', {
@@ -105,10 +106,10 @@ NeoBundleLazy 'thinca/vim-fontzoom', {
       \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
       \  ],
       \ }}
-NeoBundleLazy 'ujihisa/unite-font', {
-      \ 'gui': 1,
-      \ 'autoload': {'unite_sources': 'font'}
-      \ }
+"NeoBundleLazy 'ujihisa/unite-font', {
+      "\ 'gui': 1,
+      "\ 'autoload': {'unite_sources': 'font'}
+      "\ }
 NeoBundleLazy 'add20/vim-conque', {'autoload': {'commands': ['ConqueTerm']}}
 NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
@@ -350,8 +351,9 @@ vnoremap <leader>do :diffget <Bar> echo 'Left >>> Right'<CR>
 " ("diff put") do :diffput on range and report the change:
 vnoremap <leader>dp :diffput <Bar> echo 'Left <<< Right'<CR>
 
-nnoremap <leader>fs :FSHere<CR>
-nnoremap <leader>fv :FSSplitRight<CR>
+nnoremap <leader>fs :A<CR>
+nnoremap <leader>fv :AV<CR>
+nnoremap <leader>fh :AS<CR>
 nnoremap <silent> <leader>vn :call Svndiff("next")<CR>
 nnoremap <silent> <leader>vp :call Svndiff("prev")<CR>
 nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>
@@ -363,7 +365,7 @@ let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 5000
 let g:unite_data_directory = '~/.vim/.cache/unite'
 call EnsureDirExists(g:unite_data_directory)
-call unite#set_profile('files', 'smartcase', 1)
+"call unite#set_profile('files', 'smartcase', 1)
 if executable('ag')
     let g:unite_source_grep_command = 'ag'
     let g:unite_source_grep_default_opts = '--nocolor --nogroup -S -C4'
