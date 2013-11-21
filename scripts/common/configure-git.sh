@@ -1,7 +1,7 @@
 #!/bin/sh
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
-# Copyright (c) 2007, 2008, 2009, 2010, 2011, 2012 by Gavin Beatty
+# Copyright (c) 2007, 2008, 2009, 2010, 2011, 2012, 2013 by Gavin Beatty
 # <gavinbeatty@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -53,6 +53,13 @@ prog="configure-git.sh"
 
 say() { printf "%s\n" "$*" ; }
 die() { printf "error: %s\n" "$*" >&2 ; exit 1 ; }
+verbose() {
+    if test "$verbose" -ge "$1" ; then
+        shift
+        say "verbose: $*" >&2
+    fi
+}
+echodo() { say "$*" ; "$@" ; }
 have() { type "$@" >/dev/null 2>&1 ; }
 havefirst() { test $# -gt 0 && type "$1" >/dev/null 2>&1 ; }
 
@@ -106,13 +113,6 @@ Options:
                           \$FULLNAME and \$EMAIL.
  -g <git>               use the provided <git> instead of "git".
 EOF
-}
-echodo() { echo "$@" ; "$@" ; }
-verbose() {
-    if test "$verbose" -ge "$1" ; then
-        shift
-        echo "verbose: $@" >&2
-    fi
 }
 git_required_version=$((1 * 100 + 5 * 10 + 0))
 git_required_version_str="1.5.0"
@@ -182,6 +182,8 @@ alias_section() {
     gitconfig alias.gl "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --stat"
     gitconfig alias.lol "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit"
     gitconfig alias.lola "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit --all"
+    gitconfig alias.ignored "ls-files --others -i --exclude-standard"
+    gitconfig alias.standup "log --pretty=format:'%Cred%h%Creset -%Creset %s %Cgreen(%cD) %C(bold blue)<%an>%Creset' --since yesterday --author '$name'"
 }
 credential_section() {
     gitconfig credential.helper cache
@@ -247,8 +249,11 @@ main() {
         fi
     fi
     if test $# -ne 0 ; then usage >&2 ; die "Unrecognized arguments: $@" ; fi
+    if say "$name" | grep -Fq \' ; then
+        die "Invalid characters in name, ${name}."
+    fi
     if test -n "$dryrun" ; then
-        verbose=$(( $verbose + 1 ))
+        verbose=$((verbose + 1))
     fi
     if test -n "$help" ; then help ; exit 0 ; fi
 
@@ -262,7 +267,7 @@ main() {
     git_version=0
     git_version_str="$($git --version | sed 's/^git version //' | sed 's/\./ /g')"
     set -- $git_version_str
-    git_version=$((${1:-0} * 100 + ${2:-0} * 10 + ${3:-0}))
+    git_version=$(( ${1:-0} * 100 + ${2:-0} * 10 + ${3:-0} ))
     if test "${git_version:-0}" -lt "$git_required_version" ; then
         die "git version ($git_version) >= $git_required_version is required"
     fi
