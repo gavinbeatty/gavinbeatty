@@ -20,6 +20,7 @@ colordiff \
 colorgcc.pl \
 fix-outlook-quoting.rb \
 mutt_bgrun \
+pyperclip.py \
 256colors2.pl
 
 install: $(SOURCES)
