@@ -49,7 +49,7 @@ configfile=${CONFIGURE_GIT_CONFIGFILE:-}
 configtype=${CONFIGURE_GIT_CONFIGTYPE:---global}
 git="${CONFIGURE_GIT_GIT:-git}"
 
-prog="$(basename -- "$0")"
+prog="configure-git.sh"
 
 say() { printf "%s\n" "$*" ; }
 die() { printf "error: %s\n" "$*" >&2 ; exit 1 ; }
@@ -186,19 +186,33 @@ alias_section() {
 credential_section() {
     gitconfig credential.helper cache
 }
+getopt_name_works() {
+    $getopt -n "foo" -o a:b -- 2>/dev/null | grep -q '^ *-- *$'
+}
+getopt_works() {
+    $getopt -o a:b -- -b -a foo 2>/dev/null | grep -q "^ *-b -a '\?foo'\? -- *\$"
+}
+getopt_long_works() {
+    local e=0
+    $getopt -T >/dev/null 2>&1 || e=$?
+    test $e -eq 4
+}
 
 main() {
-    if havefirst $getopt ; then
+    if havefirst $getopt && getopt_works ; then
         local e=0
-        local longopts=
-        $getopt -T || e=$?
-        if test $e -eq 4 ; then
-            longopts="-l help,verbose,dry-run,list,name:,email:,e-mail:"
-            longopts="${longopts},work,environment,excludesfile:,sections:"
-            longopts="${longopts},system,local,configfile:,git:"
+        local getoptname=
+        if getopt_name_works ; then
+            getoptname="-n $prog"
+        fi
+        local getoptlongopts=
+        if getopt_long_works ; then
+            getoptlongopts="-l help,verbose,dry-run,list,name:,email:,e-mail:"
+            getoptlongopts="${getoptlongopts},work,environment,excludesfile:,sections:"
+            getoptlongopts="${getoptlongopts},system,local,configfile:,git:"
         fi
         e=0
-        local opts="$($getopt -n "$prog" -o "hvtLn:e:wEx:S:slf:g:" $longopts -- "$@")" || e=$?
+        local opts="$($getopt $getoptname -o "hvtLn:e:wEx:S:slf:g:" $getoptlongopts -- "$@")" || e=$?
         if test $e -ne 0 ; then exit 1 ; fi
         eval set -- "$opts"
 
