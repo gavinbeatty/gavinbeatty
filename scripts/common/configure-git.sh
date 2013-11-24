@@ -51,8 +51,9 @@ git="${CONFIGURE_GIT_GIT:-git}"
 
 prog="$(basename -- "$0")"
 
+die() { echo "error: $@" >&2 ; exit 1 ; }
 have() { type "$@" >/dev/null 2>&1 ; }
-havefirst() { type "$1" >/dev/null 2>&1 ; }
+havefirst() { test $# -gt 0 && type "$1" >/dev/null 2>&1 ; }
 
 if ! have sed ; then die "sed is required." ; fi
 
@@ -106,7 +107,6 @@ Options:
 EOF
 }
 echodo() { echo "$@" ; "$@" ; }
-die() { echo "error: $@" >&2 ; exit 1 ; }
 verbose() {
     if test "$verbose" -ge "$1" ; then
         shift
@@ -191,7 +191,7 @@ credential_section() {
 }
 
 main() {
-    if have "$getopt" ; then
+    if havefirst $getopt ; then
         local e=0
         local opts="$("$getopt" -n "$prog" -o "hvtLn:e:wEx:S:slf:g:" -- "$@")" || e=$?
         if test $e -ne 0 ; then exit 1 ; fi
