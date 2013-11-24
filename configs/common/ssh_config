@@ -6,6 +6,9 @@ Host ssh.github.com
 	TCPKeepAlive yes
 	IdentitiesOnly yes
 
+Host pi
+    Hostname 89.18.173.84
+    User gavin
 Host gavinbeatty
     Hostname 46.249.46.85
 Host kdesvn
