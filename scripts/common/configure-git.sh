@@ -193,7 +193,15 @@ credential_section() {
 main() {
     if havefirst $getopt ; then
         local e=0
-        local opts="$("$getopt" -n "$prog" -o "hvtLn:e:wEx:S:slf:g:" -- "$@")" || e=$?
+        local longopts=
+        $getopt -T || e=$?
+        if test $e -eq 4 ; then
+            longopts="-l help,verbose,dry-run,list,name:,email:,e-mail:"
+            longopts="${longopts},work,environment,excludesfile:,sections:"
+            longopts="${longopts},system,local,configfile:,git:"
+        fi
+        e=0
+        local opts="$($getopt -n "$prog" -o "hvtLn:e:wEx:S:slf:g:" $longopts -- "$@")" || e=$?
         if test $e -ne 0 ; then exit 1 ; fi
         eval set -- "$opts"
 
