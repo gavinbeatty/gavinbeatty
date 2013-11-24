@@ -51,7 +51,8 @@ git="${CONFIGURE_GIT_GIT:-git}"
 
 prog="$(basename -- "$0")"
 
-die() { echo "error: $@" >&2 ; exit 1 ; }
+say() { printf "%s\n" "$*" ; }
+die() { printf "error: %s\n" "$*" >&2 ; exit 1 ; }
 have() { type "$@" >/dev/null 2>&1 ; }
 havefirst() { test $# -gt 0 && type "$1" >/dev/null 2>&1 ; }
 
@@ -115,10 +116,6 @@ verbose() {
 }
 git_required_version=$((1 * 100 + 5 * 10 + 0))
 git_required_version_str="1.5.0"
-
-error_git_version() {
-    die "\`git' version \`${1}' is not supported. version >= \`${git_required_version_str}' is required."
-}
 
 gitconfig() {
     if test -n "$configfile" ; then
@@ -232,7 +229,7 @@ main() {
             email="${EMAIL:-$email}"
         fi
         if test -z "$no_getopt_warning" ; then
-            warning "getopt \`$getopt' does not work. Options taken from environment."
+            say "warning: getopt \`$getopt' does not work. Options taken from environment." >&2
         fi
     fi
     if test $# -ne 0 ; then usage >&2 ; die "Unrecognized arguments: $@" ; fi
