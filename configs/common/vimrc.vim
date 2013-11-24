@@ -152,16 +152,19 @@ set autoindent
 set smartcase
 set nohlsearch
 set incsearch
+set splitbelow
+set splitright
 " Minimum number of lines the search result may be from the top/bottom.
 set scrolloff=10
 set showmode
 " Path/file matching in command mode like bash's.
-set wildmode=longest,list
+set wildmode=list:longest,list:full
 set wildchar=<TAB>
 set wildignore+=*/.git*,*/.hg/*,*/.svn/*,*/.bzr/*,*/.idea/*,*/.DS_Store
 " Show a tab through menu.
 set wildmenu
 set printoptions=paper:a4
+set ttyfast
 set novisualbell
 set noerrorbells
 " Workaround to get rid of audible bell, that doesn't actually enable visual bell.
