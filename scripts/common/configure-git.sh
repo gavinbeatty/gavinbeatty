@@ -181,10 +181,10 @@ alias_section() {
     gitconfig alias.sm "submodule"
     gitconfig alias.r "remote -v"
     gitconfig alias.ll "log --stat"
-    gitconfig alias.l "log --oneline --decorate=short"
-    gitconfig alias.gl "log --graph --oneline --decorate --stat"
-    gitconfig alias.lol "log --graph --oneline --decorate --abbrev-commit"
-    gitconfig alias.lola "log --graph --oneline --decorate --abbrev-commit --all"
+    gitconfig alias.l "log --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate=short"
+    gitconfig alias.gl "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --stat"
+    gitconfig alias.lol "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit"
+    gitconfig alias.lola "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit --all"
 }
 credential_section() {
     gitconfig credential.helper cache
@@ -197,12 +197,12 @@ main() {
         if test $e -ne 0 ; then exit 1 ; fi
         eval set -- "$opts"
 
-        while true ; do
+        while test $# -gt 0 ; do
             case "$1" in
-                -h) help=1 ;;
-                -v) verbose=$(( $verbose + 1 )) ;;
-                -t) dryrun=1 ;;
-                -L) list=1 ;;
+                -h|--help) help=1 ;;
+                -v|--verbose) verbose=$((verbose + 1)) ;;
+                -t|--dry-run) dryrun=1 ;;
+                -L|--list) list=1 ;;
                 -n|--name) name=$2 ; shift ;;
                 -e|--email) email=$2 ; shift ;;
                 -w|--work) email=$default_work_email ;;
@@ -227,7 +227,7 @@ main() {
             warning "getopt \`$getopt' does not work. Options taken from environment."
         fi
     fi
-    if test $# -ne 0 ; then usage >&2 ; exit 1 ; fi
+    if test $# -ne 0 ; then usage >&2 ; die "Unrecognized arguments: $@" ; fi
     if test -n "$dryrun" ; then
         verbose=$(( $verbose + 1 ))
     fi
