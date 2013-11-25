@@ -61,4 +61,4 @@ Host gitorious
 Host repo
     Hostname repo.or.cz
     IdentityFile ~/.ssh/github_rsa
-
+# gavinbeatty:ssh_config

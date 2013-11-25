@@ -9,7 +9,7 @@ INSTALL_DIR_PRIV ?= $(INSTALL) -d -m 0700
 CHMOD ?= chmod
 CHMOD_PRIV ?= $(CHMOD) 0600
 TOUCH ?= touch
-GREP ?= grep
+AWK ?= awk
 SED ?= sed
 CAT ?= cat
 UNAME ?= uname
@@ -95,7 +95,7 @@ install-ssh_config: $(DESTDIR)$(HOME) ssh_config
 	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh
 	$(TOUCH) $(DESTDIR)$(HOME)/.ssh/config
 	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config
-	if ! $(GREP) -q '^#\s*gavinbeatty:ssh_config$$' $(DESTDIR)$(HOME)/.ssh/config ; then $(CAT) ssh_config >> $(DESTDIR)$(HOME)/.ssh/config ; fi
+	$(AWK) 'BEGIN{f=0}{if(/^#\s*gavinbeatty:ssh_config$/){f=(f==0);next;}if(f==0){print}}' $(DESTDIR)$(HOME)/.ssh/config | $(CAT) - ssh_config > $(DESTDIR)$(HOME)/.ssh/config.tmp && mv $(DESTDIR)$(HOME)/.ssh/config.tmp $(DESTDIR)$(HOME)/.ssh/config
 
 install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
