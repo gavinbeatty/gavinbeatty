@@ -184,6 +184,7 @@ alias_section() {
     gitconfig alias.lola "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit --all"
     gitconfig alias.ignored "ls-files --others -i --exclude-standard"
     gitconfig alias.standup "log --pretty=format:'%Cred%h%Creset -%Creset %s %Cgreen(%cD) %C(bold blue)<%an>%Creset' --since yesterday --author '$name'"
+    gitconfig alias.alias "config --get-regexp '^alias\.'"
 }
 credential_section() {
     gitconfig credential.helper cache
