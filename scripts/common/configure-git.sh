@@ -177,7 +177,7 @@ alias_section() {
     gitconfig alias.unstage "reset HEAD --"
     gitconfig alias.sm "submodule"
     gitconfig alias.r "remote -v"
-    gitconfig alias.ll "log --stat"
+    gitconfig alias.ll "log -v --stat"
     gitconfig alias.l "log --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate=short"
     gitconfig alias.gl "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --stat"
     gitconfig alias.lol "log --graph --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate --abbrev-commit"
