@@ -244,8 +244,8 @@ if has('gui_running')
     call SetFont()
     " hold right click for the usual kind of menu
     set mousemodel=popup
-    nmap <leader>fi :call IncrFontPt()<CR>
-    nmap <leader>fd :call DecrFontPt()<CR>
+    nnoremap <leader>fi :call IncrFontPt()<CR>
+    nnoremap <leader>fd :call DecrFontPt()<CR>
 endif
 
 au BufNew * if &buftype == 'quickfix' | setlocal wrap | endif
@@ -299,15 +299,15 @@ endif
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
 noremap Y y$
-" <HOME> toggles between start of line and start of text
-imap <khome> <home>
-nmap <khome> <home>
 fu! Home()
     let curcol = wincol()
     normal 0
     let newcol = wincol()
-    if newcol == curcol | normal ^ | endif
+    if newcol == curcol
+        normal ^
+    endif
 endf
+" <HOME> toggles between start of line and start of text
 inoremap <silent> <home> <C-o>:call Home()<CR>
 nnoremap <silent> <home> :call Home()<CR>
 " Scroll left-right.
