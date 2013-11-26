@@ -108,12 +108,9 @@ for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
         MANPATH="${n_}${MANPATH:+:$MANPATH}" ; export MANPATH
     fi
 done
-# use rvm for now... i don't know if it's incompatible with gem (the way i've done it)
-n_="${HOME}/.rvm/bin"
-if test -d "${HOME}/.rvm" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:$PATH}" ; export PATH
+if test -r "$HOME/.rvm/scripts/rvm" ; then
+    . "$HOME/.rvm/scripts/rvm"
 fi
-unset n_
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
     PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
@@ -132,6 +129,7 @@ n_="/Applications/threadscope.app/Contents/MacOS"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
+unset n_
 #pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
 #if test -n "$pyver_" ; then
 #    n_="${HOME}/Library/Python/${pyver_}/bin"
