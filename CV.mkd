@@ -1,7 +1,7 @@
 ---
 title: CV
-author: Gavin Beatty <gavinbeatty@gmail.com> +31647916862
-modified: 2013-01-23
+author: Gavin Beatty <gavinbeatty@gmail.com> +13128573895
+modified: 2013-11-26
 
 ---
 
@@ -10,14 +10,20 @@ experience in backend and finance roles, maintaining large libraries.
 
 ## Employment
 
-### Optiver Amsterdam: Senior Software Engineer
+### Optiver Americas, Chicago: Senior Software Engineer
 
-**2010 to present**
+**mid-2013 to present**
 
-I write high performance gateways connecting our auto-traders with multiple
+I work on automated trading applications, and low-latency infrastructure.
+
+### Optiver Europe, Amsterdam: Senior Software Engineer
+
+**2010 to mid-2013**
+
+I wrote high performance gateways connecting our auto-traders with multiple
 exchanges/platforms: including complex order logic, extremely high volume multicast
-traffic. I co-maintain our core in-house global library, I solely maintain several
-gateways, components, and own-initiative innovation projects.
+traffic. I co-maintained our core in-house global library, and solely maintained
+several gateways, components, and own-initiative innovation projects.
 
 ### Attached to Studio Sophisti, Amsterdam: Freelance iOS developer
 
