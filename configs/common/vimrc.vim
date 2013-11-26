@@ -216,10 +216,6 @@ set statusline+=\ [%{getcwd()}]          " current dir
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
 "my original set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
 set shortmess+=r
-if executable('ag')
-    set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
-    set grepformat=%f:%l:%c:%m
-endif
 if has('gui_running')
     " remove toolbar
     set guioptions-=T
@@ -367,12 +363,16 @@ let g:unite_data_directory = '~/.vim/.cache/unite'
 call EnsureDirExists(g:unite_data_directory)
 "call unite#set_profile('files', 'smartcase', 1)
 if executable('ag')
+    set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+    set grepformat=%f:%l:%c:%m
     let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nocolor --nogroup -S -C4'
+    let g:unite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
     let g:unite_source_grep_recursive_opt = ''
 elseif executable('ack')
+    set grepprg=ack\ --noheading\ -H\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+    set grepformat=%f:%l:%c:%m
     let g:unite_source_grep_command = 'ack'
-    let g:unite_source_grep_default_opts = '--no-heading --no-color -a -C4'
+    let g:unite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
     let g:unite_source_grep_recursive_opt = ''
 endif
 if s:is_windows
