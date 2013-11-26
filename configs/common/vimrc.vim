@@ -3,8 +3,7 @@ let s:is_windows = has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
 let s:is_mac = !s:is_windows && !s:is_cygwin
       \ && (has('mac') || has('macunix') || has('gui_macvim') ||
-      \   (!executable('xdg-open') &&
-      \     system('uname') =~? '^darwin'))
+      \   (!executable('xdg-open') && system('uname') =~? '^darwin'))
 let s:is_macvim = has('gui_macvim')
 source ~/.vimrc.pre.vim
 if !exists('g:machine') | let g:machine = 'unknown' | endif
@@ -334,6 +333,8 @@ nnoremap <leader>bb :make!<CR> <Bar> :copen<CR>
 nnoremap <leader>bn :cnext<CR>
 nnoremap <leader>bp :cprev<CR>
 nnoremap <leader>bi :copen<CR>
+
+nnoremap <leader>st :Startify<cr>
 
 nnoremap <leader>bc :YcmDiags<cr>
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<cr>
