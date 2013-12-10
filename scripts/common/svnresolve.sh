@@ -5,6 +5,7 @@ set -u
 die() { printf "%s\n" "$*" >&2 ; exit 1 ; }
 usage() { printf "usage: %s <accept> [<path>...]\n" "$(basename "$0")" ; }
 SVN_EXE="${SVN_EXE:-svn}"
+test $# -ne 0 || { usage >&2 ; exit 1 ; }
 accept="$1" ; shift
 case "$accept" in
   w|work|wk|wkd|working) accept=working ;;
