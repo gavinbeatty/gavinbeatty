@@ -9,5 +9,5 @@ fi
 if test -r ~/.bashrc ; then
     . ~/.bashrc # rely on the include guards
 fi
+. "${HOME}/.opam/opam-init/init.sh" >/dev/null 2>/dev/null || true
 # don't do post, just append here
-

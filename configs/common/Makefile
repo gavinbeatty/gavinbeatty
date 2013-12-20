@@ -87,6 +87,10 @@ install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark muttrc.g
 	$(INSTALL_DATA_PRIV) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 .PHONY: install-muttrc
 
+install-ocamlinit: $(DESTDIR)$(HOME) ocamlinit
+	$(INSTALL_DATA) ocamlinit $(DESTDIR)$(HOME)/.ocamlinit
+.PHONY: install-ocamlinit
+
 install-screenrc: $(DESTDIR)$(HOME) screenrc
 	$(INSTALL_DATA) screenrc $(DESTDIR)$(HOME)/.screenrc
 .PHONY: install-screenrc
@@ -115,6 +119,6 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.unicode.vim vim/ftplugin/cpp.vi
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 
-install: install-ackrc install-venv install-bashrc install-devscripts install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-bashrc install-devscripts install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
 .PHONY: install
 
