@@ -40,6 +40,7 @@ NeoBundleLazy 'Shougo/vimshell', {'autoload': {
       \                'VimShellTerminal', 'VimShellPop'],
       \   'mappings': ['<Plug>(vimshell_switch)']
       \ }}
+NeoBundle 'def-lkb/vimbufsync'
 NeoBundle 'tpope/vim-repeat'
 "NeoBundle 'kana/vim-textobj-user'
 " Syntax
@@ -70,6 +71,9 @@ NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 "NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
+" OCaml
+NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
+NeoBundle 'OCamlPro/ocp-indent', {'autoload': {'filetypes': 'ocaml'}, 'script_type': 'plugin', 'rtp': 'tools'}
 " Haskell
 NeoBundle 'feuerbach/vim-hs-module-name'
 NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
