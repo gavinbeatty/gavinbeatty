@@ -58,6 +58,10 @@ install-devscripts: $(DESTDIR)$(HOME) devscripts
 	$(INSTALL_DATA) devscripts $(DESTDIR)$(HOME)/.devscripts
 .PHONY: install-devscripts
 
+install-gemrc: $(DESTDIR)$(HOME) gemrc
+	$(INSTALL_DATA) gemrc $(DESTDIR)$(HOME)/.gemrc
+.PHONY: install-gemrc
+
 install-ghcconfig: $(DESTDIR)$(HOME) ghci.conf
 	$(INSTALL_DIR) $(DESTDIR)$(HOME)/.ghc
 	$(INSTALL_DATA) ghci.conf $(DESTDIR)$(HOME)/.ghc/ghci.conf
@@ -119,6 +123,6 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vimrc.unicode.vim vim/ftplugin/cpp.vi
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 
-install: install-ackrc install-venv install-bashrc install-devscripts install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-bashrc install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
 .PHONY: install
 
