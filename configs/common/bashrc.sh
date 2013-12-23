@@ -108,9 +108,7 @@ for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
         MANPATH="${n_}${MANPATH:+:$MANPATH}" ; export MANPATH
     fi
 done
-if test -r "$HOME/.rvm/scripts/rvm" ; then
-    . "$HOME/.rvm/scripts/rvm"
-fi
+. "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
     PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
