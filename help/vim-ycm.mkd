@@ -1,0 +1,84 @@
+# Setting up `YCM` in `Vim`
+
+## `CMake`
+
+http://www.cmake.org/
+
+Meta build system.
+Needed to use `YCM`.
+It's very easy to compile from source, so do that.
+
+## `YCM`
+
+https://github.com/Valloric/YouCompleteMe
+
+Essentially just `Vim` integration of `libclang` functionality.
+
+## `NeoBundle`
+
+https://github.com/Shougo/neobundle.vim
+
+`Vim` plugin manager that makes life with plugins a little easier.
+We'll install and configure it alongside `YCM`.
+
+To set up `YCM` and `NeoBundle`, do:
+
+~~~~bash
+mkdir -p ~/.vim/bundle
+git clone http://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+~~~~
+
+And add the following to the top of your `vimrc`:
+
+~~~~vim
+if has('vim_starting')
+  set nocompatible               " Be iMproved
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
+call neobundle#rc(expand('~/.vim/bundle/'))
+NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundle 'Shougo/vimproc', {
+  \ 'build' : {
+  \     'windows' : 'make -f make_mingw32.mak',
+  \     'cygwin' : 'make -f make_cygwin.mak',
+  \     'mac' : 'make -f make_mac.mak',
+  \     'unix' : 'make -f make_unix.mak',
+  \ },
+\ }
+NeoBundle 'Valloric/YouCompleteMe', {
+  \ 'vim_version':'7.3.584' 
+  \ 'build' : { 'unix' : './install.sh --clang-completer' },
+\ }
+filetype plugin indent on
+NeoBundleCheck
+~~~~
+
+On non-Linux-`x86_64` platforms, you may have to install your own `Clang`,
+and point `YCM` at it.
+
+Now launch `vim`.
+It should ask you if it's allowed download new plugins: choose `y`.
+
+## `YCM` config file
+
+https://github.com/gavinbeatty/gavinbeatty/blob/master/configs/common/ycm_extra_conf.py
+
+Put this in the checkout directory alongside `project-root.jam`.
+It tells `YCM` how to find include paths (with and without `compile_commands.json`),
+and how to parse header files (as if they were source files).
+
+## Build Ear, aka `bear`
+
+https://github.com/rizsotto/Bear
+
+Generates `compile_commands.json`, which is used by `libclang` and `YCM` to get the compiler options necessary to do compile error underscores, and include file and code completion.
+Also easy to install from source, so do that.
+
+Technically this is optional, but it gives better results, as `libclang` will know all command line options (such as `-D`).
+
+~~~~bash
+bear bjam -aqj1
+~~~~
+
+Now launch `vim` and be happy.
+
