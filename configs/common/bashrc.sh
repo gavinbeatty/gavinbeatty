@@ -456,6 +456,8 @@ if test "$isinteractive" -ne 0 ; then
     grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
 
+    dusort() { du -sbL "$@" | sort -n | awk '{print $2}' ; }
+
     # DIFF may use a heuristic to try to colorize.
     # DIFFCOLOR should force color, if the tool supports colors.
     if type git >/dev/null 2>&1 && type svngitdiff.py >/dev/null 2>&1 ; then
@@ -488,6 +490,7 @@ if test "$isinteractive" -ne 0 ; then
     svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
     svnlog() { svnd log -vr HEAD:1 "$@" ; }
+    svnnews() { svnd log -vr BASE:HEAD --incremental "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { svnd diff "$@" ; }
     svnfdiff() { svndiff --ignore-properties "$@" ; }
