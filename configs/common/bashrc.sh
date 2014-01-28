@@ -443,20 +443,23 @@ if test "$isinteractive" -ne 0 ; then
     if ! echo | $XARGS_R >/dev/null 2>&1 ; then
         XARGS_R="$XARGS"
     fi
-    grepsrc() { find-src.sh -0f | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepall() { local t="$1" ; shift ; find-src.sh -0f -t "$t" | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grephs() { find-src.sh -0f -t haskell | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepcpp() { find-src.sh -0fc | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    greppy() { find-src.sh -0f -t python | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepsh() { find-src.sh -0f -t bash | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepcs() { find-src.sh -0f -t cs | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepjam() { find-src.sh -0f -t jam | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepcmake() { find-src.sh -0f -n CMakeLists.txt | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepxml() { find-src.sh -0f -t xml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepxsd() { find-src.sh -0f -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
-    grepallxml() { find-src.sh -0f -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepsrc() { find-src.sh -0Lf | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepall() { local t="$1" ; shift ; find-src.sh -0Lf -t "$t" | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grephs() { find-src.sh -0Lf -t haskell | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcpp() { find-src.sh -0Lfc | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    greppy() { find-src.sh -0Lf -t python | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepsh() { find-src.sh -0Lf -t bash | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcs() { find-src.sh -0Lf -t cs | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepjam() { find-src.sh -0Lf -t jam | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepcmake() { find-src.sh -0Lf -n CMakeLists.txt | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepxml() { find-src.sh -0Lf -t xml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepxsd() { find-src.sh -0Lf -t xsd | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepallxml() { find-src.sh -0Lf -t allxml | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
 
     dusort() { du -sbL "$@" | sort -n | awk '{print $2}' ; }
+
+    sshsudoi() { local u="$1" ; shift ; ${SSH:-ssh} -t "$@" sudo -u "$u" -i ; }
+    sshsui() { local u="$1" ; shift ; ${SSH:-ssh} -t "$@" sudo su - "$u" ; }
 
     # DIFF may use a heuristic to try to colorize.
     # DIFFCOLOR should force color, if the tool supports colors.

@@ -6,17 +6,18 @@ trap "echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 trap "echo Caught SIGINT >&2 ; exit 1 ; " INT
 prog="$(basename -- "$0")"
 
-getopt=${getopt-}
-help=${help-}
-types=${types-}
-absolute=${absolute-}
-files=${files-}
-type=${type-}
-ext=${ext-}
-name=${name-}
-zero=${zero-}
+getopt=${getopt:-}
+help=${help:-}
+types=${types:-}
+absolute=${absolute:-}
+files=${files:-}
+type=${type:-}
+ext=${ext:-}
+name=${name:-}
+zero=${zero:-}
 complete="${complete:-}"
-debug=${debug-}
+symlink="${symlink:-}"
+debug=${debug:-}
 
 usage() {
     cat <<EOF
@@ -59,6 +60,7 @@ Options
     -t <type>   find only files of the given <type>
     -e <ext>    find only files with <ext> file extension
     -n <name>   find only paths matching -name <name>
+    -L          follow symlinks in the find
     -d          print some debugging of the find command
 
 Arguments
@@ -85,14 +87,14 @@ abspath() {
 find_src() {
     if test -n "$ext" ; then
         test -z "$debug" || set -x
-        find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+        find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
             -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
             -a \( -name '*.'"$ext" \) \
             "$printer"
         return 0
     elif test -n "$name" ; then
         test -z "$debug" || set -x
-        find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+        find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
             -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
             -a -name "$name" \
             "$printer"
@@ -101,118 +103,118 @@ find_src() {
         case "$t" in
         all)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 "$printer"
             ;;
         hs|haskell)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.hs' -o -name '*.lhs' \) \
                 "$printer"
             ;;
         lhs)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.lhs' \) \
                 "$printer"
             ;;
         c)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.c' -o -name '*.h' \) \
                 "$printer"
             ;;
         cpp)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.cc' -o -name '*.C' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) \
                 "$printer"
             ;;
         cppc)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.cc' -o -name '*.cpp' -o -iname '*.c' -o -name '*.hpp' -o -name '*.h' \) \
                 "$printer"
             ;;
         cs)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.cs' \) \
                 "$printer"
             ;;
         py|python)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.py' \) \
                 "$printer"
             ;;
         pl|perl)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.pl' \) \
                 "$printer"
             ;;
         lua)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.lua' \) \
                 "$printer"
             ;;
         sh)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.sh' \) \
                 "$printer"
             ;;
         bash)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.sh' -o -name '*.bash' \) \
                 "$printer"
             ;;
         java)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.java' \) \
                 "$printer"
             ;;
         jam)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -iname '*.jam' -o -name 'project-root.jam' -o -iname 'Jamfile' -o -iname 'Jamroot' \) \
                 "$printer"
             ;;
         xml)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.xml' \) \
                 "$printer"
             ;;
         xsd)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.xsd' \) \
                 "$printer"
             ;;
         allxml)
             test -z "$debug" || set -x
-            find $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
                 -a \( -name '*.xml' -o -name '*.xsd' \) \
                 "$printer"
@@ -240,7 +242,7 @@ find_src_complete() {
 main() {
     if test -z "${NO_GETOPT:-}" ; then
         if getopt_works ; then
-            getopts="hTafct:e:n:0C:d"
+            getopts="hTafct:e:n:0C:Ld"
             opts="$("$getopt" -n "$prog" -o "$getopts" -- "$@")"
             eval set -- "$opts"
             while test $# -gt 0 ; do
@@ -255,6 +257,7 @@ main() {
                 -n) name="$2" ; shift ;;
                 -0) zero=1 ;;
                 -C) complete="$2" ; shift ;;
+                -L) symlink="-L" ;;
                 -d) debug=1 ;;
                 --)
                     shift
