@@ -88,7 +88,9 @@ svnurl() {
 # usage: svnnameurl <path> trunk|tags|branches
 svnnameurl() {
     local url=$(svnurl "$1")
-    if ! say "$url" | grep -Eq '/(trunk|tags|branches)($|/)' ; then
+    local trail=
+    url="${url%%/}"
+    if ! say "$url" | grep -q '/\(trunk\|tags\|branches\)\($\|/\)' ; then
         local i=
         local newurl=
         for i in trunk branches tags ; do
@@ -101,21 +103,20 @@ svnnameurl() {
             url="$newurl"
         else
             if test "$url" != "$1" ; then
-                local trail=" (from $1)"
+                trail=" (from $1)"
             fi
             die "URL does not contain trunk, tags or branches: ${url}${trail:-}"
         fi
-    fi
-
-    url=$(say "$url" | perl -ne 's!/(trunk|tags/[^/]*|branches/[^/]*)(/|$).*!/'"$2"'/!;print')
-    # XXX why only test trunk?
-    if test "$2" = "trunk" && ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
-        if test "$url" != "$1" ; then
-            local trail=" (from $1)"
+    else
+        url=$(say "${url%%/}/" | perl -e 'while(<STDIN>){s!/(trunk|tags|branches)(/.*|$)!/$ARGV[0]/!;print;}' "$2")
+        if ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
+            if test "$url" != "$1" ; then
+                trail=" (from $1)"
+            fi
+            die "URL does not exist: ${url}${trail:-}"
         fi
-        die "URL does not exist: ${url}${trail:-}"
     fi
-    verbose 1 "URL: $url"
+    verbose 1 "URL: $url${trail:-}"
     say "$url"
 }
 svnls() {
@@ -129,16 +130,32 @@ svnls() {
 ltrim() { say "$1" | sed -n 's#^[^/]*//*##p' ; }
 # Append the longest suffix of "$1" to each URL from stdin.
 appendLongest() {
+    local trail="${1##/}"
+    local havetrail=
     if test -z "$append" ; then cat
     else
-        # Only do the trim-and-ls for the first url, then apply to the rest.
-        read url
-        local trail="${1##/}"
-        while test -n "$trail" && ! $SVN_EXE ls "$url/$trail" >/dev/null 2>&1 ; do
-            trail="$(ltrim "$trail")"
+        local url=
+        while read url ; do
+            url="${url%%/}"
+            if test -z "$havetrail" ; then
+                trail="${1##/}"
+                while test -n "$trail" ; do
+                    if ! $SVN_EXE info "${url}/$trail" >/dev/null 2>&1 ; then
+                        trail="$(ltrim "$trail")"
+                        trail="${trail##/}"
+                    else
+                        havetrail=1
+                        trail="${trail%%/}"
+                        break
+                    fi
+                done
+            fi
+            if test -n "$havetrail" && $SVN_EXE info "${url}/$trail" >/dev/null 2>&1 ; then
+                say "${url}/$trail"
+            else
+                say "$url"
+            fi
         done
-        trail="${trail:+/$trail}"
-        (say "$url" ; cat) | sed "s,\$,${trail%%/}," # don't forget the one we 'read'
     fi
 }
 
@@ -194,20 +211,20 @@ main() {
         exit 1
     fi
 
-    if ! LC_ALL=C $SVN_EXE info "$1" >/dev/null 2>&1 ; then
+    if ! url="$(svnurl "$1")" ; then
         die "$1 is not an svn url or checkout!"
     fi
 
     if test -n "$tags" ; then
-        if url="$(svnnameurl "$1" "tags")" ; then
-            svnls "$url" | appendLongest "$1"
+        if lsurl="$(svnnameurl "$1" "tags")" ; then
+            svnls "$lsurl" | appendLongest "$url"
         fi
     elif test -n "$branches" ; then
-        if url="$(svnnameurl "$1" "branches")" ; then
-            svnls "$url" | appendLongest "$1"
+        if lsurl="$(svnnameurl "$1" "branches")" ; then
+            svnls "$lsurl" | appendLongest "$url"
         fi
     else
-        svnnameurl "$1" "trunk" | sed 's|//*$||' | appendLongest "$1"
+        svnnameurl "$1" "trunk" | sed 's|//*$||' | appendLongest "$url"
     fi
 }
 main "$@"
