@@ -91,30 +91,21 @@ svnnameurl() {
     local trail=
     url="${url%%/}"
     if ! say "$url" | grep -q '/\(trunk\|tags\|branches\)\($\|/\)' ; then
-        local i=
-        local newurl=
-        for i in trunk branches tags ; do
-            if $SVN_EXE ls "$url/$i" >/dev/null 2>&1 ; then
-                newurl="$url/$i"
-                break
-            fi
-        done
-        if test -n "$newurl" ; then
-            url="$newurl"
+        if $SVN_EXE ls "$url/" 2>&1 | grep -q '^\(trunk\|tags\|branches\)\($\|/\)' ; then
+            url="$url/$2"
         else
             if test "$url" != "$1" ; then
                 trail=" (from $1)"
             fi
-            die "URL does not contain trunk, tags or branches: ${url}${trail:-}"
+            die "URL does not contain trunk, tags, or branches: ${url}${trail:-}"
         fi
-    else
-        url=$(say "${url%%/}/" | perl -e 'while(<STDIN>){s!/(trunk|tags|branches)(/.*|$)!/$ARGV[0]/!;print;}' "$2")
-        if ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
-            if test "$url" != "$1" ; then
-                trail=" (from $1)"
-            fi
-            die "URL does not exist: ${url}${trail:-}"
+    fi
+    url=$(say "${url%%/}/" | perl -e 'while(<STDIN>){s!/(trunk|tags|branches)(/.*|$)!/$ARGV[0]/!;print;}' "$2")
+    if ! LC_ALL=C $SVN_EXE info "$url" >/dev/null 2>&1 ; then
+        if test "$url" != "$1" ; then
+            trail=" (from $1)"
         fi
+        die "URL does not exist: ${url}${trail:-}"
     fi
     verbose 1 "URL: $url${trail:-}"
     say "$url"
