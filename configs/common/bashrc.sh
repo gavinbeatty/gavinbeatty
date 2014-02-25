@@ -366,7 +366,7 @@ if test "$isinteractive" -ne 0 ; then
     }
     e() {
         if test -f cscope.out ; then
-            vim "+cscope add Gav_fnameescape('$(pwd)/cscope.out')" "$@"
+            vim "+cscope add fnameescape('$(pwd)/cscope.out')" "$@"
         else vim "$@"
         fi
     }
