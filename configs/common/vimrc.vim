@@ -48,6 +48,7 @@ NeoBundleLazy 'http://svn.macports.org/repository/macports/contrib/mpvim/', {'au
 NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
 NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
+NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 NeoBundle 'altercation/vim-colors-solarized'
 "NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'bling/vim-airline'
@@ -65,7 +66,7 @@ NeoBundle 'tpope/vim-endwise'
 "NeoBundle 'Shougo/unite-build'
 "NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'scrooloose/syntastic'
-NeoBundle 'Raimondi/delimitMate'
+"NeoBundle 'Raimondi/delimitMate'
 "NeoBundle 'kana/vim-textobj-diff'
 NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'nathanaelkane/vim-indent-guides'
@@ -83,7 +84,6 @@ NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
 NeoBundle 'Valloric/YouCompleteMe', {'vim_version':'7.3.584'}
-NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 " Python
 NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
 NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
@@ -269,6 +269,11 @@ if !exists('s:filetypeextras_loaded')
         au FileType perl setlocal smartindent
         au FileType make setlocal noet sw=8 ts=8
         au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
+    augroup end
+endif
+if exists(':Rainbow') && !exists('s:filetypeextras_rainbow_loaded')
+    let s:filetypeextras_rainbow_loaded = 1
+    augroup filetypeextras_rainbow
         " Redraw rainbow parens when going back to the buffer.
         au Syntax * call rainbow#load()
     augroup end
