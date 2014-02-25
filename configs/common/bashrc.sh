@@ -370,6 +370,8 @@ if test "$isinteractive" -ne 0 ; then
         else vim "$@"
         fi
     }
+    vimnone() { vim --cmd 'let g:none=1' "$@" ; }
+    vimmin() { vim --cmd 'let g:min=1' "$@" ; }
     p() { if test $# -gt 0 ; then "$@" | "$PAGER" ; fi ; }
     today() { date +"%Y%m%d" ; }
     todaytime() { date +"%Y%m%d-%H%M%S" ; }

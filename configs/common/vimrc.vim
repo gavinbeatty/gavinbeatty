@@ -11,6 +11,8 @@ if !exists('g:cpp_expandtab') | let g:cpp_expandtab = 1 | endif
 if !exists('g:cpp_textwidth') | let g:cpp_textwidth = 100 | endif
 if !exists('mapleader') | let mapleader = ',' | endif
 if !exists('g:mapleader') | let g:mapleader = ',' | endif
+if !exists('g:none') | let g:none = 0 | endif
+if !exists('g:min') | let g:min = 0 | endif
 
 let &tags = getcwd().'/tags,'
 set nocscopeverbose
@@ -23,6 +25,7 @@ set cscopeverbose
 filetype on
 filetype off
 if s:is_windows | set rtp+=~/.vim | endif
+if !g:none
 set rtp+=~/.vim/bundle/neobundle.vim/
 call neobundle#rc(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -51,17 +54,23 @@ NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 NeoBundle 'altercation/vim-colors-solarized'
 "NeoBundle 'ujihisa/unite-colorscheme'
+" The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
+if !g:min
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-git'
+endif
 " Programming
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/a.vim'
+"if !g:min
 "NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
       "\ 'commands': [{'name': 'Unite',
       "\                'complete': 'customlist,unite#complete_source'
       "\               }, 'UniteWithCursorWord', 'UniteWithInput'
       "\              ]}}
+"endif
 NeoBundle 'chazy/cscope_maps'
+if !g:min
 NeoBundle 'tpope/vim-endwise'
 "NeoBundle 'Shougo/unite-build'
 "NeoBundle 'tpope/vim-fugitive'
@@ -117,7 +126,9 @@ NeoBundleLazy 'add20/vim-conque', {'autoload': {'commands': ['ConqueTerm']}}
 NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
       \ }}
+endif
 NeoBundleCheck
+endif
 
 syntax enable
 highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
@@ -128,8 +139,12 @@ set t_Co=256
 set background=dark
 " See :h filetype-overview
 filetype plugin indent on
-colorscheme solarized
-if g:colors_name != 'solarized' | colorscheme blackboard | endif
+if !g:none
+    colorscheme solarized
+endif
+if !exists('g:colors_name') || g:colors_name != 'solarized'
+    colorscheme slate
+endif
 set nonumber
 set expandtab
 set tabstop=4
