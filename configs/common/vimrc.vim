@@ -351,6 +351,8 @@ nnoremap <leader>th :set invhls hls?<CR>
 nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=t fo? <Bar> endif<CR>
 nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
+nnoremap <leader>sus :set spelllang=en_us spelllang?<CR>
+nnoremap <leader>sgb :set spelllang=en_gb spelllang?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
 " Make and quickfix.
 nnoremap <leader>bb :make!<CR> <Bar> :copen<CR>
