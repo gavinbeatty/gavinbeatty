@@ -4,8 +4,8 @@ bashrc_guard=1
 
 say() { printf "%s\n" "$*" ; }
 case $- in
-*i*) isinteractive=1 ; isay() { printf "%s\n" "$*" ; } ;;
-*) isinteractive=0 ; isay() { true ; } ;;
+*i*) isinteractive=1 ; isay() { printf "%s\n" "$*" ; } ; iprintf() { printf "$@" ; };;
+*) isinteractive=0 ; isay() { true ; } ; iprintf() { true ; } ;;
 esac
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
