@@ -122,24 +122,25 @@ find_src() {
                 "$printer"
             ;;
         c)
+            # .inl is a dumb convention that exists in some places...
             test -z "$debug" || set -x
             find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
-                -a \( -name '*.c' -o -name '*.h' \) \
+                -a \( -name '*.c' -o -name '*.h' -o -name '*.inl' \) \
                 "$printer"
             ;;
         cpp)
             test -z "$debug" || set -x
             find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
-                -a \( -name '*.cc' -o -name '*.C' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) \
+                -a \( -name '*.cc' -o -name '*.C' -o -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.inl' \) \
                 "$printer"
             ;;
         cppc)
             test -z "$debug" || set -x
             find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
-                -a \( -name '*.cc' -o -name '*.cpp' -o -iname '*.c' -o -name '*.hpp' -o -name '*.h' \) \
+                -a \( -name '*.cc' -o -name '*.cpp' -o -iname '*.c' -o -name '*.hpp' -o -name '*.h' -o -name '*.inl' \) \
                 "$printer"
             ;;
         cs)
