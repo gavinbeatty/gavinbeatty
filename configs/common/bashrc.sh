@@ -435,6 +435,8 @@ if test "$isinteractive" -ne 0 ; then
         shift
         (cd -- "$d" && "$@")
     }
+    postpath() { for i in "$@" ; do export PATH="${PATH:+${PATH}:}$i" ; done ; }
+    prepath() { for i in "$@" ; do export PATH="$i${PATH:+:${PATH}}" ; done ; }
     XARGS="xargs"
     if type gxargs >/dev/null 2>&1 ; then
         XARGS="gxargs"
