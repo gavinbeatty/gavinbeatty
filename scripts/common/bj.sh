@@ -2,7 +2,7 @@
 # vi: set ft=sh et ts=2 sw=2:
 bj() {
   local b2="${B2:-}"
-  b2="${b2:-$BJAM}"
+  b2="${b2:-${BJAM:-}}"
   b2="${b2:-b2}"
   local testfile="${TMPDIR:-/tmp}/${EUID:-$(id -u)}-bj${RANDOM:-$(uuidgen)}"
   $b2 "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
