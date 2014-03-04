@@ -108,7 +108,7 @@ main() {
         while true ; do
             case "$1" in
                 -h) help=1 ;;
-                -v) verbose=$(( $verbose + 1 ))
+                -v) verbose=$(( verbose + 1 ))
                     echodo="echodo"
                     ;;
                 -c) fxn="ctags_c" ;;

@@ -30,7 +30,7 @@ have() {
 main() {
     if have getopt ; then
         opts=$(getopt -n "$prog" -o "hp:l:" -- "$@")
-        eval set -- $opts
+        eval set -- "$opts"
 
         while test $# -gt 0 ; do
             case "$1" in
@@ -73,6 +73,6 @@ main() {
     if test -z "$rev" ; then
         die "svnlastcommit.sh failed to find revision for $1"
     fi
-    $SVN_EXE log -v --xml -r"${rev}:HEAD" "$tourl" | $python $svn2log -O -H -s
+    $SVN_EXE log -v --xml -r"${rev}:HEAD" "$tourl" | $python "$svn2log" -O -H -s
 }
 main "$@"

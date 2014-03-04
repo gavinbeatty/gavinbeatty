@@ -37,8 +37,8 @@ main() {
         while test $# -gt 0 ; do
             case "$1" in
             -h) help=1 ;;
-            -v) verbose=$(( $verbose + 1 )) ;;
-            -q) verbose=$(( $verbose - 1 )) ;;
+            -v) verbose=$(( verbose + 1 )) ;;
+            -q) verbose=$(( verbose - 1 )) ;;
             -n) verbose=1 ; dry_run=1 ;;
             --) shift ; break ;;
             *) die "Unknown option: $1" ;;

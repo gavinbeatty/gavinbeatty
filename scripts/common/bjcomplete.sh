@@ -25,20 +25,20 @@ if type bear >/dev/null 2>&1 ; then
     bear -- bjam "$@" || e=$?
 fi
 # XXX use perl instead of gawk: needs word boundaries
-gawk 'BEGIN{using=0}{
-  if(using == 0 && /^(using$|using\y|[^#]*\yusing\y)/){using=1}
-  printf("%s%s\n", using == 1 ? "#" : "", $0);
-  if(/^(|[^#]*[^\\]);/){using=0}
-}' "$root" > "${root}.complete"
+gawk "BEGIN{using=0}{
+  if(using == 0 && /^(using\$|using\\y|[^\#]*\\yusing\\y)/){using=1}
+  printf(\"%s%s\\n\", using == 1 ? \"\#\" : \"\", \$0);
+  if(/^(|[^\#]*[^\\\\]);/){using=0}
+}" "$root" > "${root}.complete"
 echo 'using gcc : complete : cc_args.py g++ ;' >> "${root}.complete"
-rollback() {
-    mv "${root}.complete.orig" "$root" 2>/dev/null || true
-}
+rollback() { mv "${root}.complete.orig" "$root" 2>/dev/null || true ; }
 mv "$root" "${root}.complete.orig"
 cp "${root}.complete" "$root"
 vdo bjam "$@" || e=$?
 c=".clang_complete"
 if test -f "$c" ; then
-    { rm $c && sort | uniq | awk '!/^[[:space:]]*$/{print}' > $c ; } < $c
+    cstr="$(cat "$c")"
+    rm -f "$c"
+    printf "%s" "$cstr" | sort | uniq | awk '!/^[[:space:]]*$/{print}' > "$c"
 fi
 exit $e

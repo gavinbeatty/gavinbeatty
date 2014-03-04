@@ -53,7 +53,6 @@ usage() {
     echo "$(eval_gettext "usage: \${prog} [-p <prefix>] [-s <suffix>] [-d]")"
 }
 help() {
-    tmpdir="\$TMPDIR"
     cat <<EOF
 $(gettext "Copyright (C) 2007, 2008, 2011 Gavin Beatty <gavinbeatty@gmail.com>")
 $(gettext "Licensed under the MIT license: http://www.opensource.org/licenses/MIT")

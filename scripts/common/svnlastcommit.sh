@@ -36,7 +36,7 @@ main() {
 
     while test $# -ne 0 ; do
         case "$1" in
-        -v) verbose=$(( $verbose + 1 )) ; ;;
+        -v) verbose=$(( verbose + 1 )) ; ;;
         -h) usage ; exit 0 ; ;;
         -l) local=1 ; ;;
         -r) real=1 ; ;;

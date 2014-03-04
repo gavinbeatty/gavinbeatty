@@ -18,7 +18,7 @@ if test $# -gt 1 ; then
     exit 1
 fi
 if info="$(LC_ALL=C $SVN_EXE info -- "$1" 2>/dev/null)" ; then
-    echo "$info" | LC_ALL=C $AWK 'BEGIN {FS=": " } /^URL: / {print $2}'
+    echo "$info" | LC_ALL=C $AWK -v FS=": " "/^URL: / {print \$2}"
 else
     echo "error: $1 is an invalid <path>" >&2
     echo "usage: $(basename -- "$0") [--] [<path>]" >&2

@@ -12,15 +12,9 @@ getopt=${getopt:-getopt}
 GREPOPTS=${GREPOPTS:-}
 
 prog="$(basename -- "$0")"
-usage() {
-    echo "usage: $prog [-h] [-v] <string> <filename>"
-}
-error() {
-    echo "error: $@" >&2
-}
-warn() {
-    echo "warn: $@" >&2
-}
+usage() { echo "usage: $prog [-h] [-v] <string> <filename>" ; }
+error() { echo "error: $@" >&2 ; }
+warn() { echo "warn: $@" >&2 ; }
 #usage: verbose <level> <msg>...
 verbose() {
     if test $verbose -ge "$1" ; then
@@ -28,18 +22,13 @@ verbose() {
         echo "verbose: $@" >&2
     fi
 }
-die() {
-    error "$@"
-    exit 1
-}
-have() {
-    type "$@" >/dev/null 2>&1
-}
+die() { error "$@" ; exit 1 ; }
+have() { type "$@" >/dev/null 2>&1 ; }
 
 main() {
     if have getopt ; then
         opts=$("$getopt" -n "$prog" -o "hv" -- "$@")
-        eval set -- $opts
+        eval set -- "$opts"
 
         while test $# -gt 0 ; do
             case "$1" in
@@ -47,7 +36,7 @@ main() {
                 help=1
                 ;;
             -v)
-                verbose=$(($verbose + 1))
+                verbose=$(( verbose + 1 ))
                 ;;
             --)
                 shift

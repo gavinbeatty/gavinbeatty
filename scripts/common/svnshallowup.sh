@@ -60,7 +60,7 @@ dirlevels() {
   local n=0
   local next="$(dirname "$1")"
   while test "$next" != '.' ; do
-    n=$(( $n + 1 ))
+    n=$(( n + 1 ))
     next="$(dirname "$next")"
   done
   echo $n
@@ -68,18 +68,18 @@ dirlevels() {
 dirnamelevel() {
   local n=$1
   local d="$2"
-  while test $n -ne 0 ; do
+  while test "$n" -ne 0 ; do
     d="$(dirname "$d")"
-    n=$(( $n - 1 ))
+    n=$(( n - 1 ))
   done
   echo "$d"
 }
 svnshallowup() {
-  local levels=$(dirlevels "$1")
-  local n=$levels
-  while test $n -ne 0 ; do
-    run $SVN_EXE update --depth=empty "$(dirnamelevel $n "$1")"
-    n=$(( $n - 1 ))
+  local levels="$(dirlevels "$1")"
+  local n="$levels"
+  while test "$n" -ne 0 ; do
+    run $SVN_EXE update --depth=empty "$(dirnamelevel "$n" "$1")"
+    n=$(( n - 1 ))
   done
   run $SVN_EXE update ${leaf_depth:+--depth=$leaf_depth} "$1"
 }
@@ -89,7 +89,7 @@ main() {
     longopts=
     test -n "$longopts_support" && longopts="-l help,leaf-depth:,depth:,verbose,dry-run"
     opts="$("$getopt" -n "$prog" -o "hlvn" $longopts -- "$@")"
-    eval set -- $opts
+    eval set -- "$opts"
 
     while test $# -gt 0 ; do
       case "$1" in

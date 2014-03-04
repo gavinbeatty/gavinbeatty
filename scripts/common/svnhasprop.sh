@@ -10,6 +10,6 @@ if test $# -lt 2 ; then usage >&2 ; exit 1 ; fi
 prop="$1" ; shift
 for i in "$@" ; do
   if $SVN_EXE pl "$i" 2>/dev/null | grep -Fq "$prop" ; then
-    printf "%s$lf" "$i"
+    printf "%s%s" "$i" "$lf"
   fi
 done

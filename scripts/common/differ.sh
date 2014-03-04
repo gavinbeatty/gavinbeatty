@@ -48,7 +48,7 @@ main() {
         while test $# -gt 0 ; do
             case "$1" in
             -h) help=1 ;;
-            -v) verbose=$(( $verbose + 1 )) ;;
+            -v) verbose=$(( verbose + 1 )) ;;
             -i) inplace=1 ;;
             -p) perlcode="$2" ; shift ;;
             -a) awkcode="$2" ; shift ;;

@@ -99,7 +99,7 @@ find_src() {
             -a -name "$name" \
             "$printer"
     fi
-    for t in $(echo "$type" | tr '[A-Z]' '[a-z]' | sed -e 's/[:,;]/ /g') ; do
+    for t in $(echo "$type" | tr '[:upper:]' '[:lower:]' | sed -e 's/[:,;]/ /g') ; do
         case "$t" in
         all)
             test -z "$debug" || set -x
@@ -226,7 +226,7 @@ find_src() {
 find_src_complete() {
     complete="$1"
     shift
-    cat "$complete" | while read c ; do
+    while read c < "$complete"; do
         c="$(echo "$c" | sed -n 's/^-\(I\|include \)//p')"
         if test -n "$c" ; then
             if test -n "$absolute" ; then

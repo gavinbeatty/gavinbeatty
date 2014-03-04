@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # vi: set ft=sh expandtab shiftwidth=4 tabstop=4:
 set -e
 set -u
@@ -25,7 +25,7 @@ main() {
             e=0
             local year="$(findyear "$f")" || e=$?
             if test $e -eq 0 ; then
-                printf "1i\n// Copyright (c) $year ${who}\n.\nw\nq\n" | ed -s -- "$f"
+                printf "1i\n// Copyright (c) %s %s\n.\nw\nq\n" "$year" "$who" | ed -s -- "$f"
             fi
         fi
     done

@@ -391,7 +391,7 @@ main() {
     while true ; do
         case "$1" in
         -h|--help) help ; pax ;;
-        -v|--verbose) verbose=$(( $verbose + 1 )) ;;
+        -v|--verbose) verbose=$(( verbose + 1 )) ;;
         -p|--patch) patch=1 ;;
         -l|--license-type) license_type="$2" ; shift ;;
         -s|--source-type) source_type="$2" ; shift ;;

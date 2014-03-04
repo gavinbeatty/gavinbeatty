@@ -104,7 +104,7 @@ main() {
                 exit 0
                 ;;
             -v)
-                verbose=$(("$verbose" + 1))
+                verbose=$(( verbose + 1 ))
                 shift
                 ;;
             --)

@@ -58,7 +58,7 @@ main() {
         while test $# -gt 0 ; do
 			case "$1" in
             -h) help=1 ; ;;
-            -v) verbose=$(( $verbose + 1 )) ; ;;
+            -v) verbose=$(( verbose + 1 )) ; ;;
             -L) symlinks="-L" ; ;;
             -P) symlinks="-P" ; ;;
             -H) symlinks="-H" ; ;;

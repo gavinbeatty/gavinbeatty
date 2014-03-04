@@ -194,7 +194,7 @@ main() {
 
     while test $# -gt 0 ; do
         case "$1" in
-        -v) verbose=$(( $verbose + 1 )) ;;
+        -v) verbose=$(( verbose + 1 )) ;;
         -s) size="$2" ; shift ;;
         -i) open_tex_block="$"
             close_tex_block="$"

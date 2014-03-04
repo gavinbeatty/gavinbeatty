@@ -66,7 +66,7 @@ have() {
 # usage: svnurl <path>
 svnurl() {
     local e=0
-    local url="$(LC_ALL=C $SVN_EXE info -- "$1" 2>/dev/null || e=$?)"
+    local url="$(LC_ALL=C $SVN_EXE info -- "$1" 2>/dev/null)" || e=$?
     if test $e -ne 0 ; then
         return $e
     fi
@@ -97,7 +97,7 @@ svnswurl() {
 main() {
     if have getopt ; then
         opts="$(getopt -n "$prog" -o "hvnab:t:T" -- "$@")"
-        eval set -- $opts
+        eval set -- "$opts"
 
         while test $# -gt 0 ; do
         case "$1" in
@@ -105,7 +105,7 @@ main() {
                 help=1
                 ;;
             -v)
-                verbose=$(($verbose + 1))
+                verbose=$(( verbose + 1 ))
                 ;;
             -n)
                 dryrun=1
@@ -172,7 +172,7 @@ main() {
     fi
 
     if test -n "$dryrun" ; then
-        echo "(cd -- "$1" && $SVN_EXE switch -- "$url")"
+        echo "(cd -- \"$1\" && $SVN_EXE switch -- \"$url\")"
     elif test -n "$ask" ; then
         echo "${prog}: $SVN_EXE switch $url"
         while true ; do

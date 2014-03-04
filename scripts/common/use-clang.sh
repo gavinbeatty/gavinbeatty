@@ -28,7 +28,7 @@ die() { error "$@" ; exit 1 ; }
 have() { type "$@" >/dev/null 2>&1 ; }
 
 enable_sh() {
-    anyway=""
+    local anyway=""
     if test -f "$1" ; then
         if test "$(file -b "$1")" != "Bourne shell script text executable" ; then
             die "Cannot overwrite $1 because it's not a shell script"
@@ -57,8 +57,8 @@ disable_sh() {
 }
 
 enable_clang() {
-    enable_sh "${bindir}/gcc" "clang \${CLANG_COLOR:+-fcolor-diagnostics}" 'test -z "${CLANG_CMD-}" || set -x'
-    enable_sh "${bindir}/g++" "clang++ \${CLANG_COLOR:+-fcolor-diagnostics}" 'test -z "${CLANG_CMD-}" || set -x'
+    enable_sh "${bindir}/gcc" "clang \${CLANG_COLOR:+-fcolor-diagnostics}" "test -z \"\${CLANG_CMD-}\" || set -x"
+    enable_sh "${bindir}/g++" "clang++ \${CLANG_COLOR:+-fcolor-diagnostics}" "test -z \"\${CLANG_CMD-}\" || set -x"
 }
 disable_clang() {
     disable_sh "${bindir}/gcc"
@@ -67,15 +67,15 @@ disable_clang() {
 
 main() {
     if have getopt ; then
-        e=0
-        opts="$("$getopt" -n "$prog" -o "hvqb:" -- "$@")" || e=$?
+        local e=0
+        local opts="$("$getopt" -n "$prog" -o "hvqb:" -- "$@")" || e=$?
         test $e -eq 0 || exit 1
         eval set -- "$opts"
 
         while test $# -gt 0 ; do
             case "$1" in
             -h) help=1 ;;
-            -v) verbose=$(( $verbose + 1 )) ;;
+            -v) verbose=$(( verbose + 1 )) ;;
             -q) verbose=0 ;;
             -b) bindir="$2" ;;
             --) shift ; break ;;
@@ -95,8 +95,8 @@ main() {
     if test -z "$bindir" ; then
         bindir="${PREFIX:-${HOME}/.local}/bin"
     fi
-    onoff="$(echo "$1" | tr "[A-Z]" "[a-z]")"
-    case "$1" in
+    local onoff="$(echo "$1" | tr "[:upper:]" "[:lower:]")"
+    case "$onoff" in
     yes|on|true|1|enable) enable_clang ;;
     no|off|false|0|disable) disable_clang ;;
     *) die "Invalid <onoff> argument." ;;

@@ -79,7 +79,7 @@ getopt_works() {
 # usage: svnurl <path>
 svnurl() {
     local e=0
-    local url="$(LC_ALL=C $SVN_EXE info "$1" 2>/dev/null || e=$?)"
+    local url="$(LC_ALL=C $SVN_EXE info "$1" 2>/dev/null)" || e=$?
     if test $e -ne 0 ; then
         return $e
     fi
@@ -155,7 +155,7 @@ main() {
         longopts=
         test -z "$longopts_support" || longopts="-l help,verbose,tags,branches,trunk,full,append"
         opts="$("$getopt" -n "$prog" -o "hvtbTfa" $longopts -- "$@")"
-        eval set -- $opts
+        eval set -- "$opts"
 
         while test $# -gt 0 ; do
             case "$1" in

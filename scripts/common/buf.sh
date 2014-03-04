@@ -53,9 +53,9 @@ main() {
     esac
 
     cif=0
-    test -n "$clear" && cif=$(( $cif + 1 ))
-    test -n "$stdin" && cif=$(( $cif + 1 ))
-    test -n "$file" && cif=$(( $cif + 1 ))
+    test -n "$clear" && cif=$(( cif + 1 ))
+    test -n "$stdin" && cif=$(( cif + 1 ))
+    test -n "$file" && cif=$(( cif + 1 ))
     case "$cif" in
     0) stdin=1 ; ;; # stdin by default
     1) ;; # fine

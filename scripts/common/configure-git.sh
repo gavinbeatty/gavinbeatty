@@ -31,7 +31,7 @@ trap "echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 default_name="Gavin Beatty"
 default_email="gavinbeatty@gmail.com"
 default_work_email="gavinbeatty@optiver.com"
-default_excludesfile="~/.gitignore"
+default_excludesfile="$HOME/.gitignore"
 
 no_getopt_warning="${NO_GETOPT_WARNING:-}"
 getopt="${GETOPT:-getopt}"
@@ -41,7 +41,6 @@ help=${CONFIGURE_GIT_HELP:-}
 list=${CONFIGURE_GIT_LIST:-}
 name=${CONFIGURE_GIT_NAME:-$default_name}
 email=${CONFIGURE_GIT_EMAIL:-$default_email}
-work=${CONFIGURE_GIT_WORK:-}
 environment="${CONFIGURE_GIT_ENVIRONMENT:-}"
 excludesfile=${CONFIGURE_GIT_EXCLUDESFILE:-$default_excludesfile}
 sections=${CONFIGURE_GIT_SECTIONS:-all}
@@ -59,7 +58,7 @@ verbose() {
         say "verbose: $*" >&2
     fi
 }
-echodo() { say "$*" ; "$@" ; }
+go() { test -n "$dryrun" || "$@" ; }
 have() { type "$@" >/dev/null 2>&1 ; }
 havefirst() { test $# -gt 0 && type "$1" >/dev/null 2>&1 ; }
 
@@ -120,10 +119,10 @@ git_required_version_str="1.5.0"
 gitconfig() {
     if test -n "$configfile" ; then
         verbose 1 $git config -f "$configfile" -- "$@"
-        $git config -f "$configfile" -- "$@"
+        go $git config -f "$configfile" -- "$@"
     else
         verbose 1 $git config "$configtype" -- "$@"
-        $git config "$configtype" -- "$@"
+        go $git config "$configtype" -- "$@"
     fi
 }
 user_section() {
@@ -270,14 +269,10 @@ main() {
     set -- $git_version_str
     git_version=$(( ${1:-0} * 100 + ${2:-0} * 10 + ${3:-0} ))
     if test "${git_version:-0}" -lt "$git_required_version" ; then
-        die "git version ($git_version) >= $git_required_version is required"
+        die "git version ($git_version) >= $git_required_version_str is required"
     fi
 
-    echodo=""
-    if test "$verbose" -ge 1 ; then echodo="echodo" ; fi
-    if test -n "$dryrun" ; then echodo="echo" ; fi
-
-    sections=$(echo "$sections" | tr '[A-Z]' '[a-z]' | sed -e 's/[ 	]*[,+|][ 	]*/ /g')
+    sections=$(echo "$sections" | tr '[:upper:]' '[:lower:]' | sed -e 's/[ 	]*[,+|][ 	]*/ /g')
     for sec in $sections ; do
         case "$sec" in
         user) user_section ;;

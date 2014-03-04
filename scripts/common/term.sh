@@ -68,7 +68,7 @@ main() {
         while true ; do
             case "$1" in
                 -h) help=1 ;;
-                -v) verbose=$(( $verbose + 1 )) ;;
+                -v) verbose=$(( verbose + 1 )) ;;
                 -n) dryrun=1 ; verbose=1 ;;
                 -t) tmpdir="$2" ; shift ;;
                 --) shift ; break ;;

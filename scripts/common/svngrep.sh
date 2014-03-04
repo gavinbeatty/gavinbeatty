@@ -35,6 +35,6 @@ e=0
 matches="$($SVN_EXE $op $rev "$path" | $GREP_EXE "$@")" || e=$?
 if test -n "$quiet" ; then exit $e ; fi
 if test -n "$matches" ; then
-  if test -n "$lf" ; then printf "%s$lf" "$path"
+  if test -n "$lf" ; then printf "%s%s" "$path" "$lf"
   else printf "%s\n" "$matches" ; fi
 fi

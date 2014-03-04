@@ -8,7 +8,6 @@ prog="$(basename -- "$0")"
 xargs="${XARGS:-}"
 help=${RMR_HELP:-}
 quiet=${RMR_QUIET:-}
-pat="${RMR_PATTERN:-}"
 dir="${RMR_DIRECTORY:-.}"
 type="${RMR_TYPE:-f}"
 pred="${RMR_PREDICATE:-name}"
