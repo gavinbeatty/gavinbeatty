@@ -15,6 +15,7 @@ addlicense.sh \
 asciitable.sh \
 bangcheck.sh \
 battery.sh \
+bj.sh \
 bjcomplete.sh \
 buf.sh \
 cc-includes.sh \
