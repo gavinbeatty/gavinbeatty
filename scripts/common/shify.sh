@@ -17,15 +17,10 @@ case "$abssh" in
     /*) ;;
     *) die "$abssh isn't an absolute path." ;;
 esac
-case "$(uname | tr '[A-Z]' '[a-z]')" in
-    *bsd*|darwin*) sedi() { sed -i '' "$@" ; } ;;
-    *) sedi() { sed -i "$@" ; } ;;
-esac
+replacesh() { perl -e 'my $sh=$ARGV[0];my $i=0;while(<STDIN>){if($i==0){s#^\#!.*/(env |)(da|)sh(| .*)$#\#!$sh$4#;}print;$i=$i+1;}' "$1" ; }
 for i in "$@" ; do
-    h="$(head -n 1 -- "$i")"
-    case "$h" in
-    \#!/*sh*) sedi -e "1s!^#\!/.*sh\$!#\!${abssh}!" "$i" ;;
-    \#!/*sh\ *) sedi -e "1s!^#\!/.*sh \(.*\)\$!#\!${abssh} \1!" "$i" ;;
-    esac
+    replacesh "$abssh" < "$i" > "$i".shify
+    cat "$i".shify > "$i" # cat into it, rather than move into it, so we don't modify file attributes
+    rm "$i".shify
 done
 peace
