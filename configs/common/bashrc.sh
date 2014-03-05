@@ -504,7 +504,9 @@ if test "$isinteractive" -ne 0 ; then
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
     svntags() { svnlist.sh -t "$@" ; }
+    svnstags() { svnsort.sh -t "$@" ; }
     svnbr() { svnlist.sh -b "$@" ; }
+    svnsbr() { svnsort.sh -b "$@" ; }
     svntr() { svnlist.sh -T "$@" ; }
 
     moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
