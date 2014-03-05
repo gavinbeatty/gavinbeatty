@@ -85,6 +85,7 @@ svnrepo.sh \
 svnrepowalk.sh \
 svnresolve.sh \
 svnshallowup.sh \
+svnsort.sh \
 svnswitch.sh \
 svnurl.sh \
 svnwcroot.sh \
