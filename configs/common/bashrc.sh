@@ -509,24 +509,7 @@ if test "$isinteractive" -ne 0 ; then
 
     moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
 
-    bj() {
-        local testfile="/tmp/gavinbeatty-bjtestcap$(uuidgen 2>/dev/null || true)"
-        b2 "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
-        local e="${PIPESTATUS[0]}"
-        cat <<EOF
-XXXXXXXXXXXXXXXXXXX
-XXX TEST OUTPUT XXX
-XXXXXXXXXXXXXXXXXXX
-EOF
-        local ge=0
-        "${GREP:-grep}" '^\(\*\*passed\*\*\|\.\.\.failed\|testing\..*\.passed$\)' "$testfile" || ge=$?
-        case $ge in
-            0|1) ;;
-            *) return $ge ;;
-        esac
-        rm "$testfile" || return $?
-        return $e
-    }
+    bj() { bj.sh "$@" ; }
     bjin() {
         test $# -eq 0 && { echo "usage: bjin <dir> [<args>...]" >&2 ; return 1; }
         local d=$1

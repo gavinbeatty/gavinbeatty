@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # vi: set ft=sh et ts=2 sw=2:
 bj() {
-  local b2="${B2:-}"
-  b2="${b2:-${BJAM:-}}"
+  local bjam="${BJAM:-}"
+  local b2="${B2:-$bjam}"
   b2="${b2:-b2}"
-  local testfile="${TMPDIR:-/tmp}/${EUID:-$(id -u)}-bj${RANDOM:-$(uuidgen)}"
+  local uid="$(id -u 2>/dev/null || true)"
+  local rand="$(uuidgen 2>/dev/null || true)"
+  local testfile="${TMPDIR:-/tmp}/${EUID:-$uid}-bj${RANDOM:-$rand}"
   $b2 "-j${JCONC:-1}" --verbose-test "$@" 2>&1 | tee "$testfile"
   local e="${PIPESTATUS[0]}"
   cat  <<EOF
