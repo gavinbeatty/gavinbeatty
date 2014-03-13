@@ -60,6 +60,7 @@ net-check.sh \
 pager.sh \
 poke.sh \
 p0.sh \
+rec2fld.pl \
 rmbin.sh \
 rmgcov.sh \
 rmr.sh \
