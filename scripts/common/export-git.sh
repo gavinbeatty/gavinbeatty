@@ -4,7 +4,6 @@ set -u
 set -e
 trap " echo Caught SIGINT ; exit 1 ; " INT
 trap " echo Caught SIGTERM ; exit 1 ; " TERM
-
 getopt=${GETOPT:-getopt}
 help=${EXPORT_GIT_HELP:-}
 basedir=${EXPORT_GIT_BASEDIR:-$HOME}
@@ -22,42 +21,24 @@ e=0
 test "$e" -ne 4 || longopts=1
 unset e
 
-usage() {
-   echo "$prog [-b <basedir>] [-w <what>] [-H <host>]"
-}
+usage() { printf "usage: %s [-b <basedir>] [-w <what>] [-H <host>]" "$prog" ; }
 help() {
     cat <<EOF
-Options:
- -h${longopts:+|--help}:
-  Print this help message and exit.
- -b${longopts:+|--basedir}:
-  The base directory to use for exporting <what>. Defaults to \${HOME}.
- -w${longopts:+|--what}:
-  Export the given <what> directory (relative to <basedir>).
- -H${longopts:+|--host}:
-  Export to the given <host>.
+ -h${longopts:+|--help}: Print this help message and exit.
+ -b${longopts:+|--basedir}: The base directory to use for exporting <what>. Defaults to \${HOME}.
+ -w${longopts:+|--what}: Export the given <what> directory (relative to <basedir>).
+ -H${longopts:+|--host}: Export to the given <host>.
 EOF
 }
-warning() { echo "warning: $@" >&2 ; }
-error() { echo "error: $@" >&2 ; }
-die() { error "$@" ; exit 1 ; }
-have() { type "$@" >/dev/null 2>&1 ; }
-getopt_works() {
-    "$getopt" -n "test" -o "ab:c" -- -ab -c -c >/dev/null 2>&1
-}
-get_xargs() {
-    if test -z "$xargs" ; then
-        xargs=xargs
-        ! have gxargs || xargs=gxargs
-    fi
-}
+warn() { echo "warning: $@" >&2 ; }
+die() { printf "error: %s\n" "$*" ; exit 1 ; }
+getopt_works() { "$getopt" -n "test" -o "ab:c" -- -ab -c -c >/dev/null 2>&1 ; }
 get_tar() {
     if test -z "$tar" ; then
         tar=tar
-        ! have gtar || xargs=gtar
+        ! type gtar >/dev/null 2>&1 || tar=gtar
     fi
 }
-
 main() {
     if getopt_works ; then
         long=
@@ -92,9 +73,7 @@ main() {
             esac
             shift
         done
-    else
-        warning "Taking options from the environment."
-    fi
+    else warn "Taking options from the environment." ; fi
     if test -n "$help" ; then
         usage
         echo
@@ -113,12 +92,15 @@ main() {
         die "Must give -H <host> optarg."
     fi
 
-    get_xargs
+    char=\;
+    if find /dev/null -exec true '{}' + 2>/dev/null ; then
+        char=+
+    fi
     get_tar
     set -x
     ( cd -- "${basedir}/$what" && \
       $git archive --format=tar --prefix="$what"/ 'HEAD^{tree}' \
-        | $ssh "$host" \( test -d "$what" '&&' rm -rf -- "$what" \; $tar xv \) '&&' find "$what" -type f -print0 \| $xargs -r0 chmod a-w --
+        | $ssh "$host" \( rm -rf "$what" \; $tar xv \) \&\& find "$what" -type f -exec chmod a-w \\\{\\\} \\$char
     )
 }
 main "$@"
