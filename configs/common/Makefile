@@ -16,9 +16,9 @@ UNAME ?= uname
 UNAME_OS ?= $(UNAME) -s
 OS ?= $(shell $(UNAME_OS))
 ifeq ($(OS),Darwin)
-  TLS_TRUST_FILE ?= tls_trust_file /opt/local/share/curl/curl-ca-bundle.crt
+TLS_TRUST_FILE ?= tls_trust_file /opt/local/share/curl/curl-ca-bundle.crt
 else
-  TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
+TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
 endif
 
 DESTDIR ?=
