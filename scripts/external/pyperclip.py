@@ -205,5 +205,9 @@ if __name__ == '__main__':
     else:
         copy = setcb
         paste = getcb
-    ns.func(ns)
+    try:
+        func = ns.func
+    except AttributeError:
+        parser.error('too few arguments')
+    func(ns)
     sys.exit(0)
