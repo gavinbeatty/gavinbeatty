@@ -1,20 +1,12 @@
 #!/usr/bin/python
+from __future__ import division
+from __future__ import print_function
 # Pyperclip v1.3
 # A cross-platform clipboard module for Python. (only handles plain text for now)
 # By Al Sweigart al@coffeeghost.net
 
 # Taken from http://coffeeghost.net/src/pyperclip.py on 2013-11-24
-# Added __main__ by Gavin Beatty <gavinbeatty@gmail.com> 2013.
-
-
-# Usage:
-#   import pyperclip
-#   pyperclip.copy('The text to be copied to the clipboard.')
-#   spam = pyperclip.paste()
-
-# On Mac, this module makes use of the pbcopy and pbpaste commands, which should come with the os.
-# On Linux, this module makes use of the xclip command, which should come with the os. Otherwise run "sudo apt-get install xclip"
-
+# Added __main__ by Gavin Beatty <gavinbeatty@gmail.com> 2013, 2014.
 
 # Copyright (c) 2010, Albert Sweigart
 # All rights reserved.
@@ -47,7 +39,12 @@
 # 1.2 Use the platform module to help determine OS.
 # 1.3 Changed ctypes.windll.user32.OpenClipboard(None) to ctypes.windll.user32.OpenClipboard(0), after some people ran into some TypeError
 
-import platform, os
+import os
+import platform
+try:
+    from functools import reduce
+except ImportError:
+    pass
 
 def winGetClipboard():
     ctypes.windll.user32.OpenClipboard(0)
@@ -157,24 +154,56 @@ elif os.name == 'posix' or platform.system() == 'Linux':
                 setcb = qtSetClipboard
             except:
                 raise Exception('Pyperclip requires the gtk or PyQt4 module installed, or the xclip command.')
-copy = setcb
-paste = getcb
 
-def _usage():
-    print('usage: pyperclip.py [-n] paste')
-    print('   or: pyperclip.py copy # takes input from stdin')
+
+def chain(fs):
+    def chain2(f, g):
+        def apply(*args, **kwargs):
+            return g(f(*args, **kwargs))
+        return apply
+    return reduce(chain2, fs)
+
+
+def llnstrip(s):
+    return s.lstrip('\n')
+
+
+def rlnstrip(s):
+    return s.rstrip('\n')
+
+
+def comma(xs):
+    return ', '.join(xs)
+
 
 if __name__ == '__main__':
     import sys
-    if len(sys.argv) == 3 and '-n' == sys.argv[1] and 'paste' == sys.argv[2]:
-        sys.stdout.write(paste())
-    elif len(sys.argv) != 2:
-        _usage()
-        sys.exit(1)
-    elif sys.argv[1] == 'copy':
-        copy(''.join(line for line in sys.stdin))
-    elif sys.argv[1] == 'paste':
-        sys.stdout.write(paste() + '\n')
+    try:
+        from argparse import ArgumentParser
+        from collections import defaultdict
+    except ImportError as e:
+        sys.exit('use python >= 2.7: error: ' + str(e))
+    argv = sys.argv[:]
+    parser = ArgumentParser(description='Get and set the clipboard from the command line.')
+    parser.add_argument('-l', '--llnstrip', dest='chain', action='append_const', const=llnstrip, help='strip newlines on the left')
+    parser.add_argument('-r', '--rlnstrip', dest='chain', action='append_const', const=rlnstrip, help='strip newlines on the right')
+    sub = parser.add_subparsers()
+    sub.add_parser('paste').set_defaults(func=lambda _: sys.stdout.write(paste()))
+    sub.add_parser('pasteln').set_defaults(func=lambda _: sys.stdout.write(paste() + '\n'))
+    sub.add_parser('copy').set_defaults(func=lambda _: copy(''.join(line for line in sys.stdin)))
+    copyargparser = sub.add_parser('copyarg')
+    copyargparser.add_argument('arg', metavar='<arg>', help='copies <arg>')
+    copyargparser.set_defaults(func=lambda ns: copy(ns.arg))
+    copyfileparser = sub.add_parser('copyfile')
+    copyfileparser.add_argument('path', metavar='<path>', help='copies the contents of <path>')
+    copyfileparser.set_defaults(func=lambda ns: copy(''.join(line for line in open(ns.path, 'r'))))
+    ns = parser.parse_args(argv[1:])
+    if ns.chain:
+        trans = chain(ns.chain)
+        copy = lambda x: setcb(trans(x))
+        paste = lambda: trans(getcb())
     else:
-        _usage()
-        sys.exit(1)
+        copy = setcb
+        paste = getcb
+    ns.func(ns)
+    sys.exit(0)
