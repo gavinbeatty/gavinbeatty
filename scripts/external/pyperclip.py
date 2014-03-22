@@ -161,18 +161,20 @@ copy = setcb
 paste = getcb
 
 def _usage():
-    print('usage: pyperclip.py paste')
+    print('usage: pyperclip.py [-n] paste')
     print('   or: pyperclip.py copy # takes input from stdin')
 
 if __name__ == '__main__':
     import sys
-    if len(sys.argv) != 2:
+    if len(sys.argv) == 3 and '-n' == sys.argv[1] and 'paste' == sys.argv[2]:
+        sys.stdout.write(paste())
+    elif len(sys.argv) != 2:
         _usage()
         sys.exit(1)
-    if sys.argv[1] == 'copy':
+    elif sys.argv[1] == 'copy':
         copy(''.join(line for line in sys.stdin))
     elif sys.argv[1] == 'paste':
-        sys.stdout.write(paste())
+        sys.stdout.write(paste() + '\n')
     else:
         _usage()
         sys.exit(1)
