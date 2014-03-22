@@ -15,7 +15,7 @@ addlicense.sh \
 asciitable.sh \
 bangcheck.sh \
 battery.sh \
-bj.sh \
+bj.bash \
 bjcomplete.sh \
 buf.sh \
 cc-includes.sh \
@@ -69,7 +69,7 @@ runq.sh \
 run.sh \
 shify.sh \
 stripcolor.sh \
-svnaddcopyright.sh \
+svnaddcopyright.bash \
 svnblamefirst.sh \
 svndepth.sh \
 svndiffadaptor.sh \
