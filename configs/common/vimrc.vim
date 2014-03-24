@@ -18,6 +18,11 @@ let &tags = getcwd().'/tags,'
 set nocscopeverbose
 exec 'cscope add '.fnameescape(getcwd().'/cscope.out')
 set cscopeverbose
+for j in ["Jamroot.jam", "Jamroot", "project-root.jam"]
+  if findfile(j, ",") == j
+    set makeprg=bj.bash
+  endif
+endfor
 
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
@@ -70,6 +75,7 @@ NeoBundle 'vim-scripts/a.vim'
       "\              ]}}
 "endif
 NeoBundle 'chazy/cscope_maps'
+NeoBundle 'tpope/vim-dispatch'
 if !g:min
 NeoBundle 'tpope/vim-endwise'
 "NeoBundle 'Shougo/unite-build'
