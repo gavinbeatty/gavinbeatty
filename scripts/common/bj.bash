@@ -23,7 +23,7 @@ EOF
   rm "$testfile" || return $?;
   return $e
 }
-if test "$(basename "$0")" = "bj.sh" ; then
+if test "$(basename "$0")" = "bj.bash" ; then
   set -e
   set -u
   trap ' echo Caught SIGINT >&2 ; exit 1 ; ' INT
