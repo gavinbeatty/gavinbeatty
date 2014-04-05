@@ -18,6 +18,7 @@ battery.sh \
 bj.bash \
 bjcomplete.sh \
 buf.sh \
+cc-defines.sh \
 cc-includes.sh \
 codepretty.py \
 configure-git.sh \
