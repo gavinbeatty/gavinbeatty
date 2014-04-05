@@ -67,6 +67,7 @@ endif
 " Programming
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/a.vim'
+NeoBundle 'MarcWeber/vim-addon-local-vimrc'
 "if !g:min
 "NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
       "\ 'commands': [{'name': 'Unite',
