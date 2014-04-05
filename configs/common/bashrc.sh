@@ -511,7 +511,7 @@ if test "$isinteractive" -ne 0 ; then
 
     moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
 
-    bj() { bj.sh "$@" ; }
+    bj() { bj.bash "$@" ; }
     bjin() {
         test $# -eq 0 && { echo "usage: bjin <dir> [<args>...]" >&2 ; return 1; }
         local d=$1
