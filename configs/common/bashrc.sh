@@ -564,7 +564,8 @@ if test "$isinteractive" -ne 0 ; then
     alias sl='ls'
     alias ks='ls'
     alias l='ls -l'
-    alias la='l -a'
+    alias la='ls -la'
+    alias lsd='ls -ltrh'
     alias lsquote='ls --quoting-style=shell-always'
     alias lsescape='ls --quoting-style=escape'
     o_=
