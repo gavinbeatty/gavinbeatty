@@ -58,7 +58,7 @@ main() {
     if test $# -eq 0 ; then
         set -- .
     fi
-    sh="just() { \"\$@\" ; } ; echodo() { printf \"%s\\n\" \"\$*\" ; \"\$@\" ; } ; for i in \"\$@\" ; do if ! printf \"%s\\n\" \"\$i\" | grep -q \"/x_\\(boost\\|xerces\\|google\\|gmock\\|gtest\\|protobuf\\)\" ; then \"\${0:-just}\" rm -r -- \"\$i\" ; fi ; done"
+    sh="just() { \"\$@\" ; } ; echodo() { printf \"%s\\n\" \"\$*\" ; \"\$@\" ; } ; for i in \"\$@\" ; do if ! printf \"%s\\n\" \"\$i\" | grep -q \"/x_\\(papi\\|boost\\|xerces\\|google\\|gmock\\|gtest\\|protobuf\\)\" ; then \"\${0:-just}\" rm -r -- \"\$i\" ; fi ; done"
     do=echodo
     test -z "$quiet" || do=just
     if test -z "$variant" ; then
