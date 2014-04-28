@@ -534,28 +534,27 @@ if test "$isinteractive" -ne 0 ; then
 
     ismounted() { mount | "${GREP:-grep}" -Fq " on ${1} type " ; }
 
-    if (type sed >/dev/null 2>&1) && (type grep >/dev/null 2>&1) \
-    && (echo | grep -Eq ''); then
+    if (type sed >/dev/null 2>&1) && (type grep >/dev/null 2>&1) ; then
         LS_OPTIONS="${LS_OPTIONS:-}"
-        bash_alias_ls="$(eval echo $(alias ls 2>/dev/null | sed -e 's/^alias ls=//'))"
+        bash_alias_ls="$(eval echo $(alias ls 2>/dev/null | sed 's/^alias ls=//'))"
         if test -z "$bash_alias_ls" ; then
             bash_alias_ls='ls ${LS_OPTIONS}'
         else
             bash_alias_ls="${bash_alias_ls} "'${LS_OPTIONS}'
         fi
-        if uname | grep -Eqi '(bsd|darwin)' ; then
-            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +-[A-Za-z0-9]*G' ; then
+        if uname | grep -qi '\(bsd\|darwin\)' ; then
+            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -q '  *-[A-Za-z0-9]*G' ; then
                 # defining CLICOLOR has the same effect as -G option and is more
                 # foolproof (if -G isn't supported, say)
                 CLICOLOR=1 ; export CLICOLOR
                 #LS_OPTIONS="${LS_OPTIONS} -G"
             fi
         else
-            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +--colou?r(=| +)(auto|tty)' ; then
+            if ! say "$bash_alias_ls $LS_OPTIONS" | grep -q '  *--colo\(\|u\)r\(=\|  *\)\(auto\|tty\)' ; then
                 LS_OPTIONS="${LS_OPTIONS} --color=auto"
             fi
         fi
-        if ! say "$bash_alias_ls $LS_OPTIONS" | grep -Eq ' +(-[A-Za-z0-9]*F|--classify)' ; then
+        if ! say "$bash_alias_ls $LS_OPTIONS" | grep -q '  *\(-[A-Za-z0-9]*F\|--classify\)' ; then
             LS_OPTIONS="${LS_OPTIONS} -F"
         fi
         export LS_OPTIONS
