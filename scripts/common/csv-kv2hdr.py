@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
+import os
 import sys
 import csv
 import logging
@@ -72,12 +73,22 @@ def read_rows(reader, sep):
     rows.append(rowkvs)
   return rows
 
+def fdup(fileno, mode, *args, **kwargs):
+  return os.fdopen(os.dup(fileno), mode, *args, **kwargs)
+
+def can_seek(fobj):
+  try:
+    fobj.seek(fobj.tell())
+    return True
+  except IOError:
+    return False
+
 def cli_open(name, mode, *args, **kwargs):
   if name == '-':
     if mode.find('r') >= 0:
-      return sys.stdin
+      return fdup(sys.stdin.fileno(), mode, *args, **kwargs)
     else:
-      return sys.stdout
+      return fdup(sys.stdout.fileno(), mode, *args, **kwargs)
   return open(name, mode, *args, **kwargs)
 
 def idx(xs, i, default):
@@ -89,9 +100,9 @@ def main(argv):
   sep = idx(argv, 3, ':')
   dialect = csv.excel
   skip_header = False
-  logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s', level=logging.DEBUG)
+  logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
   with cli_open(pathin, 'rb') as fin:
-    if fin != sys.stdin:
+    if can_seek(fin):
       sample = fin.read(4098)
       fin.seek(0)
       dialect = csv.Sniffer().sniff(sample)
@@ -108,6 +119,7 @@ def main(argv):
     writer = csv.DictWriter(fout, hdrs, restval=NoDefault, dialect=dialect)
     writer.writeheader()
     writer.writerows(rows)
+  debug('done')
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv))
