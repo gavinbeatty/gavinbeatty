@@ -149,6 +149,11 @@ appendLongest() {
         done
     fi
 }
+ifempty() {
+    local x
+    if read x ; then say "$x" ; cat
+    else say "$1" ; fi
+}
 
 main() {
     if getopt_works ; then
@@ -208,11 +213,11 @@ main() {
 
     if test -n "$tags" ; then
         if lsurl="$(svnnameurl "$1" "tags")" ; then
-            svnls "$lsurl" | appendLongest "$url"
+            svnls "$lsurl" | appendLongest "$url" | ifempty "$lsurl"
         fi
     elif test -n "$branches" ; then
         if lsurl="$(svnnameurl "$1" "branches")" ; then
-            svnls "$lsurl" | appendLongest "$url"
+            svnls "$lsurl" | appendLongest "$url" | ifempty "$lsurl"
         fi
     else
         svnnameurl "$1" "trunk" | sed 's|//*$||' | appendLongest "$url"
