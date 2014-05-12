@@ -220,6 +220,13 @@ find_src() {
                 -a \( -name '*.xml' -o -name '*.xsd' \) \
                 "$printer"
             ;;
+        diff|patch)
+            test -z "$debug" || set -x
+            find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
+                -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
+                -a \( -name '*.diff' -o -name '*.patch' \) \
+                "$printer"
+            ;;
         esac
     done
 }
@@ -283,7 +290,7 @@ main() {
         exit 0
     fi
     if test -n "$types" ; then
-        echo "all hs haskell lhs c cpp cppc cs py python pl perl lua sh bash java jam xml xsd allxml"
+        echo "all hs haskell lhs c cpp cppc cs py python pl perl lua sh bash java jam xml xsd allxml diff patch"
         exit 0
     fi
 
@@ -309,7 +316,7 @@ main() {
     fi
 
     case "$type" in
-    all|hs|haskell|lhs|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml) files=1 ;;
+    all|hs|haskell|lhs|c|cpp|cppc|cs|py|python|pl|perl|lua|sh|bash|java|jam|xml|xsd|allxml|diff|patch) files=1 ;;
     esac
     if test -n "$ext" ; then
         files=1
