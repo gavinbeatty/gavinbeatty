@@ -3,10 +3,14 @@ test -z "${bashrc_guard:-}" || return 0
 bashrc_guard=1
 
 say() { printf "%s\n" "$*" ; }
-case $- in
-*i*) isinteractive=1 ; isay() { printf "%s\n" "$*" ; } ; iprintf() { printf "$@" ; };;
-*) isinteractive=0 ; isay() { true ; } ; iprintf() { true ; } ;;
-esac
+isinteractive() { case $- in *i*) return 0 ;; esac ; return 1 ; }
+if test "${isinteractive:-0}" -eq 1 || isinteractive ; then
+    isinteractive=1
+    isay() { printf %s\\n "$*" ; } ; iprintf() { printf "$@" ; }
+else
+    isinteractive=0
+    isay() { true ; } ; iprintf() { true ; }
+fi
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
 isay ".bashrc"
