@@ -353,6 +353,12 @@ if test "$isinteractive" -ne 0 ; then
         # must be on own line because of '&', I think
         "$@" >/dev/null 2>&1 &
     }
+    quote() {
+        if test $# -eq 1 ; then printf %q\\n "$1"
+        elif test $# -gt 1 ; then
+            printf %s\\n "$(printf %q\  "$@")" | sed 's/ $//'
+        fi
+    }
     if type xdg-open >/dev/null 2>&1 ; then
         OPENER="xdg-open"
     elif type open >/dev/null 2>&1 && test "$(say "$UNAME")" = "darwin" ; then
