@@ -60,6 +60,7 @@ NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 NeoBundle 'altercation/vim-colors-solarized'
+"NeoBundle 'junegunn/seoul256.vim'
 "NeoBundle 'ujihisa/unite-colorscheme'
 " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
 if !g:min
@@ -101,7 +102,14 @@ NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell
 NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
-NeoBundle 'Valloric/YouCompleteMe', {'vim_version':'7.3.584'}
+python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+NeoBundle 'Valloric/YouCompleteMe', {
+  \ 'vim_version':'7.3.584',
+  \ 'build' : {
+    \ 'mac'  : './install.sh --clang-completer --system-libclang --python-config=/opt/local/Library/Frameworks/Python.framework/Versions/'.g:pyver.'/bin/python-config',
+    \ 'unix' : './install.sh --clang-completer --system-libclang',
+  \ },
+  \ }
 " Python
 NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
 NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
