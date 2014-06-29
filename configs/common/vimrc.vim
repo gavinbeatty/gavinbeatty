@@ -456,19 +456,6 @@ let g:hpaste_author = 'gavinbeatty'
 let g:haddock_browser = 'sensible-browser'
 let g:pandoc_no_folding = 1
 
-let g:indent_guides_start_level=1
-let g:indent_guides_guide_size=1
-let g:indent_guides_enable_on_vim_startup=0
-let g:indent_guides_color_change_percent=3
-if !has('gui_running')
-    let g:indent_guides_auto_colors=0
-    fu! s:indent_set_console_colors()
-        hi IndentGuidesOdd ctermbg=235
-        hi IndentGuidesEven ctermbg=236
-    endf
-    au VimEnter,Colorscheme * call s:indent_set_console_colors()
-endif
-
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 
