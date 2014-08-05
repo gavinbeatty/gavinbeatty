@@ -8,8 +8,11 @@ say() { printf %s\\n "$*" ; }
 warn() { say "warn: $*" >&2 ; }
 die() { say "error: $*" >&2 ; exit 1 ; }
 prog="$(basename -- "$0")"
-if test $# -gt 2 ; then usage >&2 ; die "too many arguments."
-elif test $# -eq 0 ; then
+usage() { say "usage: $prog [<cc> [<src> [<args>...]]]" ; }
+case "${1:-}" in
+    -h|--help|-\?) usage ; exit 0 ;;
+esac
+if test $# -eq 0 ; then
     case "$prog" in
         cc-def*) ;;
         gcc-def*) CC="${CC:-gcc}" ;;
@@ -19,8 +22,9 @@ elif test $# -eq 0 ; then
         *) warn "unknown program name." >&2 ;;
     esac
     if type cc >/dev/null 2>&1 ; then CC=cc ; fi
-elif test $# -ge 1 ; then CC="$1" ; SRC="${2:-}"
 fi
+if test $# -ge 1 ; then CC="$1" ; shift ; fi
+if test $# -ge 1 ; then SRC="$1" ; shift ; fi
 CC="${CC:-gcc}"
 s="${CC%%++}"
 if test -n "$CC" && test "$CC" != "$s" ; then SRC="${SRC:-c++}" ; fi
@@ -28,5 +32,5 @@ case "$CC" in
     cc*|-cc*|c++*|-c++*|gcc*|*-gcc*|g++*|*-g++*|clang*|*-clang*|clang++*|*-clang++*) ;;
     *) say "warn: unrecognized CC=$CC." >&2 ;;
 esac
-e="$("$CC" -dM -E -x "${SRC:-c}" - 2>/dev/null </dev/null)" || die "error running CC=$CC."
+e="$("$CC" -dM -E -x "${SRC:-c}" "$@" - 2>/dev/null </dev/null)" || die "error running CC=$CC."
 say "$e" | sed "s/^#define /-D/;s/ /=/"
