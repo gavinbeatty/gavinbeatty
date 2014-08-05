@@ -196,7 +196,7 @@ find_src() {
             test -z "$debug" || set -x
             find $symlink $forcedir "$srcdir" "$@" \! \( -name '.git' -prune -o -path '*/.svn' -prune -o -name '.bzr' -prune -o -name '.hg' -prune -o -name '_darcs' -prune \
                 -o -iname 'tags' -o -name 'cscope.*' -o -name '.src.files' \) $findfiles \
-                -a \( -iname '*.jam' -o -name 'project-root.jam' -o -iname 'Jamfile' -o -iname 'Jamroot' \) \
+                -a \( -name 'project-root.jam' -o -iname 'jamfile' -o -iname 'jamroot' -o -iname 'jamfile.v2' -o -iname 'jamroot.v2' -o -iname '*.jam' -iname '*.jam.v2' \) \
                 "$printer"
             ;;
         xml)
