@@ -35,12 +35,16 @@ def kv(e, sep, ktrim=selfstrip, vtrim=selfstrip):
 class NoKeyError(Exception):
   pass
 
-def add_key_value(keys, x, sep):
+def add_key_value(keys, x, sep, nrow=None):
   k, v = kv(x, sep)
+  if nrow is not None:
+    nrow = 'line %d: ' % nrow
+  else:
+    nrow = ''
   if k is NoKey:
-    raise NoKeyError("No key-value pair found in '%s' using sep='%s'" % (x, sep))
+    raise NoKeyError(nrow + "No key-value pair found in '%s' using sep='%s'" % (x, sep))
   if k in keys:
-    raise KeyError("Can't add %s=%s: already have %s=%s" % (k, v, k, keys[k]))
+    raise KeyError(nrow + "Can't add %s=%s: already have %s=%s" % (k, v, k, keys[k]))
   keys[k] = v
 
 class NoDefaultError(Exception):
@@ -66,10 +70,10 @@ def write_rows(rows, hdrs, out):
 
 def read_rows(reader, sep):
   rows = []
-  for row in reader:
+  for nrow, row in enumerate(reader):
     rowkvs = OrderedDict()
     for elem in row:
-      add_key_value(rowkvs, elem, sep)
+      add_key_value(rowkvs, elem, sep, nrow=nrow + 1)
     rows.append(rowkvs)
   return rows
 
@@ -100,14 +104,15 @@ def main(argv):
   sep = idx(argv, 3, ':')
   dialect = csv.excel
   skip_header = False
-  logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
+  logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
   with cli_open(pathin, 'rb') as fin:
     if can_seek(fin):
-      sample = fin.read(4098)
+      sample = fin.readline() + fin.readline()
       fin.seek(0)
       dialect = csv.Sniffer().sniff(sample)
       skip_header = csv.Sniffer().has_header(sample)
-    debug('dialect=%s' % dialect)
+      debug('sniffed')
+    debug('dialect=%s has_header=%s' % (dialect, not skip_header))
     reader = csv.reader(fin, dialect)
     if skip_header:
       next(reader)
