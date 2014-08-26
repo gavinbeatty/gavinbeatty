@@ -521,6 +521,7 @@ if test "$isinteractive" -ne 0 ; then
 
     moshl() { mosh --server='~'/.local/bin/mosh-server "$@" ; }
 
+    mk() { make -kj8 "$@" ; }
     bj() { bj.bash "$@" ; }
     bjin() {
         test $# -eq 0 && { echo "usage: bjin <dir> [<args>...]" >&2 ; return 1; }
