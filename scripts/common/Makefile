@@ -15,6 +15,7 @@ addlicense.sh \
 asciitable.sh \
 bangcheck.sh \
 battery.sh \
+bits.py \
 bj.bash \
 bjcomplete.sh \
 buf.sh \
