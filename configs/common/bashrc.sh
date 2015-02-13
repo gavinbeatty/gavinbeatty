@@ -459,6 +459,7 @@ if test "$isinteractive" -ne 0 ; then
     grepall() { local t="$1" ; shift ; find-src.sh -0Lf -t "$t" | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grephs() { find-src.sh -0Lf -t haskell | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepcpp() { find-src.sh -0Lfc | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
+    grepjava() { find-src.sh -0Lf -t java | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     greppy() { find-src.sh -0Lf -t python | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepsh() { find-src.sh -0Lf -t bash | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
     grepcs() { find-src.sh -0Lf -t cs | $XARGS -0 "${GREP:-grep}" -Hn "$@" ; }
