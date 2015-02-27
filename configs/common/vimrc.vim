@@ -52,7 +52,7 @@ NeoBundle 'def-lkb/vimbufsync'
 NeoBundle 'tpope/vim-repeat'
 "NeoBundle 'kana/vim-textobj-user'
 " Syntax
-NeoBundleLazy 'http://svn.macports.org/repository/macports/contrib/mpvim/', {'autoload': {'filetypes': 'portfile'}}
+NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
 NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
 NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
@@ -129,7 +129,7 @@ NeoBundleLazy 'thinca/vim-fontzoom', {
       "\ 'gui': 1,
       "\ 'autoload': {'unite_sources': 'font'}
       "\ }
-NeoBundleLazy 'add20/vim-conque', {'autoload': {'commands': ['ConqueTerm']}}
+NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
 NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
       \ }}
