@@ -30,16 +30,18 @@ endfor
 filetype on
 filetype off
 if s:is_windows | set rtp+=~/.vim | endif
+let g:make = 'gmake'
+if system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
 if !g:none
 set rtp+=~/.vim/bundle/neobundle.vim/
 call neobundle#begin(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 " Dependencies
 NeoBundle 'Shougo/vimproc', {'build': {
-      \ 'windows': 'make -f make_mingw32.mak',
-      \ 'cygwin': 'make -f make_cygwin.mak',
-      \ 'mac': 'make -f make_mac.mak',
-      \ 'unix': 'make -f make_unix.mak',
+      \ 'windows': g:make . ' -f make_mingw32.mak',
+      \ 'cygwin': g:make . ' -f make_cygwin.mak',
+      \ 'mac': g:make . ' -f make_mac.mak',
+      \ 'unix': g:make . ' -f make_unix.mak',
       \ }}
 NeoBundleLazy 'Shougo/vimshell', {'autoload': {
       \   'commands': [{'name': 'VimShell',
