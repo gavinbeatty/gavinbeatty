@@ -32,7 +32,7 @@ filetype off
 if s:is_windows | set rtp+=~/.vim | endif
 if !g:none
 set rtp+=~/.vim/bundle/neobundle.vim/
-call neobundle#rc(expand('~/.vim/bundle'))
+call neobundle#begin(expand('~/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 " Dependencies
 NeoBundle 'Shougo/vimproc', {'build': {
@@ -134,6 +134,7 @@ NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
       \ }}
 endif
+call neobundle#end()
 NeoBundleCheck
 endif
 
