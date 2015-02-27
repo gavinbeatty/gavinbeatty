@@ -144,8 +144,7 @@ syntax enable
 highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
 highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
 highlight DiffChange ctermfg=0 ctermbg=3 guibg='yellow'
-let g:solarized_termcolors=256
-set t_Co=256
+if stridx($PATH, '256') >= 0 | let g:solarized_termcolors=256 | set t_Co=256 | endif
 set background=dark
 " See :h filetype-overview
 filetype plugin indent on
