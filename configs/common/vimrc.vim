@@ -70,13 +70,13 @@ endif
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/a.vim'
 NeoBundle 'MarcWeber/vim-addon-local-vimrc'
-"if !g:min
-"NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
-      "\ 'commands': [{'name': 'Unite',
-      "\                'complete': 'customlist,unite#complete_source'
-      "\               }, 'UniteWithCursorWord', 'UniteWithInput'
-      "\              ]}}
-"endif
+if !g:min
+NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
+      \ 'commands': [{'name': 'Unite',
+      \                'complete': 'customlist,unite#complete_source'
+      \               }, 'UniteWithCursorWord', 'UniteWithInput'
+      \              ]}}
+endif
 NeoBundle 'chazy/cscope_maps'
 NeoBundle 'tpope/vim-dispatch'
 if !g:min
