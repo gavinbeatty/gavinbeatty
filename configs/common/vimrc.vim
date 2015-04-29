@@ -392,12 +392,12 @@ nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>
 let g:GPGPreferArmor = 1
 let g:delimitMate_matchpairs = "(:),[:],{:}"
 
-let g:unite_enable_start_insert = 1
+"let g:unite_enable_start_insert = 1
 let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 5000
 let g:unite_data_directory = '~/.vim/.cache/unite'
 call EnsureDirExists(g:unite_data_directory)
-"call unite#set_profile('files', 'smartcase', 1)
+call unite#set_profile('files', 'smartcase', 1)
 if executable('ag')
     set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
     set grepformat=%f:%l:%c:%m
