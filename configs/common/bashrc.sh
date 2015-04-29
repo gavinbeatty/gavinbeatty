@@ -390,7 +390,7 @@ if test "$isinteractive" -ne 0 ; then
     # ${JCONC:-1} is a decent, high value for `make -j` etc.
     n_="$(nconc 2>/dev/null || true)"
     if test -n "$n_" && test "$n_" -gt 2 ; then
-        export JCONC=$(( $n_ - 2 ))
+        export JCONC=$(( $n_ - 3 ))
     fi
     unset n_
 
@@ -506,16 +506,19 @@ if test "$isinteractive" -ne 0 ; then
     svnstma() { svn status "$@" | "${GREP:-grep}" '^M' ; }
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
     svnlog() { svnd log -vr HEAD:1 "$@" ; }
+    svnlogat() { local at="$1" ; shift ; svnd log -vr "$at":1 "$@"@"$at" ; }
     svnnews() { svnd log -vr BASE:HEAD --incremental "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { svnd diff "$@" ; }
     svnfdiff() { svndiff --ignore-properties "$@" ; }
     svnpdiff() { svndiff --properties-only "$@" ; }
     svnmkpatch() { ${SVN_EXE:-svn} diff --notice-ancestry --show-copies-as-adds "$@" ; }
+    svnfulldiff() { svndiff --notice-ancestry --show-copies-as-adds "$@" ; }
     svnlogcopies() { svnl log -v --stop-on-copy "$@" ; }
     svnurl() { LC_ALL=C ${SVN_EXE:-svn} info "$@" | sed -n 's/^URL: //p' ; }
     svntags() { svnlist.sh -t "$@" ; }
     svnstags() { svnsort.sh -t "$@" ; }
+    svntagcmp() { printf %s "old " ; svnurl "$@" || say error'!' >&2 ; printf %s "new " ; local new="$(svnsort.sh -t "$@" || say error'!' >&2)" ; printf %s\\n "$new" | tail -n1 ; }
     svnbr() { svnlist.sh -b "$@" ; }
     svnsbr() { svnsort.sh -b "$@" ; }
     svntr() { svnlist.sh -T "$@" ; }
