@@ -95,6 +95,8 @@ if test -d "${HOME_PREFIX}" ; then
         fi
     done
 fi
+test -n "${bashrc_opam_init:-}" || . "${HOME}/.opam/opam-init/init.sh" >/dev/null 2>/dev/null || true
+bashrc_opam_init=1
 n_="${HOME}/.cabal/bin"
 if test -d "${HOME}/.cabal" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
