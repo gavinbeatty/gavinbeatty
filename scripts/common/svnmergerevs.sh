@@ -4,8 +4,8 @@ set -e
 set -u
 trap 'echo Caught SIGINT >&2 ; exit 1 ; ' INT
 trap 'echo Caught SIGTERM >&2 ; exit 1 ; ' TERM
-say() { printf "%s\n" "$*" ; }
-die() { printf "%s\n" "$*" >&2 ; exit 1 ; }
+say() { printf %s\\n "$*" ; }
+die() { printf error:\ %s\\n "$*" >&2 ; exit 1 ; }
 prog="$(basename "$0")"
 getopt="${getopt:-getopt}"
 has_longopts=
@@ -13,17 +13,16 @@ e=0
 "$getopt" -T >/dev/null 2>&1 || e=$?
 test "$e" -eq 4 && has_longopts=1
 usage() {
-  printf "usage: %s [-r] [-R] [-t|-m] [--] <branch-url> [<log-args>...]\n" "$prog"
-  printf "   or: %s [-r] [-R] [-t|-m] [--] <source-url>..<branch-url> [<log-args>...]\n" "$prog"
-  printf "   or: %s [-r] [-R] [-t|-m] [--] <source-url>...<branch-url> [<log-args>...]\n" "$prog"
+  printf "usage: %s [-r] [-R] [-t|-m] [--] <source-url>..<branch-url> [<log-args>...]\\n" "$prog"
+  printf "   or: %s [-r] [-R] [-t|-m] [--] <source-url>...<branch-url> [<log-args>...]\\n" "$prog"
 }
 SVN_EXE="${SVN_EXE:-svn}"
 svnurl() {
   local info=
-  if info="$(LC_ALL=C $SVN_EXE info -- "$1" 2>/dev/null)" ; then
-    echo "$info" | LC_ALL=C awk 'BEGIN {FS=": " } /^URL: / {print $2}'
+  if info="$(LC_ALL=C $SVN_EXE info -- "${1:-.}" 2>/dev/null)" ; then
+    say "$info" | LC_ALL=C awk -v FS=": " '/^URL: / {print $2}'
   else
-    printf "error: %s is an invalid <url|path>\n" "$1" >&2
+    printf "error: %s is an invalid <url|path>\\n" "$1" >&2
     usage >&2
     exit 1
   fi
@@ -52,8 +51,7 @@ done
 if test $# -lt 1 ; then usage >&2 ; exit 1 ; fi
 url="$1" ; shift
 if ! say "$url" | grep -F -q '..' ; then # handles "..." as well
-  src="$(svnurl .)" || die "Could not infer <source-url>."
-  branch="$url"
+  die "$(usage)"
 else
   src="$(say "$url" | sed 's/\.\..*$//')"
   branch="$(say "$url" | sed 's/^.*\.\.//')"
@@ -61,8 +59,9 @@ else
     die "Cannot split <branch-url> unambiguously."
   fi
 fi
-test -n "$src" || die "<source-url> is empty."
-test -n "$branch" || die "<branch-url> is empty."
+test -n "$src" || test -n "$branch" || die "either <source-url> or <branch-url> must be non-empty"
+test -n "$src" || src="$(svnurl)"
+test -n "$branch" || branch="$(svnurl)"
 
 mergeinfo() {
   $SVN_EXE mergeinfo --show-revs $show -- "$1" "$2"
