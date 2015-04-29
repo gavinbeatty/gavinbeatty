@@ -52,6 +52,7 @@ isiface.sh \
 issvncheckout.sh \
 issvnrepo.sh \
 jamroot.sh \
+kde-plot.py \
 killpid.sh \
 logstamp.sh \
 logto.sh \
