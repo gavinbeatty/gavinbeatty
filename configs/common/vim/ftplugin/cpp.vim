@@ -3,7 +3,7 @@ if !exists('b:did_ftplugin_cpp_vim')
 let b:did_ftplugin_cpp_vim = 1
 
 setlocal formatoptions=croql list cindent ts=4 sw=4
-setlocal makeprg=TERM=dumb\ b2\ -j8
+setlocal makeprg=TERM=dumb\ b2\ -j8\ --verbose-test
 setlocal makeef=bjam-build-errors.log
 " to ignore boost (since it's so big)
 "setlocal include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
