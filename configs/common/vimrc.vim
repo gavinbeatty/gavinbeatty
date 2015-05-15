@@ -68,7 +68,7 @@ NeoBundle 'tpope/vim-git'
 endif
 " Programming
 NeoBundle 'bogado/file-line'
-NeoBundle 'vim-scripts/a.vim'
+NeoBundle 'vim-scripts/FSwitch'
 NeoBundle 'MarcWeber/vim-addon-local-vimrc'
 if !g:min
 NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
@@ -383,9 +383,9 @@ vnoremap <leader>do :diffget <Bar> echo 'Left >>> Right'<CR>
 " ("diff put") do :diffput on range and report the change:
 vnoremap <leader>dp :diffput <Bar> echo 'Left <<< Right'<CR>
 
-nnoremap <leader>fs :A<CR>
-nnoremap <leader>fv :AV<CR>
-nnoremap <leader>fh :AS<CR>
+nnoremap <leader>fs :FSHere<CR>
+nnoremap <leader>fv :FSSplitRight<CR>
+nnoremap <leader>fh :FSSplitAbove<CR>
 nnoremap <silent> <leader>vn :call Svndiff("next")<CR>
 nnoremap <silent> <leader>vp :call Svndiff("prev")<CR>
 nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>

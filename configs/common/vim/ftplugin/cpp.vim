@@ -12,6 +12,14 @@ if exists('g:cpp_expandtab') | let &l:expandtab = g:cpp_expandtab | endif
 let g:clang_use_library = 1
 let g:clang_complete_auto = 1
 
+augroup cpp_fswitch
+  au BufEnter *.cpp let b:fswitchdst = 'hpp,h,hh,inl' | let b:fswitchlocs = '.,reg:/src/include/,reg:|src|include/**|,../include'
+  au BufEnter *.cc let b:fswitchdst = 'hh,h,hpp,inl' | let b:fswitchlocs = '.,reg:/src/include/,reg:|src|include/**|,../include'
+  au BufEnter *.hpp let b:fswitchdst = 'cpp,inl' | let b:fswitchlocs = '.,reg:/include/src/,reg:/include.*/src/,../src'
+  au BufEnter *.h let b:fswitchdst = 'cc,cpp,c,inl' | let b:fswitchlocs = '.,reg:/include/src/,reg:/include.*/src/,../src'
+  au BufEnter *.inl let b:fswitchdst = 'h,cc,cpp,c' | let b:fswitchlocs = '.'
+augroup end
+
 iab #d #define
 iab #i #include
 iab #w #warning
