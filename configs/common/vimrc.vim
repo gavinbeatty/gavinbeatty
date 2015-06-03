@@ -233,7 +233,7 @@ set statusline+=%w%h%m%r " Options
 set statusline+=\ [%{&ff}/%Y]            " filetype
 set statusline+=\ [%{getcwd()}]          " current dir
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
-"my original set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
+" My original: set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
 set shortmess+=r
 if has('gui_running')
     " remove toolbar
