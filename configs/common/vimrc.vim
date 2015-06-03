@@ -94,11 +94,12 @@ NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
 python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
 NeoBundle 'Valloric/YouCompleteMe', {
   \ 'vim_version':'7.3.584',
-  \ 'build' : {
-    \ 'mac'  : './install.sh --clang-completer --system-libclang --python-config=/opt/local/Library/Frameworks/Python.framework/Versions/'.g:pyver.'/bin/python-config',
-    \ 'unix' : './install.sh --clang-completer --system-libclang',
+  \ 'build':{
+    \ 'mac' : 'env PATH="'.g:macportspypath.'" ./install.sh --clang-completer --system-libclang',
+    \ 'unix': './install.sh --clang-completer --system-libclang',
   \ },
   \ }
 " Python
