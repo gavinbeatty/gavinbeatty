@@ -101,10 +101,10 @@ n_="${HOME}/.cabal/bin"
 if test -d "${HOME}/.cabal" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
-# mac specific, but put it here regardless
-n_="${HOME}/Library/Haskell/bin"
+# Add GHC 7.10.1 to the PATH, via https://ghcformacosx.github.io/
+n_="/Applications/ghc-7.10.1.app"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:$PATH}" ; export PATH
+  PATH="${n_}/Contents/bin${PATH:+:$PATH}" ; export PATH
 fi
 
 . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
@@ -440,6 +440,13 @@ if test "$isinteractive" -ne 0 ; then
         shift
         (cd -- "$d" && "$@")
     }
+    if type greadlink >/dev/null 2>&1 ; then
+        realpath() { greadlink -f "$@" ; }
+    elif type readlink >/dev/null 2>&1 ; then
+        realpath() { readlink -f "$@" ; }
+    else
+        realpath() { python -c 'import sys;import os.path;print(os.path.realpath(sys.argv[1]))' ; }
+    fi
     postpath() { for i in "$@" ; do export PATH="${PATH:+${PATH}:}$i" ; done ; }
     prepath() { for i in "$@" ; do export PATH="$i${PATH:+:${PATH}}" ; done ; }
     XARGS="xargs"
