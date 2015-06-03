@@ -72,7 +72,7 @@ if !g:min
 NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
       \ 'commands': [{'name': 'Unite',
       \                'complete': 'customlist,unite#complete_source'
-      \               }, 'UniteWithCursorWord', 'UniteWithInput'
+      \              }, 'UniteWithCursorWord', 'UniteWithInput'
       \              ]}}
 endif
 NeoBundle 'chazy/cscope_maps'
@@ -388,7 +388,9 @@ let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 5000
 let g:unite_data_directory = '~/.vim/.cache/unite'
 call EnsureDirExists(g:unite_data_directory)
-call unite#set_profile('files', 'context.smartcase', 1)
+if !g:min
+  call unite#set_profile('files', 'context.smartcase', 1)
+endif
 if executable('ag')
     set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
     set grepformat=%f:%l:%c:%m
