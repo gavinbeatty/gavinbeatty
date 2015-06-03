@@ -106,14 +106,7 @@ n_="${HOME}/Library/Haskell/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
-if test -z "${MANPATH:-}" && type manpath >/dev/null 2>&1 ; then
-    MANPATH="$(manpath)" ; export MANPATH
-fi
-for n_ in "$HOME"/Library/Haskell/ghc/lib/*/share/man ; do
-    if test -d "$n_" && ! say "${MANPATH:-}" | grep -Fq "$n_" ; then
-        MANPATH="${n_}${MANPATH:+:$MANPATH}" ; export MANPATH
-    fi
-done
+
 . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
