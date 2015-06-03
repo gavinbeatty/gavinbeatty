@@ -52,7 +52,6 @@ NeoBundleLazy 'Shougo/vimshell', {'autoload': {
       \ }}
 NeoBundle 'def-lkb/vimbufsync'
 NeoBundle 'tpope/vim-repeat'
-"NeoBundle 'kana/vim-textobj-user'
 " Syntax
 NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
 NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
@@ -60,8 +59,6 @@ NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
 NeoBundle 'altercation/vim-colors-solarized'
-"NeoBundle 'junegunn/seoul256.vim'
-"NeoBundle 'ujihisa/unite-colorscheme'
 " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
 if !g:min
 NeoBundle 'bling/vim-airline'
@@ -82,14 +79,8 @@ NeoBundle 'chazy/cscope_maps'
 NeoBundle 'tpope/vim-dispatch'
 if !g:min
 NeoBundle 'tpope/vim-endwise'
-"NeoBundle 'Shougo/unite-build'
-"NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'scrooloose/syntastic'
-"NeoBundle 'Raimondi/delimitMate'
-"NeoBundle 'kana/vim-textobj-diff'
 NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-"NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
 " OCaml
 NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
@@ -98,7 +89,6 @@ NeoBundle 'OCamlPro/ocp-indent', {'autoload': {'filetypes': 'ocaml'}, 'script_ty
 NeoBundle 'feuerbach/vim-hs-module-name'
 NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
-"NeoBundleLazy 'eagletmt/unite-haddock', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
@@ -119,13 +109,10 @@ NeoBundle 'kana/vim-fakeclip'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'Lokaltog/vim-easymotion'
-"NeoBundle 'terryma/vim-multiple-cursors'
 " Files
-"NeoBundle 'Shougo/unite-sudo'
 NeoBundle 'mhinz/vim-startify'
 NeoBundle 'jamessan/vim-gnupg'
 NeoBundle 'gmarik/sudo-gui.vim'
-"NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'regedarek/vim-bufexplorer'
 " Optional
 NeoBundleLazy 'thinca/vim-fontzoom', {
@@ -135,10 +122,6 @@ NeoBundleLazy 'thinca/vim-fontzoom', {
       \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
       \  ],
       \ }}
-"NeoBundleLazy 'ujihisa/unite-font', {
-      "\ 'gui': 1,
-      "\ 'autoload': {'unite_sources': 'font'}
-      "\ }
 NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
 NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
       \ 'mappings': [['nxo', '<Plug>(quickrun)']],
@@ -460,14 +443,9 @@ let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 
 let g:ycm_confirm_extra_conf = 0
-"let g:ycm_min_num_of_chars_for_completion = 1
 let g:ycm_filetype_whitelist = {
   \ 'c': 1, 'cpp': 1, 'objcpp': 1
   \ }
-"let g:ycm_filetype_blacklist = {
-"  \ 'unite': 1, 'markdown': 1, 'notes': 1, 'text': 1, 'txt': 1,
-"  \ 'gitcommit': 1, 'svn': 1,
-"  \ }
 
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
