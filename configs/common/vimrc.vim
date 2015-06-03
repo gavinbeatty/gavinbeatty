@@ -81,6 +81,7 @@ if !g:min
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'tpope/vim-sleuth'
 NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
 " OCaml
 NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
