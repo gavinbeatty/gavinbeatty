@@ -92,8 +92,10 @@ if !g:none
     NeoBundle 'tpope/vim-sleuth'
     NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
     " OCaml
-    NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
-    NeoBundle 'OCamlPro/ocp-indent', {'autoload': {'filetypes': 'ocaml'}, 'script_type': 'plugin', 'rtp': 'tools'}
+    let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+    execute 'set rtp+='.g:opamshare.'/merlin/vim'
+    "execute 'helptags '.g:opamshare.'/merlin/vim/doc'
+    NeoBundle 'def-lkb/ocp-indent-vim', {'autoload': {'filetypes': 'ocaml'}}
     " Haskell
     NeoBundle 'feuerbach/vim-hs-module-name'
     NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
@@ -303,6 +305,7 @@ if !exists('s:filetypeextras_loaded')
   augroup filetypeextras
     au FileType pandoc,markdown runtime ftplugin/txt.vim
     au FileType c,objc,objcpp runtime ftplugin/cpp.vim
+    au FileType ocaml runtime ftplugin/ocaml.vim
     au FileType cs runtime ftplugin/cs.vim
     au FileType perl setlocal smartindent
     au FileType make setlocal noet sw=8 ts=8
