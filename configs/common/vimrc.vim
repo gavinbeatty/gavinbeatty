@@ -179,6 +179,10 @@ endif
 set nolist
 " Don't automatically format text as it's typed.
 set formatoptions-=t
+if v:version > 703 || v:version == 703 && has("patch541")
+  " Delete comment character when joining commented lines
+  set formatoptions+=j
+endif
 " When 'wrap' is enabled, use 'soft wrap', i.e., don't insert an eol into the buffer.
 set linebreak
 set nowrap
