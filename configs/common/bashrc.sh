@@ -11,6 +11,10 @@ else
     isinteractive=0
     isay() { true ; } ; iprintf() { true ; }
 fi
+iscygwin() { uname -o 2>/dev/null | tr 'A-Z' 'a-z' | grep -F -q cygwin ; }
+if test -z "${iscygwin:-}" ; then
+    if iscygwin ; then iscygwin=1 ; else iscygwin=0 ; fi
+fi
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
 isay ".bashrc"
@@ -18,7 +22,7 @@ isay ".bashrc"
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
 regexelem() { say "$2" | "${GREP:-grep}" -q "\\(^$1:\\|:$1:\\|:$1\$\\|^$1\$\\)" ; }
 
-if test "$isinteractive" -ne 0 ; then
+if test "${iscygwin:-0}" -eq 0 && test "$isinteractive" -ne 0 ; then
     cat /tmp/gavinbeatty-du.log 2>/dev/null || true
     if type df >/dev/null 2>&1 ; then
         df -h
@@ -110,7 +114,7 @@ n_="/opt/mono/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
-. "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
+test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
     PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
