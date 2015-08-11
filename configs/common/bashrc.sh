@@ -106,7 +106,10 @@ n_="/Applications/ghc-7.10.1.app"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
   PATH="${n_}/Contents/bin${PATH:+:$PATH}" ; export PATH
 fi
-
+n_="/opt/mono/bin"
+if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:$PATH}" ; export PATH
+fi
 . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then

@@ -58,6 +58,7 @@ NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes
 NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
 NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
+NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'autoload': {'filetypes': 'cs'}}
 NeoBundle 'altercation/vim-colors-solarized'
 " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
 if !g:min
@@ -153,7 +154,8 @@ set tabstop=4
 set shiftwidth=4
 set textwidth=90
 set matchpairs+=<:>
-set showmatch
+set noshowmatch
+set completeopt=menuone,longest
 set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
 set nolist
 " Don't automatically format text as it's typed.
@@ -283,6 +285,7 @@ if !exists('s:filetypeextras_loaded')
     augroup filetypeextras
         au FileType pandoc,markdown runtime ftplugin/txt.vim
         au FileType c,objc,objcpp runtime ftplugin/cpp.vim
+        au FileType cs runtime ftplugin/cs.vim
         au FileType perl setlocal smartindent
         au FileType make setlocal noet sw=8 ts=8
         au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
@@ -430,6 +433,8 @@ nnoremap <silent> <leader>gw :Gwrite<CR>
 nnoremap <silent> <leader>gr :Gremove<CR>
 au BufReadPost fugitive://* set bufhidden=delete"
 
+let g:OmniSharp_selector_ui = 'unite'
+
 let g:haskell_autotags = 1
 let g:haskell_tabular = 1
 let g:haskell_conceal = 1
@@ -453,6 +458,7 @@ let g:ycm_filetype_whitelist = {
 
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
+let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
