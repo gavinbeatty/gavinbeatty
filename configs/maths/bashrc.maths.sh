@@ -1,7 +1,7 @@
 # gavinbeatty:bashrc.maths.sh
 # A default .bashrc is in /local/skel/bash_profile;
 # this could be copied and adapted.
-iecho ".bashrc.maths.sh"
+isay ".bashrc.maths.sh"
 
 LC_ALL="en_IE.UTF-8" ; export LC_ALL
 LANG="${LC_ALL}" ; export LANG
