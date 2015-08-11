@@ -65,6 +65,8 @@ if !g:min
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-git'
 endif
+" Math
+NeoBundle 'vim-scripts/mathematic.vim'
 " Programming
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/FSwitch'
@@ -463,5 +465,9 @@ let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
 
-source ~/.vimrc.unicode.vim
+nnoremap <leader>km :set keymap=mathematic<CR>
+nnoremap <leader>kn :set keymap=<CR>
+nnoremap <leader>ks :sp ~/.vim/bundle/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>kv :vs ~/.vim/bundle/mathematic.vim/keymap/mathematic.vim<CR>
+
 source ~/.vimrc.post.vim
