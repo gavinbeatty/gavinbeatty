@@ -586,7 +586,7 @@ if test "$isinteractive" -ne 0 ; then
     alias lsquote='ls --quoting-style=shell-always'
     alias lsescape='ls --quoting-style=escape'
     o_=
-    if say $TERM | grep -q -- '-256color' ; then o_="${o_:--}2" ; fi
+    if say $TERM | grep -q -- '-256color$' ; then o_="${o_:--}2" ; fi
     if say $LANG | grep -iq -- '\.UTF-8$' ; then o_="${o_:--}u" ; fi
     alias tmux="tmux $o_"
     unset o_
