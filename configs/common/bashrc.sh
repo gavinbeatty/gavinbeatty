@@ -48,7 +48,7 @@ fi
 ########################################################################
 # Set variables that have no dependency on PATH etc.
 ########################################################################
-UNAME="$(uname 2>/dev/null | tr '[A-Z]' '[a-z]' 2>/dev/null || true)"
+UNAME="$(uname 2>/dev/null | tr 'A-Z' 'a-z' 2>/dev/null || true)"
 HOST="$(hostname -s 2>/dev/null || true)"
 if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
 
