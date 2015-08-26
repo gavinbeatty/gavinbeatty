@@ -1,0 +1,130 @@
+% C/C++ Tools and Options
+% Gavin Beatty <gavinbeatty@gmail.com>
+
+# Warnings
+
+* `-Wall -Wextra`: always.
+* `-Wformat=2`: format strings (use with `__attribute__ ((format(printf, <format-idx>, <elipsis-idx>)))`).
+* `-Wno-unused-local-typedefs`: pretty useless.
+* `-Wsuggest-override`: suggest `override` keyword.
+* `-Wsuggest-final-types -Wsuggest-final-methods`: suggest `final` keyword.
+* `-Wsuggest-attribute=format` or `-Wmissing-format-attribute`: suggest `__attribute__ ((format(printf, <format-idx>, <elipsis-idx>)))`, etc.
+* `-Wsuggest-attribute=const`: suggest `__attribute__ ((const))`.
+* `-Wsuggest-attribute=noreturn`: suggest `__attribute__ ((noreturn))`.
+* `-Wfloat-equal`: of occasional benefit.
+* `-Wundef`: if undefined macro is in `#if`.
+* `-Wstack-usage=1024`: warn if stack usage may exceed 1024 bytes.
+* `-Wpointer-arith`: warn for `sizeof(void)` and arithmetic on `NULL`.
+* `-Wcast-qual`: warn for `(char*)var_that_is_const_char_star`.
+* `-Wconversion`: warn for implicit lossy conversions.
+* `-Wsign-promo`: warn if unsigned promoted to signed for overload resolution when unsigned of same size is available.
+* `-Wuseless-cast`: warn for cast to same type.
+* `-Wlogical-op`: warn for logical `||` where bitwise `|` expected, etc.
+* `-Woverloaded-virtual`: warn if a derived type has an overload that hides a base virtual function.
+* `-Wpadded`: warn if structure layout could be altered to reduce padding.
+* `-Wvariadic-macros`: warn if variadic macro used of type not matching `-std=...`.
+* `-Wnoexcept`: warn if `noexcept(...)` is false but is known to never throw.
+* `-Weffc++`: warn about some (debatable) Effective and More Effective C++ items.
+* `-Wold-style-cast`: warn if using old style casts (to non-void types) in C++.
+* `-Wnormalized`: warn if using non-ASCII characters not normalized in the "standard" NFC way.
+
+# Malloc (glibc)
+
+* `unset MALLOC_CHECK_`: regular, fast allocator.
+* `export MALLOC_CHECK_=0`: tolerate more errors.
+* `export MALLOC_CHECK_=1`: extra checks with failures written to stderr.
+* `export MALLOC_CHECK_=2`: extra checks with failures causing abort.
+
+# Security (gcc, glibc)
+
+* `-fstack-protector`: protect functions with large buffer arrays from stack smashing.
+* `-fstack-protector-all`: protect all functions as above.
+* `-D_FORTIFY_SOURCE=1 -O1`: (and higher optimizations) extra checks that conform to standard.
+* `-D_FORTIFY_SOURCE=2 -O1`: (and higher optimizations) extra extra checks that may reject conformant programs.
+
+# Optimization
+
+* `-flto`: use at all stages of compilation and linking.
+* `-fopt-info=vec`: reports all vectorization optimizations to stderr.
+* `-fopt-info-options=filename`: report to filename instead of stderr.
+* `-fno-delete-null-pointer-checks`: prevents `T* x = 0; x->foo(); if (x) branch();` from deleting `branch()` code.
+* `-fno-strict-aliasing`: lots of developers have been taught to write code that breaks strict aliasing.
+* `-fno-strict-overflow`: lots of developers have been taught to write code that breaks strict overflow.
+* `-march=<arch> -mtune=<tune>`: support from `<arch>` on, but tune performance to exactly `<tune>`.
+
+# Features
+
+* `-ftemplate-depth=1024`: allow template instantiation up to 1024.
+* `-fconstexpr-depth=1024`: allow constexpr recursion up to 1024.
+* `-fwrapv`: ensure twos-complement signed arithmetic and overflow.
+* `-fvisibility=hidden`: hide all symbols unless marked `__attribute__ ((visibility("default")))` etc.
+* `-fno-exceptions`: disable exceptions in C++.
+* `-fno-rtti`: disable info required for `dynamic_cast` and `typeid`.
+
+# Debug containers/iterators (libstdc++)
+
+* `-D_GLIBCXX_DEBUG`: use `__gnu_debug::vector` for `std::vector` etc.
+  **Must use for all compilation units using `std::` containers!**
+
+# Profiling containers (libstdc++)
+
+* `-D_GLIBCXX_PROFILE`: after running executable, check `libstdcxx-profile.txt` for suggestions.
+  **Must use for all compilation units using `std::` containers!**
+
+# Profile Guided Optimization
+
+* `-fprofile-generate` in all steps in profile build.
+* Run the application, generating .gcda files.
+* `-fprofile-use` in release build. Must use same paths as profile build.
+
+# Valgrind (memcheck)
+
+* `--trace-children=yes`: check exec-d processes.
+* `--leak-check=full`: individual leak details instead of just a `--leak-check=summary`.
+* `--show-reachable=yes`: complain about memory not free-d, etc., on process exit, even if a pointer exists.
+* `--malloc-fill=aa`: malloc, new, etc., memory initially filled with 0xaa.
+* `--free-fill=ff`: free-d, delete-d, etc., memory filled with 0xff.
+
+# AddressSanitizer
+
+* `-fsanitize=address`: log to stderr and by default, `_exit(1)`.
+* `export ASAN_OPTIONS="key=value:key=value"`: multiple options separated by COLON.
+* `export ASAN_OPTIONS=log_path=PATH`: log to PATH.PID instead of stderr.
+* `export ASAN_OPTIONS=detect_odr_violation=2`: detect all ODR violations at startup (default _should_ be 2).
+* `export ASAN_SYMBOLIZER_PATH=/path/to/llvm-symbolizer`: to get symbols in stack trace.
+* `LLVM_SYMBOLIZER_PATH=... asan_symbolize.py prefix < asan.log`: symbolizes and removes leading `.*prefix` from path.
+* `gdb`: set breakpoint on `__asan_report_error`.
+
+# LeakSanitizer
+
+* `-fsanitize=address`: or just `-fsanitize=leak` if you really don't want asan overhead.
+* `export LSAN_OPTIONS=suppressions=suppressions.txt`: use suppressions.txt
+  to ignore certain leaks of the format `leak:<pattern>`.
+  See https://code.google.com/p/address-sanitizer/wiki/LeakSanitizer
+* `export LSAN_OPTIONS=report_objects=1`: report addresses of individual leaked objects.
+
+# MemorySanitizer
+
+* `-fsanitize=memory`: detects uninitialized memory reads (heap or stack).
+
+# ThreadSanitizer
+
+* `-fsanitize=thread`: log detected errors.
+* `export TSAN_OPTIONS="key=value key=value"`: multiple options separate by SPACE.
+* `export TSAN_OPTIONS=log_path=PATH`: log to PATH.PID instead of stderr.
+* `export TSAN_OPTIONS=halt_on_error=1`: exit on first error.
+* `export TSAN_OPTIONS=suppressions=suppressions.txt`: lines formatted as follows:
+  `race:^Class::Function$`; `thread:Name`; `mutex:Name; `deadlock:Name`; `called_from_lib:libzmq.so` (not instrumented, say).
+* `-fsanitize-blacklist=blacklist.txt`: lines formatted as follows:
+  `fun:foo`; `fun:_Z8foov` for C++ `foo(void)`; `fun:*foo*` for all containing `foo`; `src:file.cc` for all of `file.cc`.
+
+# Coverage
+
+* `--coverage`: at compile-time, `-fprofile-arcs -ftest-coverage`; at link time, `-lgcov`.
+* `-fno-inline -O0`: do not inline and do not optimize.
+* `gcovr`: to process .gcda and .gcno files (`lcov` is annoying).
+
+# Linking
+
+* `-fuse-ld=gold`: gold linker is faster.
+
