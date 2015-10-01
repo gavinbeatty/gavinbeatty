@@ -96,6 +96,7 @@ NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell
 NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
 NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
 " C++
+if has('python')
 python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
 let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
 NeoBundle 'Valloric/YouCompleteMe', {
@@ -105,6 +106,7 @@ NeoBundle 'Valloric/YouCompleteMe', {
     \ 'unix': './install.sh --clang-completer --system-libclang',
   \ },
   \ }
+endif
 " Python
 NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
 NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
@@ -395,8 +397,8 @@ let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 5000
 let g:unite_data_directory = '~/.vim/.cache/unite'
 call EnsureDirExists(g:unite_data_directory)
-if !g:min
-  call unite#set_profile('files', 'context.smartcase', 1)
+if !g:none && !g:min
+  call unite#custom#profile('files', 'context.smartcase', 1)
 endif
 if executable('ag')
     set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
@@ -411,6 +413,7 @@ elseif executable('ack')
     let g:unite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
     let g:unite_source_grep_recursive_opt = ''
 endif
+if !g:none && !g:min
 if s:is_windows
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec buffer file_mru bookmark<cr><c-u>
     nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
@@ -424,6 +427,7 @@ nnoremap <silent> <leader>ub :<C-u>Unite -auto-resize -buffer-name=buffers buffe
 nnoremap <silent> <leader>u/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
 nnoremap <silent> <leader>um :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
 nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
+endif
 
 nnoremap <silent> <leader>gs :Gstatus<CR>
 nnoremap <silent> <leader>gd :Gdiff<CR>
@@ -435,7 +439,9 @@ nnoremap <silent> <leader>gw :Gwrite<CR>
 nnoremap <silent> <leader>gr :Gremove<CR>
 au BufReadPost fugitive://* set bufhidden=delete"
 
+if !g:none && !g:min
 let g:OmniSharp_selector_ui = 'unite'
+endif
 
 let g:haskell_autotags = 1
 let g:haskell_tabular = 1
