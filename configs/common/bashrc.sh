@@ -114,6 +114,10 @@ n_="/opt/mono/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
+n_="${HOME}/.local/opt/node/bin"
+if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="${n_}${PATH:+:$PATH}" ; export PATH
+fi
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
