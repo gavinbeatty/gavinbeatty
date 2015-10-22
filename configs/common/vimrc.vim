@@ -68,6 +68,7 @@ endif
 " Math
 NeoBundle 'vim-scripts/mathematic.vim'
 " Programming
+NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/FSwitch'
 NeoBundle 'MarcWeber/vim-addon-local-vimrc'
@@ -106,6 +107,7 @@ NeoBundle 'Valloric/YouCompleteMe', {
     \ 'unix': './install.sh --clang-completer --system-libclang',
   \ },
   \ }
+NeoBundle 'lyuts/vim-rtags'
 endif
 " Python
 NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
