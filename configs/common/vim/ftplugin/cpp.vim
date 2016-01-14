@@ -1,4 +1,4 @@
-" vi: set ft=vim expandtab tabstop=4 shiftwidth=4:
+" vi: set ft=vim tabstop=2 shiftwidth=2 expandtab:
 if !exists('b:did_ftplugin_cpp_vim')
 let b:did_ftplugin_cpp_vim = 1
 
