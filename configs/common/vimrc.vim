@@ -288,6 +288,7 @@ if !exists('s:filetypedetect_loaded')
         au BufRead,BufNewFile \
             \ *.text,*.txt,*.mail,*.email,*.followup,*.article,*.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt*
             \ setlocal filetype=txt
+        au BufRead,BufNewFile CMake*.txt setlocal filetype=cmake
         au BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
         " .m files are objective c by default, not matlab
         au BufRead,BufNewFile *.m setlocal filetype=objc
