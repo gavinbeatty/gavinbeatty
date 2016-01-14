@@ -13,4 +13,4 @@ if test $# -ne 0 && ishelp "$1" ; then
   usage
   exit 0
 fi
-svnlist.sh -f "$@" | xargs -L1 sh -c 'printf "%d %s\n" "$(svnlastcommit.sh "$0")" "$0"' | sort -n | cut -d' ' -f2-
+svnlist.sh -f "$@" | xargs -L1 sh -c 'printf "%d %s\n" "$(svnlastcommit.sh "$1")" "$1"' sh | sort -n | cut -d' ' -f2-
