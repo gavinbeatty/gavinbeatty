@@ -118,6 +118,7 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vim/ftplugin/cpp.vim vim/ftplugin/cs.
 	$(INSTALL_DATA) vim/ftplugin/cs.vim $(DESTDIR)$(HOME)/.vim/ftplugin/cs.vim
 	$(INSTALL_DATA) vim/ftplugin/haskell.vim $(DESTDIR)$(HOME)/.vim/ftplugin/haskell.vim
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
+	$(INSTALL_DATA) vim/ftplugin/xml.vim $(DESTDIR)$(HOME)/.vim/ftplugin/xml.vim
 .PHONY: install-vimrc
 
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
