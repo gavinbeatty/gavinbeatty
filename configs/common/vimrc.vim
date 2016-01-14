@@ -68,6 +68,10 @@ endif
 " Math
 NeoBundle 'vim-scripts/mathematic.vim'
 " Programming
+let g:indentLine_char = '│'
+if !g:min
+let g:indentLine_color_term = 239
+endif
 NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'bogado/file-line'
 NeoBundle 'vim-scripts/FSwitch'
@@ -351,6 +355,8 @@ nnoremap <down> :bprev<CR>
 nnoremap <up> :bnext<CR>
 nnoremap <left> :tabnext<CR>
 nnoremap <right> :tabprev<CR>
+
+nnoremap <leader>il :IndentLinesToggle<CR>
 
 nnoremap <leader>rr :redraw!<CR>
 " Toggle.
