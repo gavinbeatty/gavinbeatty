@@ -2,6 +2,7 @@
 if !exists('b:did_ftplugin_cs_vim')
 let b:did_ftplugin_cs_vim = 1
 
+setlocal fileformat=dos
 setlocal list cindent expandtab textwidth=4 tabstop=4
 setlocal omnifunc=OmniSharp#Complete
 setlocal updatetime=500
