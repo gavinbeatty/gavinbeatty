@@ -516,6 +516,7 @@ if test "$isinteractive" -ne 0 ; then
     svnnews() { svnd log -vr BASE:HEAD --incremental "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { svnd diff "$@" ; }
+    svnwdiff() { svndiff -x -w "$@" ; }
     svnfdiff() { svndiff --ignore-properties "$@" ; }
     svnpdiff() { svndiff --properties-only "$@" ; }
     svnmkpatch() { ${SVN_EXE:-svn} diff --notice-ancestry --show-copies-as-adds "$@" ; }
