@@ -194,13 +194,17 @@ bashrc_guard=1
 
 # Gavin
 
+say() { printf "%s\n" "$*" ; }
+
 export PATH="/bin:/mingw64/bin:${HOME}/.local/bin:${PATH}"
 export LANG=en_US.UTF-8
-export TERM=xterm-256color
+if test "$TERM" = xterm ; then
+    export TERM=xterm-256color
+fi
+if (test -n "$TMUX" || test -n "$SCREEN") && test "$TERM" = xterm-256color ; then
+    export TERM=screen-256color
+fi
 eval $(dircolors -b ~/.dircolors)
-cd
-
-say() { printf "%s\n" "$*" ; }
 
 isinteractive() { case $- in *i*) return 0 ;; esac ; return 1 ; }
 if test "${isinteractive:-0}" -eq 1 || isinteractive ; then
