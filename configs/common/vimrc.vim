@@ -33,115 +33,117 @@ if s:is_windows | set rtp+=~/.vim | endif
 let g:make = 'gmake'
 if system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
 if !g:none
-set rtp+=~/.vim/bundle/neobundle.vim/
-call neobundle#begin(expand('~/.vim/bundle'))
-NeoBundleFetch 'Shougo/neobundle.vim'
-" Dependencies
-NeoBundle 'Shougo/vimproc', {'build': {
-      \ 'windows': g:make . ' -f make_mingw32.mak',
-      \ 'cygwin': g:make . ' -f make_cygwin.mak',
-      \ 'mac': g:make . ' -f make_mac.mak',
-      \ 'unix': g:make . ' -f make_unix.mak',
-      \ }}
-NeoBundleLazy 'Shougo/vimshell', {'autoload': {
-      \   'commands': [{'name': 'VimShell',
-      \                 'complete': 'customlist,vimshell#complete'},
-      \                'VimShellExecute', 'VimShellInteractive',
-      \                'VimShellTerminal', 'VimShellPop'],
-      \   'mappings': ['<Plug>(vimshell_switch)']
-      \ }}
-NeoBundle 'def-lkb/vimbufsync'
-NeoBundle 'tpope/vim-repeat'
-" Syntax
-NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
-NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
-NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
-NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
-NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
-NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'autoload': {'filetypes': 'cs'}}
-NeoBundle 'altercation/vim-colors-solarized'
-" The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
-if !g:min
-NeoBundle 'bling/vim-airline'
-NeoBundle 'tpope/vim-git'
-endif
-" Math
-NeoBundle 'vim-scripts/mathematic.vim'
-" Programming
-let g:indentLine_char = '│'
-if !g:min
-let g:indentLine_color_term = 239
-endif
-NeoBundle 'Yggdroot/indentLine'
-NeoBundle 'bogado/file-line'
-NeoBundle 'vim-scripts/FSwitch'
-NeoBundle 'MarcWeber/vim-addon-local-vimrc'
-if !g:min
-NeoBundleLazy 'Shougo/unite.vim', {'autoload': {
-      \ 'commands': [{'name': 'Unite',
-      \                'complete': 'customlist,unite#complete_source'
-      \              }, 'UniteWithCursorWord', 'UniteWithInput'
-      \              ]}}
-endif
-NeoBundle 'chazy/cscope_maps'
-NeoBundle 'tpope/vim-dispatch'
-if !g:min
-NeoBundle 'tpope/vim-endwise'
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'tpope/vim-sleuth'
-NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
-" OCaml
-NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
-NeoBundle 'OCamlPro/ocp-indent', {'autoload': {'filetypes': 'ocaml'}, 'script_type': 'plugin', 'rtp': 'tools'}
-" Haskell
-NeoBundle 'feuerbach/vim-hs-module-name'
-NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
-NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
-NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
-NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
-" C++
-if has('python')
-python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
-NeoBundle 'Valloric/YouCompleteMe', {
-  \ 'vim_version':'7.3.584',
-  \ 'build':{
-    \ 'mac' : 'env PATH="'.g:macportspypath.'" ./install.sh --clang-completer --system-libclang',
-    \ 'unix': './install.sh --clang-completer --system-libclang',
-  \ },
-  \ }
-NeoBundle 'lyuts/vim-rtags'
-endif
-" Python
-NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
-NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
-" Text
-NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
-NeoBundle 'kana/vim-fakeclip'
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'Lokaltog/vim-easymotion'
-" Files
-NeoBundle 'mhinz/vim-startify'
-NeoBundle 'jamessan/vim-gnupg'
-NeoBundle 'gmarik/sudo-gui.vim'
-NeoBundle 'regedarek/vim-bufexplorer'
-" Optional
-NeoBundleLazy 'thinca/vim-fontzoom', {
-      \ 'gui': 1,
-      \ 'autoload': {
-      \  'mappings': [
-      \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
-      \  ],
-      \ }}
-NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
-NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
-      \ 'mappings': [['nxo', '<Plug>(quickrun)']],
-      \ }}
-endif
-call neobundle#end()
-NeoBundleCheck
+  set rtp+=~/.vim/bundle/neobundle.vim/
+  call neobundle#begin(expand('~/.vim/bundle'))
+  NeoBundleFetch 'Shougo/neobundle.vim'
+  " Dependencies
+  if !s:is_cygwin
+    NeoBundle 'Shougo/vimproc', {'build': {
+          \ 'windows': g:make . ' -f make_mingw32.mak',
+          \ 'cygwin': g:make . ' -f make_cygwin.mak',
+          \ 'mac': g:make . ' -f make_mac.mak',
+          \ 'unix': g:make . ' -f make_unix.mak',
+          \ }}
+  endif
+  NeoBundleLazy 'Shougo/vimshell', {'autoload': {
+        \   'commands': [{'name': 'VimShell',
+        \                 'complete': 'customlist,vimshell#complete'},
+        \                'VimShellExecute', 'VimShellInteractive',
+        \                'VimShellTerminal', 'VimShellPop'],
+        \   'mappings': ['<Plug>(vimshell_switch)']
+        \ }}
+  NeoBundle 'def-lkb/vimbufsync'
+  NeoBundle 'tpope/vim-repeat'
+  " Syntax
+  NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
+  NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
+  NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
+  NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
+  NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
+  if !s:is_cygwin
+    NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'autoload': {'filetypes': 'cs'}}
+  endif
+  NeoBundle 'altercation/vim-colors-solarized'
+  " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
+  if !g:min
+    NeoBundle 'bling/vim-airline'
+    NeoBundle 'tpope/vim-git'
+  endif
+  " Math
+  NeoBundle 'vim-scripts/mathematic.vim'
+  " Programming
+  let g:indentLine_char = '│'
+  if !g:min
+    let g:indentLine_color_term = 239
+  endif
+  NeoBundle 'Yggdroot/indentLine'
+  NeoBundle 'bogado/file-line'
+  NeoBundle 'vim-scripts/FSwitch'
+  NeoBundle 'MarcWeber/vim-addon-local-vimrc'
+  if !g:min
+    NeoBundle 'Shougo/unite.vim'
+  endif
+  NeoBundle 'chazy/cscope_maps'
+  NeoBundle 'tpope/vim-dispatch'
+  if !g:min
+    NeoBundle 'tpope/vim-endwise'
+    NeoBundle 'scrooloose/syntastic'
+    NeoBundle 'scrooloose/nerdcommenter'
+    NeoBundle 'tpope/vim-sleuth'
+    NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
+    " OCaml
+    NeoBundle 'the-lambda-church/merlin', {'autoload': {'filetypes': 'ocaml'}, 'rtp': 'vim/merlin'}
+    NeoBundle 'OCamlPro/ocp-indent', {'autoload': {'filetypes': 'ocaml'}, 'script_type': 'plugin', 'rtp': 'tools'}
+    " Haskell
+    NeoBundle 'feuerbach/vim-hs-module-name'
+    NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
+    NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
+    NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
+    NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
+    " C++
+    if s:is_mac && has('python')
+      python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+      let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
+    endif
+    if !s:is_cygwin
+      NeoBundle 'Valloric/YouCompleteMe', {
+        \ 'vim_version':'7.3.584',
+        \ 'build':{
+          \ 'mac' : 'env PATH="'.g:macportspypath.'" ./install.sh --clang-completer --system-libclang',
+          \ 'unix': './install.sh --clang-completer --system-libclang',
+        \ },
+        \ }
+      NeoBundle 'lyuts/vim-rtags'
+    endif
+    " Python
+    NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
+    NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
+    " Text
+    NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
+    NeoBundle 'kana/vim-fakeclip'
+    NeoBundle 'godlygeek/tabular'
+    NeoBundle 'tpope/vim-surround'
+    NeoBundle 'Lokaltog/vim-easymotion'
+    " Files
+    NeoBundle 'mhinz/vim-startify'
+    NeoBundle 'jamessan/vim-gnupg'
+    NeoBundle 'gmarik/sudo-gui.vim'
+    NeoBundle 'regedarek/vim-bufexplorer'
+    " Optional
+    NeoBundleLazy 'thinca/vim-fontzoom', {
+          \ 'gui': 1,
+          \ 'autoload': {
+          \  'mappings': [
+          \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
+          \  ],
+          \ }}
+    NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
+    NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
+          \ 'mappings': [['nxo', '<Plug>(quickrun)']],
+          \ }}
+  endif
+  call neobundle#end()
+  NeoBundleCheck
 endif
 
 syntax enable
@@ -153,10 +155,10 @@ set background=dark
 " See :h filetype-overview
 filetype plugin indent on
 if !g:none
-    colorscheme solarized
+  colorscheme solarized
 endif
 if !exists('g:colors_name') || g:colors_name != 'solarized'
-    colorscheme slate
+  colorscheme slate
 endif
 set nonumber
 set expandtab
@@ -217,7 +219,7 @@ endif
 if s:is_windows && has('+shellslash') | set shellslash | endif
 
 fu! EnsureDirExists(path)
-    sil! call mkdir(expand(a:path), 'p')
+  sil! call mkdir(expand(a:path), 'p')
 endf
 if exists('+undofile') | set undofile | set undodir=~/.vim/.cache/undo | endif
 set backupdir=~/.vim/.cache/backup
@@ -228,13 +230,13 @@ call EnsureDirExists(&directory)
 if s:is_windows && !s:is_cygwin | set shell=c:/windows/system32/cmd.exe | endif
 
 if has('multi_byte')
-    " Quotation dash.
-    digraphs -Q 8213
-    " Figure dash.
-    digraphs -F 8210
-    " e.g., Polish as in Grze<c-k>'s
-    digraphs 's 347
-    digraphs s' 347
+  " Quotation dash.
+  digraphs -Q 8213
+  " Figure dash.
+  digraphs -F 8210
+  " e.g., Polish as in Grze<c-k>'s
+  digraphs 's 347
+  digraphs s' 347
 endif
 
 set ruler
@@ -254,69 +256,69 @@ set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
 " My original: set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
 set shortmess+=r
 if has('gui_running')
-    " remove toolbar
-    set guioptions-=T
-    " Remove left-hand toolbar in vsplit.
-    " This fixes a bug where caret disappears in vsplit in 7.2.
-    set guioptions-=L
-    set lines=30
-    let g:font = 'Bitstream\ Vera\ Sans\ Mono'
-    "let g:font = 'Monospace'
-    let g:fontpt = 10
-    fu! SetFont()
-        let &guifont=g:font.' '.g:fontpt
-    endf
-    fu! IncrFontPt()
-        let g:fontpt = g:fontpt + 1
-        call SetFont()
-    endf
-    fu! DecrFontPt()
-        let g:fontpt = g:fontpt - 1
-        call SetFont()
-    endf
+  " remove toolbar
+  set guioptions-=T
+  " Remove left-hand toolbar in vsplit.
+  " This fixes a bug where caret disappears in vsplit in 7.2.
+  set guioptions-=L
+  set lines=30
+  let g:font = 'Bitstream\ Vera\ Sans\ Mono'
+  "let g:font = 'Monospace'
+  let g:fontpt = 10
+  fu! SetFont()
+    let &guifont=g:font.' '.g:fontpt
+  endf
+  fu! IncrFontPt()
+    let g:fontpt = g:fontpt + 1
     call SetFont()
-    " hold right click for the usual kind of menu
-    set mousemodel=popup
-    nnoremap <leader>fi :call IncrFontPt()<CR>
-    nnoremap <leader>fd :call DecrFontPt()<CR>
+  endf
+  fu! DecrFontPt()
+    let g:fontpt = g:fontpt - 1
+    call SetFont()
+  endf
+  call SetFont()
+  " hold right click for the usual kind of menu
+  set mousemodel=popup
+  nnoremap <leader>fi :call IncrFontPt()<CR>
+  nnoremap <leader>fd :call DecrFontPt()<CR>
 endif
 
 au BufNew * if &buftype == 'quickfix' | setlocal wrap | endif
 if !exists('s:filetypedetect_loaded')
-    let s:filetypedetect_loaded = 1
-    augroup filetypedetect
-        au BufRead,BufNewFile \
-            \ *.text,*.txt,*.mail,*.email,*.followup,*.article,*.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt*
-            \ setlocal filetype=txt
-        au BufRead,BufNewFile CMake*.txt setlocal filetype=cmake
-        au BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
-        " .m files are objective c by default, not matlab
-        au BufRead,BufNewFile *.m setlocal filetype=objc
-        " .proto files for google protocol buffers
-        au BufRead,BufNewFile *.proto setlocal filetype=proto
-    augroup end
+  let s:filetypedetect_loaded = 1
+  augroup filetypedetect
+    au BufRead,BufNewFile \
+      \ *.text,*.txt,*.mail,*.email,*.followup,*.article,*.letter,/tmp/pico*,nn.*,snd.*,/tmp/mutt*
+      \ setlocal filetype=txt
+    au BufRead,BufNewFile CMake*.txt setlocal filetype=cmake
+    au BufRead,BufNewFile Jamfile,Jamroot,*.jam setlocal filetype=bbv2
+    " .m files are objective c by default, not matlab
+    au BufRead,BufNewFile *.m setlocal filetype=objc
+    " .proto files for google protocol buffers
+    au BufRead,BufNewFile *.proto setlocal filetype=proto
+  augroup end
 endif
 if !exists('s:filetypeextras_loaded')
-    let s:filetypeextras_loaded = 1
-    augroup filetypeextras
-        au FileType pandoc,markdown runtime ftplugin/txt.vim
-        au FileType c,objc,objcpp runtime ftplugin/cpp.vim
-        au FileType cs runtime ftplugin/cs.vim
-        au FileType perl setlocal smartindent
-        au FileType make setlocal noet sw=8 ts=8
-        au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
-    augroup end
+  let s:filetypeextras_loaded = 1
+  augroup filetypeextras
+    au FileType pandoc,markdown runtime ftplugin/txt.vim
+    au FileType c,objc,objcpp runtime ftplugin/cpp.vim
+    au FileType cs runtime ftplugin/cs.vim
+    au FileType perl setlocal smartindent
+    au FileType make setlocal noet sw=8 ts=8
+    au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
+  augroup end
 endif
 if exists(':Rainbow') && !exists('s:filetypeextras_rainbow_loaded')
-    let s:filetypeextras_rainbow_loaded = 1
-    augroup filetypeextras_rainbow
-        " Redraw rainbow parens when going back to the buffer.
-        au Syntax * call rainbow#load()
-    augroup end
+  let s:filetypeextras_rainbow_loaded = 1
+  augroup filetypeextras_rainbow
+    " Redraw rainbow parens when going back to the buffer.
+    au Syntax * call rainbow#load()
+  augroup end
 endif
 
 fu! AutoGitCommit(filename)
-    execute 'sil! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
+  execute 'sil! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
 endf
 " Could be used in conjunction with set autowriteall
 command! -nargs=0 -complete=file AutoGitCommitWrites
@@ -340,12 +342,12 @@ inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
 noremap Y y$
 fu! Home()
-    let curcol = wincol()
-    normal 0
-    let newcol = wincol()
-    if newcol == curcol
-        normal ^
-    endif
+  let curcol = wincol()
+  normal 0
+  let newcol = wincol()
+  if newcol == curcol
+    normal ^
+  endif
 endf
 " <HOME> toggles between start of line and start of text
 inoremap <silent> <home> <C-o>:call Home()<CR>
@@ -415,32 +417,32 @@ if !g:none && !g:min
   call unite#custom#profile('files', 'context.smartcase', 1)
 endif
 if executable('ag')
-    set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
-    set grepformat=%f:%l:%c:%m
-    let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
-    let g:unite_source_grep_recursive_opt = ''
+  set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+  set grepformat=%f:%l:%c:%m
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
+  let g:unite_source_grep_recursive_opt = ''
 elseif executable('ack')
-    set grepprg=ack\ --noheading\ -H\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
-    set grepformat=%f:%l:%c:%m
-    let g:unite_source_grep_command = 'ack'
-    let g:unite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
-    let g:unite_source_grep_recursive_opt = ''
+  set grepprg=ack\ --noheading\ -H\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+  set grepformat=%f:%l:%c:%m
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
+  let g:unite_source_grep_recursive_opt = ''
 endif
 if !g:none && !g:min
-if s:is_windows
+  if s:is_windows || s:is_cygwin
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec buffer file_mru bookmark<cr><c-u>
     nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
-else
+  else
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec/async buffer file_mru bookmark<cr><c-u>
     nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec/async<cr><c-u>
-endif
-nnoremap <silent> <leader>uy :<C-u>Unite -buffer-name=yanks history/yank<cr>
-nnoremap <silent> <leader>ul :<C-u>Unite -auto-resize -buffer-name=line line<cr>
-nnoremap <silent> <leader>ub :<C-u>Unite -auto-resize -buffer-name=buffers buffer<cr>
-nnoremap <silent> <leader>u/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
-nnoremap <silent> <leader>um :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
-nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
+  endif
+  nnoremap <silent> <leader>uy :<C-u>Unite -buffer-name=yanks history/yank<cr>
+  nnoremap <silent> <leader>ul :<C-u>Unite -auto-resize -buffer-name=line line<cr>
+  nnoremap <silent> <leader>ub :<C-u>Unite -auto-resize -buffer-name=buffers buffer<cr>
+  nnoremap <silent> <leader>u/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
+  nnoremap <silent> <leader>um :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
+  nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
 endif
 
 nnoremap <silent> <leader>gs :Gstatus<CR>
@@ -454,7 +456,7 @@ nnoremap <silent> <leader>gr :Gremove<CR>
 au BufReadPost fugitive://* set bufhidden=delete"
 
 if !g:none && !g:min
-let g:OmniSharp_selector_ui = 'unite'
+  let g:OmniSharp_selector_ui = 'unite'
 endif
 
 let g:haskell_autotags = 1
