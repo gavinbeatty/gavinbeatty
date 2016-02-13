@@ -1,66 +1,58 @@
 ---
 title: CV
-author: Gavin Beatty <gavinbeatty@gmail.com> +13128573895
-modified: 2013-11-26
+author: Gavin Beatty <gavinbeatty@gmail.com> +1 312 709 1965
+modified: 2016-02-13
 
 ---
 
-High performance, low latency, C++, linux, networking, software engineer with over 5 years
-experience in backend and finance roles, maintaining large libraries.
+High performance, low latency, C++, linux, networking, software engineer with over 7 years experience in backend and finance roles, responsible for large applications and libraries.
 
-## Employment
+Experience
+----------
 
-### Optiver Americas, Chicago: Senior Software Engineer
+2013 to present
+:   **Senior Software Engineer**: Optiver US LLC, Chicago, USA
 
-**mid-2013 to present**
+    I write automated trading applications for options, operating with extremely low latency.
+    I design and implement systems for traders to control these applications behavior and pricing in a scriptable and safe way.
 
-I work on automated trading applications, and low-latency infrastructure.
+2010 to 2013
+:   **Senior Software Engineer**: Optiver Europe, Amsterdam, the Netherlands
 
-### Optiver Europe, Amsterdam: Senior Software Engineer
+    I wrote high performance gateways connecting our auto-traders with multiple exchanges/platforms.
+    This included complex order logic, and extremely high volume multicast traffic.
+    I lead development of our core in-house global library for market connectivity.
+    I also designed and implemented several exchange-specific gateways, and several general-purpose risk and testing components.
 
-**2010 to mid-2013**
+2010
+:   **Freelance iOS developer**: Studio Sophisti, Amsterdam, the Netherlands
 
-I wrote high performance gateways connecting our auto-traders with multiple
-exchanges/platforms: including complex order logic, extremely high volume multicast
-traffic. I co-maintained our core in-house global library, and solely maintained
-several gateways, components, and own-initiative innovation projects.
+    I wrote the backend for the popular and extremely well-reviewed Booking.com app.
+    This app streamed verbose XML and joined with a large SQLite dataset for every interaction.
+    I wrote the backend for Flora NL, a categorization app for the flora of the Netherlands.
+    I created in-house libraries to enable efficient work across both of these apps and future apps.
 
-### Attached to Studio Sophisti, Amsterdam: Freelance iOS developer
+2008 to 2010
+:   **Software Engineer**: Klas Ltd., Dublin, Ireland
 
-**Summer of 2010**
+    I designed and developed a daemon to implement GRE Keepalives on POSIX-compatible OSes.
+    This involved raw socket programming, state machines, and dynamic IP header modification.
 
-I wrote the backend for the popular and extremely well-reviewed Booking.com app, intensive
-in XML and SQLite processing and efficient network usage. I wrote the backend for Flora
-NL, a categorization app for the flora of the Netherlands.
+Summer of 2007
+:   **Student Software Engineer**: Google Summer of Code
 
-### Klas Ltd., Dublin: Software Engineer
+    I applied for and successfully completed my [Google Summer of Code](http://code.google.com/soc/2007) project entitled "KDEPrint – add support for LinuxPrinting's on-line drivers query."
+    I implemented a very speedy GUI-wizard to query, download and install the correct driver for the user's given printer, written entirely in C++.
+    I used a web query language, streamed XML parsing and the KDE/Qt libraries.
+    This was a Unix-only application by design, at the time there being no printer driver repository for other platforms.
+    It installed packages in the given Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
 
-**2008 to 2010**
+Education
+---------
 
-I designed and developed a daemon to implement GRE Keepalives on POSIX-compatible OSes.
-Previously, this was only available on Cisco routers. This involved raw socket
-programming, a state machine and manual modification of IP headers.
+2004 to 2008
+:   **BA, Mathematics**: Trinity College, the University of Dublin, Ireland
 
-### Google Summer of Code: Student Software Engineer
+    Alongside my studies, from 2nd year I ran tutorials in Numerical Analysis in C, LaTeX, and Unix.
 
-**Summer of 2007**
-
-I applied for and successfully completed my [Google Summer of
-Code](http://code.google.com/soc/2007) project entitled "KDEPrint – add support for
-LinuxPrinting's on-line drivers query." I implemented a very speedy GUI-wizard to query,
-download and install the correct driver for the user's given printer, written entirely in
-C++, using a web query language, streamed XML parsing and the KDE/Qt libraries (all
-cross-platform). This was a Unix-only application by design, at the time there being no
-printer driver repository for other platforms. It installed packages in the given
-Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
-
-## Education
-
-### Trinity College, Dublin University: Mathematics
-
-**2004 to 2008**
-
-Aside from my studies, I gave basic tutorials in Numerical Analysis through C and Unix
-from 2nd year.
-
-<!-- vi: set et sw=2 ts=2 tw=90 -->
+<!-- vi: set et sw=2 ts=2 tw=90: -->
