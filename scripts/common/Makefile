@@ -86,6 +86,7 @@ svnlist.sh \
 svnmergerevs.sh \
 svnpeggedexternals.sh \
 svnrelnotes.sh \
+svnrepairmv.sh \
 svnrepo.sh \
 svnrepowalk.sh \
 svnresolve.sh \
