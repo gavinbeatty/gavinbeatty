@@ -99,17 +99,6 @@ if test -d "${HOME_PREFIX}" ; then
         fi
     done
 fi
-test -n "${bashrc_opam_init:-}" || . "${HOME}/.opam/opam-init/init.sh" >/dev/null 2>/dev/null || true
-bashrc_opam_init=1
-n_="${HOME}/.cabal/bin"
-if test -d "${HOME}/.cabal" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-    PATH="${n_}${PATH:+:$PATH}" ; export PATH
-fi
-# Add GHC 7.10.1 to the PATH, via https://ghcformacosx.github.io/
-n_="/Applications/ghc-7.10.1.app"
-if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-  PATH="${n_}/Contents/bin${PATH:+:$PATH}" ; export PATH
-fi
 n_="/opt/mono/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
@@ -118,6 +107,9 @@ n_="${HOME}/.local/opt/node/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
+test -n "${bashrc_opam_config_env:-}" || eval `opam config env` >/dev/null 2>/dev/null || true
+bashrc_opam_config_env=1
+
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
