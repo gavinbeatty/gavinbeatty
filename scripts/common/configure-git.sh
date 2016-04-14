@@ -163,6 +163,7 @@ alias_section() {
     gitconfig alias.ci "commit"
     gitconfig alias.cia "commit -a"
     gitconfig alias.get "fetch -v"
+    gitconfig alias.rclone "clone --recursive"
     gitconfig alias.prebase "pull --rebase"
     gitconfig alias.rebaseup "rebase -i @{u}"
     gitconfig alias.fmerge "merge --no-ff" # feature merge
