@@ -36,6 +36,7 @@ if test -n "$is_msys2" ; then
 else
     $MAKE -C configs/common install
 fi
+$MAKE -C configs/external install
 case "$HOST" in
     *.maths.tcd.ie) $MAKE -C configs/maths install ;;
 esac

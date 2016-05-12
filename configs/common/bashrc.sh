@@ -210,80 +210,15 @@ if test "$isinteractive" -ne 0 ; then
 fi
 
 if test "$isinteractive" -ne 0 ; then
-    if test -r "${HOME}/.git-completion.bash" ; then
-        . "${HOME}/.git-completion.bash"
+    if test -r "${HOME}/.git-prompt.sh" ; then
+        . "${HOME}/.git-prompt.sh"
         git_ps1_() {
             local p="$(__git_ps1 "$@")"
             test -n "$p" || return 1
-            printf "%s\n" "$p"
+            printf %s\\n "$p"
         }
     else
-    # taken from git/contrib/completion/git-completion.bash
-    #
-    # __git_ps1 accepts 0 or 1 arguments (i.e., format string)
-    # returns text to add to bash PS1 prompt (includes branch name)
-    git_ps1_() {
-        local g="$(git rev-parse --git-dir 2>/dev/null)" || return 1
-        if [ -n "$g" ]; then
-            local r
-            local b
-            if [ -d "$g/rebase-apply" ]
-            then
-                if test -f "$g/rebase-apply/rebasing"
-                then
-                    r="|REBASE"
-                elif test -f "$g/rebase-apply/applying"
-                then
-                    r="|AM"
-                else
-                    r="|AM/REBASE"
-                fi
-                b="$(git symbolic-ref HEAD 2>/dev/null)"
-            elif [ -f "$g/rebase-merge/interactive" ]
-            then
-                r="|REBASE-i"
-                b="$(cat "$g/rebase-merge/head-name")"
-            elif [ -d "$g/rebase-merge" ]
-            then
-                r="|REBASE-m"
-                b="$(cat "$g/rebase-merge/head-name")"
-            elif [ -f "$g/MERGE_HEAD" ]
-            then
-                r="|MERGING"
-                b="$(git symbolic-ref HEAD 2>/dev/null)"
-            else
-                if [ -f "$g/BISECT_LOG" ]
-                then
-                    r="|BISECTING"
-                fi
-                if ! b="$(git symbolic-ref HEAD 2>/dev/null)"
-                then
-                    if ! b="$(git describe --exact-match HEAD 2>/dev/null)"
-                    then
-                        b="$(cut -c1-7 "$g/HEAD")..."
-                    fi
-                fi
-            fi
-
-            local w
-            local i
-
-            if test -n "${GIT_PS1_SHOWDIRTYSTATE-}"; then
-                if test "$(git config --bool bash.showDirtyState)" != "false"; then
-                    git diff --no-ext-diff --ignore-submodules \
-                        --quiet --exit-code || w="*"
-                    if git rev-parse --quiet --verify HEAD >/dev/null; then
-                        git diff-index --cached --quiet \
-                            --ignore-submodules HEAD -- || i="+"
-                    else
-                        i="#"
-                    fi
-                fi
-            fi
-            printf "${1:- (%s)}" "${b##refs/heads/}$w$i$r"
-        else return 1
-        fi
-    }
+        git_ps1_() { return 1 ; }
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
