@@ -162,11 +162,12 @@ alias_section() {
     gitconfig alias.co "checkout"
     gitconfig alias.ci "commit"
     gitconfig alias.cia "commit -a"
-    gitconfig alias.get "fetch -v"
+    gitconfig alias.get "fetch -v -p"
     gitconfig alias.rclone "clone --recursive"
     gitconfig alias.prebase "pull --rebase"
     gitconfig alias.rebaseup "rebase -i @{u}"
-    gitconfig alias.fmerge "merge --no-ff" # feature merge
+    gitconfig alias.mergenoff "merge --no-ff"
+    gitconfig alias.mergeff "merge --ff"
     gitconfig alias.cpick "cherry-pick"
     gitconfig alias.br "branch -v"
     gitconfig alias.thisbr "thisbranch"
@@ -188,6 +189,9 @@ alias_section() {
 }
 credential_section() {
     gitconfig credential.helper cache
+}
+tag_section() {
+    gitconfig tag.sort taggerdate
 }
 getopt_name_works() {
     $getopt -n "foo" -o a:b -- 2>/dev/null | grep -q '^ *-- *$'
@@ -259,7 +263,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,color,core,alias,mail,credential"
+        echo "user,color,core,alias,mail,credential,tag"
         exit 0
     fi
 
@@ -282,12 +286,14 @@ main() {
         alias) alias_section ;;
         color) color_section ;;
         credential) credential_section ;;
+        tag) tag_section ;;
         all) user_section
             mail_section
             core_section
             alias_section
             color_section
             credential_section
+            tag_section
             ;;
         *)
             die "Unknown section: $sec"
