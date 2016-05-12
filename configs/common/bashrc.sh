@@ -54,15 +54,6 @@ if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
 
 HISTSIZE="30" ; export HISTSIZE
 
-FULLNAME="Gavin Beatty" ; export FULLNAME
-EMAIL="gavinbeatty@gmail.com" ; export EMAIL
-DEBFULLNAME="${FULLNAME}" ; export DEBFULLNAME
-DEBEMAIL="${EMAIL}" ; export DEBEMAIL
-GIT_AUTHOR_NAME="${FULLNAME}" ; export GIT_AUTHOR_NAME
-GIT_AUTHOR_EMAIL="${EMAIL}" ; export GIT_AUTHOR_EMAIL
-BZR_EMAIL="${FULLNAME} <${EMAIL}>" ; export BZR_EMAIL
-GPG_KEY_ID="Gavin Beatty (Dublin, Ireland) <gavinbeatty@gmail.com>"
-
 LESS="${LESS:-}"
 if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
 if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*X' ; then LESS="${LESS} -X" ; fi
