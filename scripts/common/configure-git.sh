@@ -128,10 +128,6 @@ gitconfig() {
 user_section() {
     gitconfig user.name "$name"
     gitconfig user.email "$email"
-    ## XXX set the signing key
-    #if test -n "${GPG_KEY_ID-}" ; then
-    #    gitconfig user.signingkey "$GPG_KEY_ID"
-    #fi
 }
 mail_section() {
 # this so I can submit patches using git send-email
@@ -141,19 +137,10 @@ mail_section() {
 }
 color_section() {
     gitconfig color.ui "auto"
-    ## old way: individually
-    #gitconfig color.status auto
-    #gitconfig color.diff auto
-    #gitconfig color.branch auto
 }
 core_section() {
     gitconfig core.excludesfile "$excludesfile"
-# turn on new 1.5 features which break backwards compatibility
-    gitconfig core.legacyheaders false
-    gitconfig repack.usedeltabaseoffset true
-# warnings appear in 1.6 if not set (we set to default = current)
-    gitconfig push.default current
-# when `merge`-ing with no arguments, merge upstream into current branch
+    gitconfig push.default simple
     gitconfig merge.defaultToUpstream true
 }
 alias_section() {
