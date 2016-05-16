@@ -170,11 +170,8 @@ set textwidth=90
 set matchpairs+=<:>
 set noshowmatch
 set completeopt=menuone,longest
-if !s:is_windows
-  set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
-else
-  set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
-endif
+set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
+"set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
 
 set nolist
 " Don't automatically format text as it's typed.
