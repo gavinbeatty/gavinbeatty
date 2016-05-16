@@ -11,10 +11,10 @@ else
     isinteractive=0
     isay() { true ; } ; iprintf() { true ; }
 fi
-iscygwin() { uname -o 2>/dev/null | tr 'A-Z' 'a-z' | grep -F -q cygwin ; }
-if test -z "${iscygwin:-}" ; then
-    if iscygwin ; then iscygwin=1 ; else iscygwin=0 ; fi
-fi
+iscygwin() { uname -o 2>/dev/null | tr 'A-Z' 'a-z' | grep -Fq cygwin ; }
+ismsys() { uname -o 2>/dev/null | tr 'A-Z' 'a-z' | grep -Fq msys ; }
+if test -z "${iscygwin:-}" && iscygwin ; then iscygwin=1 ; else iscygwin=0 ; fi
+if test -z "${ismsys:-}" && ismsys ; then ismsys=1 ; else ismsys=0 ; fi
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
 isay ".bashrc"
