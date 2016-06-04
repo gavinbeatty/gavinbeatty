@@ -148,6 +148,8 @@ if !g:none
   NeoBundleCheck
 endif
 
+let g:is_posix = 1
+
 syntax enable
 highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
 highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
