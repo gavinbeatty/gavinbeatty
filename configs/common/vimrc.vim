@@ -106,6 +106,8 @@ if !g:none
     if s:is_mac && has('python')
       python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
       let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
+    else
+      let g:macportspypath = fnameescape($PATH)
     endif
     if !s:is_cygwin
       NeoBundle 'Valloric/YouCompleteMe', {
