@@ -98,7 +98,7 @@ n_="${HOME}/.local/opt/node/bin"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="${n_}${PATH:+:$PATH}" ; export PATH
 fi
-test -n "${bashrc_opam_config_env:-}" || eval `opam config env` >/dev/null 2>/dev/null || true
+test -n "${bashrc_opam_config_env:-}" || (type opam >/dev/null 2>/dev/null && eval `opam config env` >/dev/null 2>/dev/null) || true
 bashrc_opam_config_env=1
 
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
@@ -431,6 +431,7 @@ if test "$isinteractive" -ne 0 ; then
     svnstqa() { svn status "$@" | "${GREP:-grep}" '^?' ; }
     svnlog() { svnd log -vr HEAD:1 "$@" ; }
     svnlogat() { local at="$1" ; shift ; svnd log -vr "$at":1 "$@"@"$at" ; }
+    svnlshead() { ${SVN_EXE:-svn} ls -rHEAD "$@" ; }
     svnnews() { svnd log -vr BASE:HEAD --incremental "$@" ; }
     svnmergelog() { svnlog -g "$@" ; }
     svndiff() { svnd diff "$@" ; }
