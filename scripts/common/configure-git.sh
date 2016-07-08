@@ -180,8 +180,20 @@ alias_section() {
     gitconfig alias.standup "log --pretty=format:'%Cred%h%Creset -%Creset %s %Cgreen(%cD) %C(bold blue)<%an>%Creset' --since yesterday --author '$name'"
     gitconfig alias.alias "config --get-regexp '^alias\.'"
 }
+is_windows() {
+    local os="$(uname -o 2>/dev/null || true)"
+    os="$(say "$os" | tr A-Z a-z)"
+    if test -z "$os" || say "$os" | grep -q '^\(msys\|cygwin\|win\)' ; then
+        return 0
+    fi
+    return 1
+}
 credential_section() {
-    gitconfig credential.helper cache
+    if is_windows ; then
+        gitconfig credential.helper manager
+    else
+        gitconfig credential.helper cache
+    fi
 }
 tag_section() {
     gitconfig tag.sort creatordate
