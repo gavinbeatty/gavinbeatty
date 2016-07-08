@@ -32,6 +32,7 @@ default_name="Gavin Beatty"
 default_email="gavinbeatty@gmail.com"
 default_work_email="gavinbeatty@optiver.com"
 default_excludesfile="$HOME/.gitignore"
+default_attributesfile="$HOME/.gitattributes"
 
 no_getopt_warning="${NO_GETOPT_WARNING:-}"
 getopt="${GETOPT:-getopt}"
@@ -43,6 +44,7 @@ name=${CONFIGURE_GIT_NAME:-$default_name}
 email=${CONFIGURE_GIT_EMAIL:-$default_email}
 environment="${CONFIGURE_GIT_ENVIRONMENT:-}"
 excludesfile=${CONFIGURE_GIT_EXCLUDESFILE:-$default_excludesfile}
+attributesfile=${CONFIGURE_GIT_ATTRIBUTESFILE:-$default_attributesfile}
 sections=${CONFIGURE_GIT_SECTIONS:-all}
 configfile=${CONFIGURE_GIT_CONFIGFILE:-}
 configtype=${CONFIGURE_GIT_CONFIGTYPE:---global}
@@ -139,7 +141,8 @@ color_section() {
     gitconfig color.ui "auto"
 }
 core_section() {
-    gitconfig core.excludesfile "$excludesfile"
+    ! test -r "$excludesfile" || gitconfig core.excludesfile "$excludesfile"
+    ! test -r "$attributesfile" || gitconfig core.attributesfile "$attributesfile"
     gitconfig push.default simple
     gitconfig merge.defaultToUpstream true
 }

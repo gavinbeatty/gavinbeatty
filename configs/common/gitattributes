@@ -1,0 +1,6 @@
+* text=auto
+*.cs text diff=csharp eol=crlf
+*.sln text merge=union eol=crlf
+*.vcproj text merge=union eol=crlf
+*.vcxproj text merge=union eol=crlf
+*.csproj text merge=union eol=crlf

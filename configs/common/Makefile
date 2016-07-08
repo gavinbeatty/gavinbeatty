@@ -67,8 +67,9 @@ install-ghcconfig: $(DESTDIR)$(HOME) ghci.conf
 	$(INSTALL_DATA) ghci.conf $(DESTDIR)$(HOME)/.ghc/ghci.conf
 .PHONY: install-ghcconfig
 
-install-gitconfig: $(DESTDIR)$(HOME) gitaliases gitignore
+install-gitconfig: $(DESTDIR)$(HOME) gitaliases gitattributes gitignore
 	$(INSTALL_DATA) gitaliases $(DESTDIR)$(HOME)/.gitaliases
+	$(INSTALL_DATA) gitattributes $(DESTDIR)$(HOME)/.gitattributes
 	$(INSTALL_DATA) gitignore $(DESTDIR)$(HOME)/.gitignore
 .PHONY: install-gitconfig
 
