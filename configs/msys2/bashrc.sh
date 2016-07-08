@@ -21,6 +21,7 @@ bashrc_guard=1
 
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
+. ~/.ssh-agent.sh 2>/dev/null || true
 
 # Shell Options
 #
