@@ -178,7 +178,7 @@ credential_section() {
     gitconfig credential.helper cache
 }
 tag_section() {
-    gitconfig tag.sort taggerdate
+    gitconfig tag.sort creatordate
 }
 getopt_name_works() {
     $getopt -n "foo" -o a:b -- 2>/dev/null | grep -q '^ *-- *$'
