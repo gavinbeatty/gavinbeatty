@@ -146,6 +146,9 @@ core_section() {
     gitconfig push.default simple
     gitconfig merge.defaultToUpstream true
 }
+interactive_section() {
+    ! type diff-highlight >/dev/null 2>/dev/null || gitconfig interactive.diffFilter diff-highlight
+}
 alias_section() {
     gitconfig alias.st "status"
     gitconfig alias.a "add -v"
@@ -253,7 +256,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,color,core,alias,mail,credential,tag"
+        echo "user,color,core,interactive,alias,mail,credential,tag"
         exit 0
     fi
 
@@ -273,6 +276,7 @@ main() {
         user) user_section ;;
         mail) mail_section ;;
         core) core_section ;;
+        interactive) interactive_section ;;
         alias) alias_section ;;
         color) color_section ;;
         credential) credential_section ;;
@@ -280,6 +284,7 @@ main() {
         all) user_section
             mail_section
             core_section
+            interactive_section
             alias_section
             color_section
             credential_section
