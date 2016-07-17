@@ -5,7 +5,9 @@ let () =
 ;;
 #use "topfind";;
 #thread;;
-#camlp4o;;
+(* #camlp4o;; *)
 #require "core.top";;
 #require "core.syntax";;
+#require "ppx_deriving";;
+#require "ppx_sexp_conv";;
 open Core.Std
