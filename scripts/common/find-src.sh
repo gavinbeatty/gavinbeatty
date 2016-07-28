@@ -309,8 +309,7 @@ main() {
             srcdir="$(abspath "$1")"
             cd /
         else
-            srcdir="."
-            cd -- "$1"
+            srcdir="$1"
         fi
         shift
     fi
