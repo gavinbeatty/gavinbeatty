@@ -6,4 +6,4 @@
 *.so
 *.out
 *.pyc
-
+**/StyleCop.Cache
