@@ -102,16 +102,16 @@ if !g:none
     " C++
     if s:is_mac && has('python')
       python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-      let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
+      let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
     else
-      let g:macportspypath = fnameescape($PATH)
+      let g:macportspy = 'python'
     endif
     if !s:is_cygwin
       NeoBundle 'Valloric/YouCompleteMe', {
         \ 'vim_version':'7.3.584',
         \ 'build':{
-          \ 'mac' : 'env PATH="'.g:macportspypath.'" ./install.sh --clang-completer --system-libclang',
-          \ 'unix': './install.sh --clang-completer --system-libclang',
+          \ 'mac' : g:macportspy . ' ./install.py --clang-completer',
+          \ 'unix': './install.py --clang-completer',
         \ },
         \ }
       NeoBundle 'lyuts/vim-rtags'
