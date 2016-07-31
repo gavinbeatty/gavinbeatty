@@ -60,9 +60,6 @@ if !g:none
   NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
   NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
   NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
-  if !s:is_cygwin
-    NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'autoload': {'filetypes': 'cs'}}
-  endif
   NeoBundle 'altercation/vim-colors-solarized'
   " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
   if !g:min
