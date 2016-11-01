@@ -18,6 +18,7 @@ cc_args.py \
 checkbashisms \
 colordiff \
 colorgcc.pl \
+cwdiff \
 diff-highlight \
 fix-outlook-quoting.rb \
 mutt_bgrun \
