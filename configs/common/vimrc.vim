@@ -44,24 +44,23 @@ if !g:none
           \ 'mac': g:make . ' -f make_mac.mak',
           \ 'unix': g:make . ' -f make_unix.mak',
           \ }}
+    "NeoBundleLazy 'Shougo/vimshell', {
+    "      \   'depends': ['http://github.com/Shougo/vimproc'],
+    "      \   'on_cmd': ['VimShellExecute', 'VimShellInteractive',
+    "      \              'VimShellTerminal', 'VimShellPop'],
+    "      \   'on_map': '<Plug>',
+    "      \ }
   endif
-  NeoBundleLazy 'Shougo/vimshell', {'autoload': {
-        \   'commands': [{'name': 'VimShell',
-        \                 'complete': 'customlist,vimshell#complete'},
-        \                'VimShellExecute', 'VimShellInteractive',
-        \                'VimShellTerminal', 'VimShellPop'],
-        \   'mappings': ['<Plug>(vimshell_switch)']
-        \ }}
   NeoBundle 'def-lkb/vimbufsync'
   NeoBundle 'tpope/vim-repeat'
   " Syntax
-  NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
-  NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
-  NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
-  NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
-  NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
+  NeoBundleLazy 'jstrater/mpvim', {'on_ft': ['portfile']}
+  NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'on_ft': ['bbv2']}
+  NeoBundleLazy 'chikamichi/mediawiki.vim', {'on_ft': ['mediawiki']}
+  NeoBundleLazy 'tpope/vim-markdown', {'on_ft': ['markdown']}
+  NeoBundleLazy 'vim-jp/cpp-vim', {'on_ft': ['cpp']}
   if !s:is_cygwin
-    NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'autoload': {'filetypes': 'cs'}}
+    NeoBundleLazy 'OmniSharp/omnisharp-vim', {'build': {'unix': 'cd server && xbuild'}, 'on_ft': ['cs']}
   endif
   NeoBundle 'altercation/vim-colors-solarized'
   " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
@@ -96,13 +95,13 @@ if !g:none
     let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
     execute 'set rtp+='.g:opamshare.'/merlin/vim'
     "execute 'helptags '.g:opamshare.'/merlin/vim/doc'
-    NeoBundle 'def-lkb/ocp-indent-vim', {'autoload': {'filetypes': 'ocaml'}}
+    NeoBundle 'def-lkb/ocp-indent-vim', {'on_ft': ['ocaml']}
     " Haskell
     NeoBundle 'feuerbach/vim-hs-module-name'
-    NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
+    NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'on_ft': ['haskell']}
+    NeoBundleLazy 'Twinside/vim-haskellConceal', {'on_ft': ['haskell']}
+    NeoBundleLazy 'eagletmt/ghcmod-vim', {'on_ft': ['haskell']}
+    NeoBundleLazy 'ujihisa/neco-ghc', {'on_ft': ['haskell']}
     " C++
     NeoBundleLazy 'rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]}
     if s:is_mac && has('python')
@@ -115,10 +114,10 @@ if !g:none
       NeoBundle 'lyuts/vim-rtags'
     endif
     " Python
-    NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
-    NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
+    NeoBundleLazy 'nvie/vim-flake8', {'on_ft': ['python']}
+    NeoBundleLazy 'ehamberg/vim-cute-python', {'on_ft': ['python']}
     " Text
-    NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
+    NeoBundleLazy 'elzr/vim-json', {'on_ft': ['json']}
     NeoBundle 'kana/vim-fakeclip'
     NeoBundle 'godlygeek/tabular'
     NeoBundle 'tpope/vim-surround'
@@ -133,7 +132,7 @@ if !g:none
           \ 'gui': 1,
           \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']]
           \ }
-    NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
+    NeoBundleLazy 'vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb']}
     NeoBundleLazy 'thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)'}
   endif
   call neobundle#end()
