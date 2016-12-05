@@ -57,6 +57,7 @@ if !g:none
   if !g:min
     call dein#add('bling/vim-airline')
     call dein#add('tpope/vim-git')
+    call dein#add('rhysd/committia.vim')
   endif
   " Math
   call dein#add('vim-scripts/mathematic.vim')
@@ -298,17 +299,6 @@ if !exists('s:filetypeextras_loaded')
     au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
   augroup end
 endif
-if exists(':RainbowParanthesesToggle') && !exists('s:filetypeextras_rainbow_loaded')
-  let s:filetypeextras_rainbow_loaded = 1
-  augroup filetypeextras_rainbow
-    " Redraw rainbow parens when going back to the buffer.
-    au VimEnter * RainbowParenthesesToggle
-    au Syntax * RainbowParenthesesLoadRound
-    au Syntax * RainbowParenthesesLoadSquare
-    au Syntax * RainbowParenthesesLoadBraces
-    au Syntax * RainbowParenthesesLoadChevrons
-  augroup end
-endif
 
 fu! AutoGitCommit(filename)
   execute 'sil! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
@@ -369,6 +359,9 @@ nnoremap <leader>th :set invhls hls?<CR>
 nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=t fo? <Bar> endif<CR>
 nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
+if exists(':RainbowParentheses')
+  nnoremap <leader>tr :RainbowParenthesesToggleAll <Bar> RainbowParenthesesActivate<CR>
+endif
 nnoremap <leader>sus :set spelllang=en_us spelllang?<CR>
 nnoremap <leader>sgb :set spelllang=en_gb spelllang?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
@@ -442,7 +435,6 @@ nnoremap <silent> <leader>gl :Glog<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
 nnoremap <silent> <leader>gw :Gwrite<CR>
 nnoremap <silent> <leader>gr :Gremove<CR>
-au BufReadPost fugitive://* set bufhidden=delete"
 
 if !g:none && !g:min
   let g:OmniSharp_selector_ui = 'unite'
@@ -467,9 +459,6 @@ let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
-
-let g:rainbow_active = 1
-let g:rainbow_operators = 1
 
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
