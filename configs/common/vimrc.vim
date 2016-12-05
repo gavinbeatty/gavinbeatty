@@ -110,13 +110,6 @@ if !g:none
       let g:macportspypath = fnameescape($PATH)
     endif
     if !s:is_cygwin
-      NeoBundle 'Valloric/YouCompleteMe', {
-        \ 'vim_version':'7.3.584',
-        \ 'build':{
-          \ 'mac' : 'env PATH="'.g:macportspypath.'" ./install.sh --clang-completer --system-libclang',
-          \ 'unix': './install.sh --clang-completer --system-libclang',
-        \ },
-        \ }
       NeoBundle 'lyuts/vim-rtags'
     endif
     " Python
@@ -395,10 +388,6 @@ nnoremap <leader>bi :copen<CR>
 
 nnoremap <leader>st :Startify<cr>
 
-nnoremap <leader>bc :YcmDiags<cr>
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<cr>
-nnoremap <leader>jD :YcmCompleter GoToDeclaration<cr>
-
 " ("diff no") turn off diff mode and report the change
 nnoremap <leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
 " ("diff obtain") do :diffget on range and report the change:
@@ -482,11 +471,6 @@ let g:pandoc_no_folding = 1
 
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
-
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_filetype_whitelist = {
-  \ 'c': 1, 'cpp': 1, 'objcpp': 1
-  \ }
 
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
