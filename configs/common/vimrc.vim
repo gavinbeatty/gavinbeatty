@@ -316,7 +316,7 @@ endf
 " Could be used in conjunction with set autowriteall
 command! -nargs=0 -complete=file AutoGitCommitWrites
       \ au BufWritePost <args> call AutoGitCommit(expand('%:t:p'))
-command! WUtf8 setlocal fenc=utf-8
+command! WUtf8 setlocal fenc=utf-8 nobomb
 command! WUtf16 setlocal fenc=ucs-2le
 command! -bang -complete=file -nargs=? WUnix
       \ write<bang> ++fileformat=unix <args> | edit <args>
