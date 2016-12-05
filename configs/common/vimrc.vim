@@ -427,16 +427,7 @@ if !g:none && !g:min
   nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
 endif
 
-nnoremap <silent> <leader>gs :Gstatus<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gc :Gcommit<CR>
-nnoremap <silent> <leader>gb :Gblame<CR>
-nnoremap <silent> <leader>gl :Glog<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>gr :Gremove<CR>
-
-if !g:none && !g:min
+if !g:none && !g:min && !s:is_cygwin
   let g:OmniSharp_selector_ui = 'unite'
 endif
 
