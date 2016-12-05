@@ -131,15 +131,10 @@ if !g:none
     " Optional
     NeoBundleLazy 'thinca/vim-fontzoom', {
           \ 'gui': 1,
-          \ 'autoload': {
-          \  'mappings': [
-          \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
-          \  ],
-          \ }}
+          \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']]
+          \ }
     NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
-    NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
-          \ 'mappings': [['nxo', '<Plug>(quickrun)']],
-          \ }}
+    NeoBundleLazy 'thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)'}
   endif
   call neobundle#end()
   NeoBundleCheck
