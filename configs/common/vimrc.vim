@@ -80,7 +80,7 @@ if !g:none
     call dein#add('scrooloose/syntastic')
     call dein#add('scrooloose/nerdcommenter')
     call dein#add('tpope/vim-sleuth')
-    call dein#add('vim-scripts/Rainbow-Parentheses-Improved-and2')
+    call dein#add('kien/rainbow_parentheses.vim')
     " OCaml
     let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
     execute 'set rtp+='.g:opamshare.'/merlin/vim'
@@ -298,11 +298,15 @@ if !exists('s:filetypeextras_loaded')
     au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
   augroup end
 endif
-if exists(':Rainbow') && !exists('s:filetypeextras_rainbow_loaded')
+if exists(':RainbowParanthesesToggle') && !exists('s:filetypeextras_rainbow_loaded')
   let s:filetypeextras_rainbow_loaded = 1
   augroup filetypeextras_rainbow
     " Redraw rainbow parens when going back to the buffer.
-    au Syntax * call rainbow#load()
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+    au Syntax * RainbowParenthesesLoadChevrons
   augroup end
 endif
 
