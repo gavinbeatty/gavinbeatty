@@ -86,6 +86,7 @@ if !g:none
   NeoBundle 'chazy/cscope_maps'
   NeoBundle 'tpope/vim-dispatch'
   if !g:min
+    NeoBundle 'kana/vim-operator-user'
     NeoBundle 'tpope/vim-endwise'
     NeoBundle 'scrooloose/syntastic'
     NeoBundle 'scrooloose/nerdcommenter'
@@ -103,6 +104,7 @@ if !g:none
     NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
     NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
     " C++
+    NeoBundleLazy 'rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]}
     if s:is_mac && has('python')
       python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
       let g:macportspypath = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin:'.$PATH)
