@@ -81,7 +81,7 @@ if !g:none
     call dein#add('scrooloose/syntastic')
     call dein#add('scrooloose/nerdcommenter')
     call dein#add('tpope/vim-sleuth')
-    call dein#add('kien/rainbow_parentheses.vim')
+    call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons'})
     " OCaml
     let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
     execute 'set rtp+='.g:opamshare.'/merlin/vim'
