@@ -148,6 +148,7 @@ core_section() {
 }
 interactive_section() {
     ! type diff-highlight >/dev/null 2>/dev/null || gitconfig interactive.diffFilter diff-highlight
+    gitconfig grep.lineNumber true
 }
 alias_section() {
     gitconfig alias.st "status"

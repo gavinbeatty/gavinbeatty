@@ -26,6 +26,7 @@ configure-git.sh \
 cscope.sh \
 csv-kv2hdr.py \
 ctags.sh \
+cxx-test.sh \
 daemonize.sh \
 dashify.sh \
 dashinstall.sh \
