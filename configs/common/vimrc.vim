@@ -104,6 +104,8 @@ if !g:none
     if !s:is_cygwin && has('python')
       call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
     endif
+    let g:clang_format#detect_style_file = 1
+    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
     " Python
     call dein#add('nvie/vim-flake8', {'on_ft': ['python']})
     call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python']})
