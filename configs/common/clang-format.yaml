@@ -29,7 +29,7 @@ BreakConstructorInitializersBeforeComma: true
 BreakBeforeBinaryOperators: NonAssignment
 BinPackArguments: true
 BinPackParameters: true
-AccessModifierOffset: 0
+AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
