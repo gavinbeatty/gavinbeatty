@@ -113,6 +113,15 @@ if !g:none
     call dein#add('godlygeek/tabular')
     call dein#add('tpope/vim-surround')
     call dein#add('Lokaltog/vim-easymotion')
+    let wiki = {}
+    let wiki.path = '~/vimwiki/'
+    let wiki.syntax = 'markdown'
+    let wiki.ext = '.mkd'
+    let wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
+    let g:vimwiki_list = [wiki]
+    let g:vimwiki_hl_headers = 1
+    let g:vimwiki_hl_cb_checked = 1
+    call dein#add('vimwiki/vimwiki')
     " Files
     call dein#add('mhinz/vim-startify')
     call dein#add('jamessan/vim-gnupg')
