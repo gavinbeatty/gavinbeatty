@@ -101,8 +101,8 @@ if !g:none
     else
       let g:macportspypath = fnameescape($PATH)
     endif
-    if !s:is_cygwin
-      call dein#add('lyuts/vim-rtags')
+    if !s:is_cygwin && has('python')
+      call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
     endif
     " Python
     call dein#add('nvie/vim-flake8', {'on_ft': ['python']})
