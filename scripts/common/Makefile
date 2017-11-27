@@ -72,6 +72,7 @@ rmtmp.sh \
 runq.sh \
 run.sh \
 shify.sh \
+stats.py \
 stripcolor.sh \
 svnaddcopyright.bash \
 svnblamefirst.sh \
