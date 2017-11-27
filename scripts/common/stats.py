@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import codecs
 import collections
 import datetime
+import itertools
 import locale
 import math
 import sys
@@ -16,8 +17,12 @@ def from_locale(s):
     return codecs.decode(s, DEFAULT_ENCODING, 'strict')
 
 
+def identity(x):
+    return x
+
+
 if sys.version_info[0] < 3:
-    unistr = from_locale
+    unistr = unicode
     from_stdin = from_locale
     def viewitems(d, **kwargs):
         return d.viewitems(**kwargs)
@@ -26,8 +31,7 @@ if sys.version_info[0] < 3:
 else:
     unistr = str
     long = int
-    def from_stdin(s):
-        return s
+    from_stdin = identity
     def viewitems(d, **kwargs):
         return d.items(**kwargs)
     def get_argv():
@@ -53,46 +57,51 @@ def timestamp(s):
     return dt.time()
 
 
-def categorize(s, cats):
-    for cat, convfmt in viewitems(cats):
+def categorize_kind(s, kinds):
+    for kind, convfmt in viewitems(kinds):
         conv, fmt = convfmt
         try:
-            return (cat, conv(s))
+            return (kind, conv(s))
         except:
             pass
-    raise RuntimeError('no cat for {!r}: tried {!r}'.format(s, list(viewitems(cats))))
+    raise RuntimeError('no kind for {!r}: tried {!r}'.format(s, list(viewitems(kinds))))
 
 
 def main(argv):
-    cats = collections.OrderedDict()
-    cats['timestamp'] = (timestamp, datetime.time.isoformat)
-    cats['number'] = (number, unistr)
-    cats['identity'] = (lambda s: s, unistr)
+    kinds = collections.OrderedDict()
+    kinds['timestamp'] = (timestamp, datetime.time.isoformat)
+    kinds['number'] = (number, unistr)
+    kinds['identity'] = (identity, unistr)
     values = []
     count = 0
     stdiniter = iter(sys.stdin)
-    first = next(stdiniter, None)
-    if first is None:
+    line = next(stdiniter, None)
+    if line is None:
         return
-    first = from_stdin(first).rstrip()
-    cat, value = categorize(first, cats)
-    conv, fmt = cats[cat]
-    values.append(value)
+    line = from_stdin(line).rstrip()
+    split = line.split(',')
+    head, tail = split[0], split[1:]
+    kind, value = categorize_kind(head, kinds)
+    conv, fmt = kinds[kind]
+    values.append((value, tail))
     count += 1
+    print('kind:', kind)
     for line in stdiniter:
         line = from_stdin(line).rstrip()
-        value = conv(line)
-        values.append(value)
+        split = line.split(',')
+        head, tail = split[0], split[1:]
+        value = conv(head)
+        values.append((value, tail))
         count += 1
     values = sorted(values)
-    print('cat:', cat)
     print('count:', count)
     percentiles = (.0, .25, .5, .75, .95, .99, 1.0)
     indices = [max(0, min(count - 1, int(count * p))) for p in percentiles]
     for p, i in zip(percentiles, indices):
-        print('{:.02f}ile:'.format(p), fmt(values[i]))
-    if cat in {'number'}:
-        total = math.fsum(values)
+        value, tail = values[i]
+        print('{:.02f}ile: {}'.format(p, ','.join(itertools.chain((fmt(value),), tail))))
+    if kind in {'number'}:
+        total = math.fsum(x[0] for x in values)
         print('mean:', fmt(total / count))
 
 
