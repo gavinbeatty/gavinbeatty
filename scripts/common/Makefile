@@ -25,6 +25,9 @@ codepretty.py \
 configure-git.sh \
 cscope.sh \
 csv-kv2hdr.py \
+cs-csproj-mismatch.sh \
+cs-has-tests.sh \
+cs-name-check.sh \
 ctags.sh \
 daemonize.sh \
 dashify.sh \
