@@ -105,9 +105,9 @@ install-screenrc: $(DESTDIR)$(HOME) screenrc
 .PHONY: install-screenrc
 
 install-ssh_config: $(DESTDIR)$(HOME) ssh_config
-	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh
+	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh || echo $(INSTALL_DIR_PRIV) ~/.ssh failed >&2
 	$(TOUCH) $(DESTDIR)$(HOME)/.ssh/config
-	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config
+	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config || echo $(CHMOD_PRIV) on ~/.ssh/config failed >&2
 	$(AWK) 'BEGIN{f=0}{if(/^#[[:space:]]*gavinbeatty:ssh_config[[:space:]]*$$/){f=(f==0);next;}if(f==0){print}}' $(DESTDIR)$(HOME)/.ssh/config | $(CAT) - ssh_config > $(DESTDIR)$(HOME)/.ssh/config.tmp && mv $(DESTDIR)$(HOME)/.ssh/config.tmp $(DESTDIR)$(HOME)/.ssh/config
 .PHONY: install-ssh_config
 

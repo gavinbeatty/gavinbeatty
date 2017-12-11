@@ -25,6 +25,9 @@ codepretty.py \
 configure-git.sh \
 cscope.sh \
 csv-kv2hdr.py \
+cs-csproj-mismatch.sh \
+cs-has-tests.sh \
+cs-name-check.sh \
 ctags.sh \
 cxx-test.sh \
 daemonize.sh \
@@ -73,6 +76,7 @@ rmtmp.sh \
 runq.sh \
 run.sh \
 shify.sh \
+stats.py \
 stripcolor.sh \
 svnaddcopyright.bash \
 svnblamefirst.sh \
