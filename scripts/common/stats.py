@@ -47,9 +47,11 @@ def number(s):
 
 
 def timestamp(s):
-    # If we get 7 post-second digits, trunc to 6 digits.
+    # If we get 7 post-second digits, round to 6 digits.
     if len(s) == 16:
-        s = s[:15]
+        seconds = s[6:]
+        if seconds:
+            s = s[:6] + '{:02.6f}'.format(round(float(seconds), 6))
     try:
         dt = datetime.datetime.strptime(s, '%H:%M:%S.%f')
     except ValueError:
@@ -95,7 +97,7 @@ def main(argv):
         count += 1
     values = sorted(values)
     print('count:', count)
-    percentiles = (.0, .25, .5, .75, .95, .99, 1.0)
+    percentiles = (0.00, 0.01, 0.05, 0.25, 0.50, 0.75, 0.95, 0.99, 1.00)
     indices = [max(0, min(count - 1, int(count * p))) for p in percentiles]
     for p, i in zip(percentiles, indices):
         value, tail = values[i]
