@@ -104,6 +104,9 @@ if !g:none
     if !s:is_cygwin && has('python')
       call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
     endif
+    if has('python')
+      call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp']})
+    endif
     let g:clang_format#detect_style_file = 1
     call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
     " Python
@@ -358,6 +361,11 @@ nnoremap <up> :bnext<CR>
 nnoremap <left> :tabnext<CR>
 nnoremap <right> :tabprev<CR>
 
+nnoremap <leader>a= :Tabularize /=<CR>
+vnoremap <leader>a= :Tabularize /=<CR>
+nnoremap <leader>a: :Tabularize /:<CR>
+vnoremap <leader>a: :Tabularize /:<CR>
+
 nnoremap <leader>il :IndentLinesToggle<CR>
 
 nnoremap <leader>rr :redraw!<CR>
@@ -371,7 +379,7 @@ nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=
 nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
 if exists(':RainbowParentheses')
-  nnoremap <leader>tr :RainbowParenthesesToggleAll <Bar> RainbowParenthesesActivate<CR>
+  nnoremap <silent> <leader>tr :RainbowParenthesesToggleAll <Bar> RainbowParenthesesActivate<CR>
 endif
 nnoremap <leader>sus :set spelllang=en_us spelllang?<CR>
 nnoremap <leader>sgb :set spelllang=en_gb spelllang?<CR>
