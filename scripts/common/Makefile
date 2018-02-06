@@ -78,6 +78,7 @@ runq.sh \
 run.sh \
 shify.sh \
 stats.py \
+strerror.sh \
 stripcolor.sh \
 svnaddcopyright.bash \
 svnblamefirst.sh \
