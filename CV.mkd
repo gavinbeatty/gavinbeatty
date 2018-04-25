@@ -1,11 +1,11 @@
 ---
 title: CV
 author: Gavin Beatty <gavinbeatty@gmail.com> +1 312 709 1965
-modified: 2016-02-13
+modified: 2018-04-25
 
 ---
 
-High performance, low latency, C++, linux, networking, software engineer with over 7 years experience in backend and finance roles, responsible for large applications and libraries.
+High performance, low latency, C++, C, C#, linux, windows, networking, software engineer with 10 years of experience in backend and finance roles, responsible for large applications and libraries.
 
 Experience
 ----------
@@ -13,8 +13,10 @@ Experience
 2013 to present
 :   **Senior Software Engineer**: Optiver US LLC, Chicago, USA
 
-    I write automated trading applications for options, operating with extremely low latency.
-    I design and implement systems for traders to control these applications behavior and pricing in a scriptable and safe way.
+    I write automated trading applications for options, executing with extremely low latency.
+    I write low response time systems for storing and distributing pricing parameters.
+    I lead technical development of our pricing architecture.
+    I design and implement systems for traders to control trading applications' behavior and pricing in a scriptable and safe way.
 
 2010 to 2013
 :   **Senior Software Engineer**: Optiver Europe, Amsterdam, the Netherlands
