@@ -8,16 +8,16 @@ say() { printf %s\\n "$*" ; }
 
 cat_without_bom() {
   # \xEF\xBB\xBF is the UTF-8 BOM. Bloody Microsoft.
-  sed -e '1s/^\(\xEF\xBB\xBF\|\)\(.*\)/\2/' "$1"
+  sed -e '1s/^\(\xEF\xBB\xBF\|\)//' "$1"
 }
 read_namespace() {
-  cat_without_bom "$1" | sed -rn -e 's/^[[:space:]]*namespace[[:space:]]+([^{[:space:]]*)/\1/p'
+  cat_without_bom "$1" | sed -rn -e 's/^[[:space:]]*namespace[[:space:]]+([^{[:space:]]*).*/\1/p'
 }
 infer_namespace() {
-  dirname "$1" | sed 's#/#.#g'
+  dirname "$1" | sed -e 's#^\./##' -e 's#/#.#g'
 }
 read_types() {
-  sed -rne 's/^[[:space:]]*\b(public|internal)\b.*\b(interface|enum|class)\b[[:space:]]+([[:alpha:][:digit:]_]*).*/\3/p' "$1"
+  sed -rne 's/^[[:space:]]*\b(public|internal)\b.*\b(interface|enum|class|struct)\b[[:space:]]+([[:alpha:][:digit:]_]*).*/\3/p' "$1"
 }
 infer_type() {
   local base="$(basename "$1")"
@@ -47,7 +47,7 @@ for i in "$@" ; do
     fi
   done
   if test "$found" -eq 0 ; then
-    say "$i is missing type $inferred_type (found $types)."
+    say "$i is missing type $inferred_type (found $(say $types | tr '\n' ' ' | sed '$s/ $//'))."
     ret=1
   fi
 done
