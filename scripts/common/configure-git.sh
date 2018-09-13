@@ -29,8 +29,8 @@ trap "echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap "echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 
 default_name="Gavin Beatty"
-default_email="gavinbeatty@gmail.com"
-default_work_email="gavinbeatty@optiver.com"
+default_email="public@gavinbeatty.com"
+default_work_email="gavinbeatty@optiver.us"
 default_excludesfile="$HOME/.gitignore"
 default_attributesfile="$HOME/.gitattributes"
 
