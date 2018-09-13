@@ -48,6 +48,9 @@ attributesfile=${CONFIGURE_GIT_ATTRIBUTESFILE:-$default_attributesfile}
 sections=${CONFIGURE_GIT_SECTIONS:-all}
 configfile=${CONFIGURE_GIT_CONFIGFILE:-}
 configtype=${CONFIGURE_GIT_CONFIGTYPE:---global}
+pager="${CONFIGURE_GIT_PAGER:-}"
+test -n "$pager" || pager="${GIT_PAGER:-}"
+test -n "$pager" || pager="${PAGER:-less}"
 git="${CONFIGURE_GIT_GIT:-git}"
 
 prog="configure-git.sh"
@@ -147,8 +150,17 @@ core_section() {
     gitconfig merge.defaultToUpstream true
 }
 interactive_section() {
-    ! type diff-highlight >/dev/null 2>/dev/null || gitconfig interactive.diffFilter diff-highlight
     gitconfig grep.lineNumber true
+}
+pager_section() {
+    if type "$pager" >/dev/null 2>/dev/null ; then
+        gitconfig core.pager "$pager"
+        if type diff-highlight >/dev/null 2>/dev/null ; then
+            gitconfig pager.diff "diff-highlight | $pager"
+            gitconfig pager.log "diff-highlight | $pager"
+            gitconfig pager.show "diff-highlight | $pager"
+        fi
+    fi
 }
 alias_section() {
     gitconfig alias.st "status"
@@ -290,6 +302,7 @@ main() {
         mail) mail_section ;;
         core) core_section ;;
         interactive) interactive_section ;;
+        pager) pager_section ;;
         alias) alias_section ;;
         color) color_section ;;
         credential) credential_section ;;
@@ -298,6 +311,7 @@ main() {
             mail_section
             core_section
             interactive_section
+            pager_section
             alias_section
             color_section
             credential_section
