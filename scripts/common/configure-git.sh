@@ -287,7 +287,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,color,core,interactive,alias,mail,credential,tag"
+        echo "user,mail,core,interactive,pager,alias,diff,color,credential,tag"
         exit 0
     fi
 
