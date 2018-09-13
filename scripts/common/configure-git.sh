@@ -143,6 +143,10 @@ mail_section() {
 color_section() {
     gitconfig color.ui "auto"
 }
+diff_section() {
+    gitconfig diff.colorMoved "default"
+    gitconfig diff.colorMovedWS "allow-indentation-change"
+}
 core_section() {
     ! test -r "$excludesfile" || gitconfig core.excludesfile "$excludesfile"
     ! test -r "$attributesfile" || gitconfig core.attributesfile "$attributesfile"
@@ -304,6 +308,7 @@ main() {
         interactive) interactive_section ;;
         pager) pager_section ;;
         alias) alias_section ;;
+        diff) diff_section ;;
         color) color_section ;;
         credential) credential_section ;;
         tag) tag_section ;;
@@ -313,6 +318,7 @@ main() {
             interactive_section
             pager_section
             alias_section
+            diff_section
             color_section
             credential_section
             tag_section
