@@ -38,6 +38,7 @@ findpid.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
+git-export.sh \
 git-news \
 git-release \
 git-remotebranch \

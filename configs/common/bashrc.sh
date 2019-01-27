@@ -104,10 +104,10 @@ bashrc_opam_config_env=1
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
-    PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
+    PATH="${PATH:+$PATH:}/opt/local/bin" ; export PATH
 fi
 if test -d "/opt/local/sbin" && ! say "${PATH:-}" | grep -Fq "/opt/local/sbin" ; then
-    PATH="${PATH:+$PATH:}/opt/local/sbin}" ; export PATH
+    PATH="${PATH:+$PATH:}/opt/local/sbin" ; export PATH
 fi
 n_="/Applications/MacVim.app/Contents/MacOS"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
