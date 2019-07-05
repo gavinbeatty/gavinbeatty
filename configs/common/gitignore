@@ -7,3 +7,5 @@
 *.out
 *.pyc
 **/StyleCop.Cache
+/.vscode/
+/.idea/
