@@ -146,6 +146,7 @@ color_section() {
 diff_section() {
     gitconfig diff.colorMoved "default"
     gitconfig diff.colorMovedWS "allow-indentation-change"
+    gitconfig diff.renameLimit "1000"
 }
 core_section() {
     ! test -r "$excludesfile" || gitconfig core.excludesfile "$excludesfile"
