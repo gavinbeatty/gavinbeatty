@@ -194,7 +194,7 @@ alias_section() {
     gitconfig alias.cdiff "diff --cached"
     gitconfig alias.unstage "reset HEAD --"
     gitconfig alias.sm "submodule"
-    gitconfig alias.tags "for-each-ref --sort=creatordate --format=\"%(refname:short) %(creatordate:short) %(subject)\" refs/tags"
+    gitconfig alias.tags "-p for-each-ref --sort=-creatordate --format=\"%(refname:short) %(creatordate:short) %(subject)\" refs/tags"
     gitconfig alias.r "remote -v"
     gitconfig alias.ll "log -v --stat"
     gitconfig alias.l "log --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate=short"
