@@ -165,6 +165,7 @@ pager_section() {
             gitconfig pager.log "diff-highlight | $pager"
             gitconfig pager.show "diff-highlight | $pager"
         fi
+        gitconfig pager.difftool "$pager"
     fi
 }
 alias_section() {
@@ -190,6 +191,7 @@ alias_section() {
     gitconfig alias.cdiff "diff --cached"
     gitconfig alias.unstage "reset HEAD --"
     gitconfig alias.sm "submodule"
+    gitconfig alias.tags "for-each-ref --sort=creatordate --format=\"%(refname:short) %(creatordate:short) %(subject)\" refs/tags"
     gitconfig alias.r "remote -v"
     gitconfig alias.ll "log -v --stat"
     gitconfig alias.l "log --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate=short"
