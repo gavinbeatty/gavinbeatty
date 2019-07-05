@@ -96,7 +96,11 @@ def main():
         print('{:.02f}ile: {}'.format(p, ','.join(itertools.chain((fmt(value),), tail))))
     if kind in {'number'}:
         total = math.fsum(x[0] for x in values)
-        print('mean:', fmt(total / count))
+        mean = total / count
+        print('mean:', fmt(mean))
+        if count > 1:
+            stddev = math.sqrt(math.fsum((xi - mean) ** 2 for xi, tail in values) / (count - 1))
+            print('stddev:', fmt(stddev))
 
 
 if __name__ == '__main__':
