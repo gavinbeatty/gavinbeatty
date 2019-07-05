@@ -11,7 +11,7 @@ cat_without_bom() {
   sed -e '1s/^\(\xEF\xBB\xBF\|\)//' "$1"
 }
 read_namespace() {
-  cat_without_bom "$1" | sed -rn -e 's/^[[:space:]]*namespace[[:space:]]+([^{[:space:]]*).*/\1/p'
+  cat_without_bom "$1" | sed -rn -e 's/^[[:space:]]*namespace[[:space:]]+([^{[:space:]]*).*/\1/p' | head -n1
 }
 infer_namespace() {
   dirname "$1" | sed -e 's#^\./##' -e 's#/#.#g'
