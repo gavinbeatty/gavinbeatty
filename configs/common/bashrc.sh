@@ -215,7 +215,7 @@ if test "$isinteractive" -ne 0 ; then
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
-            v="$(say "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
+            v="$(say "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|\s*$)/){s!^.*/(trunk|tags|branches)(/*\s*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
             if test -n "$v" ; then printf "${1:- (%s)}" "$v" && return 0 ; fi
         fi
         return 1
