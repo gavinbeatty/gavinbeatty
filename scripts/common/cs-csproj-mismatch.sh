@@ -7,7 +7,7 @@ trap ' echo Caught SIGTERM >&2 ; exit 1 ' TERM
 say() { printf %s\\n "$*" ; }
 die() { say "$*" >&2 ; exit 1 ; }
 usage() { say "usage: cs-csproj-mismatch.sh <csproj>" ; }
-csproj_listed() { sed -n 's/.*<Compile\s\s*Include="\([^"]*\.cs\)".*\/>/\1/p' "$1" | sed -e 's#^#./#' -e 's#\\#/#g' | sort ; }
+csproj_listed() { sed -n 's/.*<Compile\s\s*Include="\([^"]*\.cs\)"[ \/]*>/\1/p' "$1" | sed -e 's#^#./#' -e 's#\\#/#g' | sort ; }
 csproj_inferred() {
   local dir="$(dirname "$1")"
   (cd "$dir" && find . -name '*.cs' -a '!' -name 'TemporaryGeneratedFile_*.cs' | sort)
