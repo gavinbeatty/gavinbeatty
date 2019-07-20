@@ -101,6 +101,8 @@ fi
 test -n "${bashrc_opam_config_env:-}" || (type opam >/dev/null 2>/dev/null && eval `opam config env` >/dev/null 2>/dev/null) || true
 bashrc_opam_config_env=1
 
+DOTNET_CLI_TELEMETRY_OPTOUT=1 ; export DOTNET_CLI_TELEMETRY_OPTOUT
+
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
