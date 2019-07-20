@@ -47,12 +47,16 @@ install-ackrc: $(DESTDIR)$(HOME) ackrc
 install-venv: $(DESTDIR)$(HOME) venv
 	$(INSTALL_DATA) venv $(DESTDIR)$(HOME)/.venv
 .PHONY: install-venv
-	
+
 install-bashrc: $(DESTDIR)$(HOME) bash_logout.sh bash_profile.sh bashrc.sh
 	$(INSTALL_DATA) bash_logout.sh $(DESTDIR)$(HOME)/.bash_logout
 	$(INSTALL_DATA) bash_profile.sh $(DESTDIR)$(HOME)/.bash_profile
 	$(INSTALL_DATA) bashrc.sh $(DESTDIR)$(HOME)/.bashrc
 .PHONY: install-bashrc
+
+install-clang-format: $(DESTDIR)$(HOME) clang-format.yaml
+	$(INSTALL_DATA) clang-format.yaml $(DESTDIR)$(HOME)/.clang-format
+.PHONY: install-clang-format
 
 install-devscripts: $(DESTDIR)$(HOME) devscripts
 	$(INSTALL_DATA) devscripts $(DESTDIR)$(HOME)/.devscripts
@@ -101,9 +105,9 @@ install-screenrc: $(DESTDIR)$(HOME) screenrc
 .PHONY: install-screenrc
 
 install-ssh_config: $(DESTDIR)$(HOME) ssh_config
-	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh
+	@$(INSTALL_DIR_PRIV) $(DESTDIR)$(HOME)/.ssh || echo $(INSTALL_DIR_PRIV) ~/.ssh failed >&2
 	$(TOUCH) $(DESTDIR)$(HOME)/.ssh/config
-	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config
+	$(CHMOD_PRIV) $(DESTDIR)$(HOME)/.ssh/config || echo $(CHMOD_PRIV) on ~/.ssh/config failed >&2
 	$(AWK) 'BEGIN{f=0}{if(/^#[[:space:]]*gavinbeatty:ssh_config[[:space:]]*$$/){f=(f==0);next;}if(f==0){print}}' $(DESTDIR)$(HOME)/.ssh/config | $(CAT) - ssh_config > $(DESTDIR)$(HOME)/.ssh/config.tmp && mv $(DESTDIR)$(HOME)/.ssh/config.tmp $(DESTDIR)$(HOME)/.ssh/config
 .PHONY: install-ssh_config
 
@@ -128,6 +132,6 @@ install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-bashrc install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
 .PHONY: install
 

@@ -26,125 +26,133 @@ endfor
 
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
-" I leave them here, even though I now use neobundle.
+" I leave them here, even though I now use dein.
 filetype on
 filetype off
 if s:is_windows | set rtp+=~/.vim | endif
 let g:make = 'gmake'
 if system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
 if !g:none
-  set rtp+=~/.vim/bundle/neobundle.vim/
-  call neobundle#begin(expand('~/.vim/bundle'))
-  NeoBundleFetch 'Shougo/neobundle.vim'
+  set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
+  call dein#begin(expand('~/.vim/dein'))
+  call dein#add('Shougo/dein.vim')
   " Dependencies
   if !s:is_cygwin
-    NeoBundle 'Shougo/vimproc', {'build': {
-          \ 'windows': g:make . ' -f make_mingw32.mak',
-          \ 'cygwin': g:make . ' -f make_cygwin.mak',
-          \ 'mac': g:make . ' -f make_mac.mak',
-          \ 'unix': g:make . ' -f make_unix.mak',
-          \ }}
+    call dein#add('Shougo/vimproc', {'build': g:make})
+    call dein#add('Shougo/vimshell')
   endif
-  NeoBundleLazy 'Shougo/vimshell', {'autoload': {
-        \   'commands': [{'name': 'VimShell',
-        \                 'complete': 'customlist,vimshell#complete'},
-        \                'VimShellExecute', 'VimShellInteractive',
-        \                'VimShellTerminal', 'VimShellPop'],
-        \   'mappings': ['<Plug>(vimshell_switch)']
-        \ }}
-  NeoBundle 'def-lkb/vimbufsync'
-  NeoBundle 'tpope/vim-repeat'
+  call dein#add('def-lkb/vimbufsync')
+  call dein#add('tpope/vim-repeat')
   " Syntax
-  NeoBundleLazy 'jstrater/mpvim', {'autoload': {'filetypes': 'portfile'}}
-  NeoBundleLazy 'vim-scripts/Boost-Build-v2-BBv2-syntax', {'autoload': {'filetypes': 'bbv2'}}
-  NeoBundleLazy 'chikamichi/mediawiki.vim', {'autoload': {'filetypes': 'mediawiki'}}
-  NeoBundleLazy 'tpope/vim-markdown', {'autoload': {'filetypes': 'markdown'}}
-  NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': 'cpp'}}
-  NeoBundle 'altercation/vim-colors-solarized'
+  call dein#add('jstrater/mpvim', {'on_ft': ['portfile']})
+  call dein#add('vim-scripts/Boost-Build-v2-BBv2-syntax', {'on_ft': ['bbv2']})
+  call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki']})
+  call dein#add('tpope/vim-markdown', {'on_ft': ['markdown']})
+  call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp']})
+  if !s:is_cygwin
+    call dein#add('OmniSharp/omnisharp-vim', {'build': 'sh -c "cd server && xbuild"', 'on_ft': ['cs']})
+  endif
+  call dein#add('altercation/vim-colors-solarized')
   " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
   if !g:min
-    NeoBundle 'bling/vim-airline'
-    NeoBundle 'tpope/vim-git'
+    call dein#add('bling/vim-airline')
+    call dein#add('tpope/vim-git')
+    call dein#add('rhysd/committia.vim')
   endif
   " Math
-  NeoBundle 'vim-scripts/mathematic.vim'
+  call dein#add('vim-scripts/mathematic.vim')
   " Programming
   let g:indentLine_char = '│'
   if !g:min
     let g:indentLine_color_term = 239
   endif
-  NeoBundle 'Yggdroot/indentLine'
-  NeoBundle 'bogado/file-line'
-  NeoBundle 'vim-scripts/FSwitch'
-  NeoBundle 'MarcWeber/vim-addon-local-vimrc'
+  call dein#add('Yggdroot/indentLine')
+  call dein#add('bogado/file-line')
+  call dein#add('vim-scripts/FSwitch')
+  call dein#add('MarcWeber/vim-addon-local-vimrc')
   if !g:min
-    NeoBundle 'Shougo/unite.vim'
+    call dein#add('Shougo/unite.vim')
   endif
-  NeoBundle 'chazy/cscope_maps'
-  NeoBundle 'tpope/vim-dispatch'
+  call dein#add('chazy/cscope_maps')
+  call dein#add('tpope/vim-dispatch')
   if !g:min
-    NeoBundle 'tpope/vim-endwise'
-    NeoBundle 'scrooloose/syntastic'
-    NeoBundle 'scrooloose/nerdcommenter'
-    NeoBundle 'tpope/vim-sleuth'
-    NeoBundle 'vim-scripts/Rainbow-Parentheses-Improved-and2'
+    call dein#add('kana/vim-operator-user')
+    call dein#add('tpope/vim-endwise')
+    call dein#add('scrooloose/syntastic')
+    call dein#add('scrooloose/nerdcommenter')
+    call dein#add('tpope/vim-sleuth')
+    call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons'})
     " OCaml
     let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
     execute 'set rtp+='.g:opamshare.'/merlin/vim'
     "execute 'helptags '.g:opamshare.'/merlin/vim/doc'
-    NeoBundle 'def-lkb/ocp-indent-vim', {'autoload': {'filetypes': 'ocaml'}}
+    call dein#add('def-lkb/ocp-indent-vim', {'on_ft': ['ocaml']})
     " Haskell
-    NeoBundle 'feuerbach/vim-hs-module-name'
-    NeoBundleLazy 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'Twinside/vim-haskellConceal', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'eagletmt/ghcmod-vim', {'autoload': {'filetypes': 'haskell'}}
-    NeoBundleLazy 'ujihisa/neco-ghc', {'autoload': {'filetypes': 'haskell'}}
+    call dein#add('feuerbach/vim-hs-module-name')
+    call dein#add('vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'on_ft': ['haskell']})
+    call dein#add('Twinside/vim-haskellConceal', {'on_ft': ['haskell']})
+    call dein#add('eagletmt/ghcmod-vim', {'on_ft': ['haskell']})
+    call dein#add('ujihisa/neco-ghc', {'on_ft': ['haskell']})
     " C++
+    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
     if s:is_mac && has('python')
       python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
       let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
     else
       let g:macportspy = 'python'
     endif
-    if !s:is_cygwin
-      NeoBundle 'Valloric/YouCompleteMe', {
-        \ 'vim_version':'7.3.584',
-        \ 'build':{
-          \ 'mac' : g:macportspy . ' ./install.py --clang-completer',
-          \ 'unix': './install.py --clang-completer',
-        \ },
-        \ }
-      NeoBundle 'lyuts/vim-rtags'
+    "if !s:is_cygwin
+    "  NeoBundle 'Valloric/YouCompleteMe', {
+    "    \ 'vim_version':'7.3.584',
+    "    \ 'build':{
+    "      \ 'mac' : g:macportspy . ' ./install.py --clang-completer',
+    "      \ 'unix': './install.py --clang-completer',
+    "    \ },
+    "    \ }
+    "endif
+    if !s:is_cygwin && has('python')
+      call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
     endif
+    if has('python')
+      call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp']})
+    endif
+    let g:clang_format#detect_style_file = 1
+    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
     " Python
-    NeoBundleLazy 'nvie/vim-flake8', {'autoload': {'filetypes': 'python'}}
-    NeoBundleLazy 'ehamberg/vim-cute-python', {'autoload': {'filetypes': 'python'}}
+    call dein#add('nvie/vim-flake8', {'on_ft': ['python']})
+    call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python']})
     " Text
-    NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': 'json'}}
-    NeoBundle 'kana/vim-fakeclip'
-    NeoBundle 'godlygeek/tabular'
-    NeoBundle 'tpope/vim-surround'
-    NeoBundle 'Lokaltog/vim-easymotion'
+    call dein#add('elzr/vim-json', {'on_ft': ['json']})
+    call dein#add('kana/vim-fakeclip')
+    call dein#add('godlygeek/tabular')
+    call dein#add('tpope/vim-surround')
+    call dein#add('Lokaltog/vim-easymotion')
+    let wiki = {}
+    let wiki.path = '~/vimwiki/'
+    let wiki.syntax = 'markdown'
+    let wiki.ext = '.mkd'
+    let wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
+    let g:vimwiki_list = [wiki]
+    let g:vimwiki_hl_headers = 1
+    let g:vimwiki_hl_cb_checked = 1
+    call dein#add('vimwiki/vimwiki')
     " Files
-    NeoBundle 'mhinz/vim-startify'
-    NeoBundle 'jamessan/vim-gnupg'
-    NeoBundle 'gmarik/sudo-gui.vim'
-    NeoBundle 'regedarek/vim-bufexplorer'
+    call dein#add('mhinz/vim-startify')
+    call dein#add('jamessan/vim-gnupg')
+    call dein#add('gmarik/sudo-gui.vim')
+    call dein#add('regedarek/vim-bufexplorer')
     " Optional
-    NeoBundleLazy 'thinca/vim-fontzoom', {
-          \ 'gui': 1,
-          \ 'autoload': {
-          \  'mappings': [
-          \   ['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']
-          \  ],
-          \ }}
-    NeoBundleLazy 'vim-scripts/Conque-GDB', {'autoload': {'commands': ['ConqueTerm', 'ConqueGdb']}}
-    NeoBundleLazy 'thinca/vim-quickrun', { 'autoload': {
-          \ 'mappings': [['nxo', '<Plug>(quickrun)']],
-          \ }}
+    call dein#add('thinca/vim-fontzoom', {
+          \ 'if': has('gui_running'),
+          \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']],
+          \ })
+    call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb']})
+    call dein#add('thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)'})
   endif
-  call neobundle#end()
-  NeoBundleCheck
+  call dein#end()
+  if dein#check_install()
+    call dein#install()
+  endif
 endif
 
 let g:is_posix = 1
@@ -314,13 +322,6 @@ if !exists('s:filetypeextras_loaded')
     au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
   augroup end
 endif
-if exists(':Rainbow') && !exists('s:filetypeextras_rainbow_loaded')
-  let s:filetypeextras_rainbow_loaded = 1
-  augroup filetypeextras_rainbow
-    " Redraw rainbow parens when going back to the buffer.
-    au Syntax * call rainbow#load()
-  augroup end
-endif
 
 fu! AutoGitCommit(filename)
   execute 'sil! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
@@ -328,7 +329,7 @@ endf
 " Could be used in conjunction with set autowriteall
 command! -nargs=0 -complete=file AutoGitCommitWrites
       \ au BufWritePost <args> call AutoGitCommit(expand('%:t:p'))
-command! WUtf8 setlocal fenc=utf-8
+command! WUtf8 setlocal fenc=utf-8 nobomb
 command! WUtf16 setlocal fenc=ucs-2le
 command! -bang -complete=file -nargs=? WUnix
       \ write<bang> ++fileformat=unix <args> | edit <args>
@@ -369,6 +370,11 @@ nnoremap <up> :bnext<CR>
 nnoremap <left> :tabnext<CR>
 nnoremap <right> :tabprev<CR>
 
+nnoremap <leader>a= :Tabularize /=<CR>
+vnoremap <leader>a= :Tabularize /=<CR>
+nnoremap <leader>a: :Tabularize /:<CR>
+vnoremap <leader>a: :Tabularize /:<CR>
+
 nnoremap <leader>il :IndentLinesToggle<CR>
 
 nnoremap <leader>rr :redraw!<CR>
@@ -381,6 +387,9 @@ nnoremap <leader>th :set invhls hls?<CR>
 nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=t fo? <Bar> endif<CR>
 nnoremap <leader>tl :set invlist list?<CR>
 nnoremap <leader>ts :set invspell spell?<CR>
+if exists(':RainbowParentheses')
+  nnoremap <silent> <leader>tr :RainbowParenthesesToggleAll <Bar> RainbowParenthesesActivate<CR>
+endif
 nnoremap <leader>sus :set spelllang=en_us spelllang?<CR>
 nnoremap <leader>sgb :set spelllang=en_gb spelllang?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
@@ -391,10 +400,6 @@ nnoremap <leader>bp :cprev<CR>
 nnoremap <leader>bi :copen<CR>
 
 nnoremap <leader>st :Startify<cr>
-
-nnoremap <leader>bc :YcmDiags<cr>
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<cr>
-nnoremap <leader>jD :YcmCompleter GoToDeclaration<cr>
 
 " ("diff no") turn off diff mode and report the change
 nnoremap <leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
@@ -450,17 +455,7 @@ if !g:none && !g:min
   nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
 endif
 
-nnoremap <silent> <leader>gs :Gstatus<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gc :Gcommit<CR>
-nnoremap <silent> <leader>gb :Gblame<CR>
-nnoremap <silent> <leader>gl :Glog<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>gr :Gremove<CR>
-au BufReadPost fugitive://* set bufhidden=delete"
-
-if !g:none && !g:min
+if !g:none && !g:min && !s:is_cygwin
   let g:OmniSharp_selector_ui = 'unite'
 endif
 
@@ -480,21 +475,13 @@ let g:pandoc_no_folding = 1
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
 let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
 
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_filetype_whitelist = {
-  \ 'c': 1, 'cpp': 1, 'objcpp': 1
-  \ }
-
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
-let g:rainbow_active = 1
-let g:rainbow_operators = 1
-
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
-nnoremap <leader>ks :sp ~/.vim/bundle/mathematic.vim/keymap/mathematic.vim<CR>
-nnoremap <leader>kv :vs ~/.vim/bundle/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>ks :sp ~/.vim/dein/github.com/vim-scripts/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>kv :vs ~/.vim/dein/github.com/vim-scripts/mathematic.vim/keymap/mathematic.vim<CR>
 
 source ~/.vimrc.post.vim

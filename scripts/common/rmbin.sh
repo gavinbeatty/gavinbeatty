@@ -66,10 +66,10 @@ main() {
     test -z "$dryrun" || do=quote
     if test -z "$variant" ; then
         test -n "$quiet" || set -x
-        find $symlinks "$@" -type d \( -name 'bin' -o -name 'bin.v2' -o -name 'obj' -o -iname 'debug' -o -iname 'release' \) -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
+        find $symlinks "$@" \( -type d \( -name 'bin' -o -name 'bin.v2' -o -name 'obj' -o -iname 'debug' -o -iname 'release' \) '!' -wholename '*/.git/*' \) -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
     else
         test -n "$quiet" || set -x
-        find $symlinks "$@" -type d -name "$variant" -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
+        find $symlinks "$@" \( -type d -name "$variant" '!' -wholename '*/.git/*' \) -prune -print0 | $xargs -r0 sh -c "$sh" "$do"
     fi
 }
 main "$@"

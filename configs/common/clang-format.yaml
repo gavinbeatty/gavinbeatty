@@ -1,0 +1,54 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit
+Standard: Cpp11
+TabWidth: 4
+IndentWidth: 4
+ColumnLimit: 0
+UseTab: Never
+NamespaceIndentation: None
+ReflowComments: false
+SpaceBeforeParens: ControlStatements
+SpacesBeforeTrailingComments: 2
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+BreakStringLiterals: false
+BreakConstructorInitializersBeforeComma: true
+BreakBeforeBinaryOperators: NonAssignment
+BinPackArguments: true
+BinPackParameters: true
+AccessModifierOffset: -4
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlinesLeft: true
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+DerivePointerAlignment: true
+PointerAlignment: Left
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 2
+SortIncludes: true
+IncludeCategories:
+  - Regex:    '^"'
+    Priority: 1
+  - Regex:    '^<(gmock|gtest|boost|xerces|sparsehash|lbm|minixml|open_onload|onload|etherfabric|tinyxml)'
+    Priority: 3
+  - Regex:    '.*'
+    Priority: 2
+---
