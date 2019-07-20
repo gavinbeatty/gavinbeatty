@@ -33,6 +33,7 @@ if s:is_windows | set rtp+=~/.vim | endif
 let g:make = 'gmake'
 if system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
 if !g:none
+  " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.vim/dein/repos/github.com/Shougo/dein.vim`
   set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
   if dein#load_state(expand('~/.vim/dein'))
     call dein#begin(expand('~/.vim/dein'))
