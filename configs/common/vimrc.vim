@@ -89,12 +89,6 @@ if !g:none
       execute 'set rtp+='.g:opamshare.'/merlin/vim'
       "execute 'helptags '.g:opamshare.'/merlin/vim/doc'
       call dein#add('def-lkb/ocp-indent-vim', {'on_ft': ['ocaml']})
-      " Haskell
-      call dein#add('feuerbach/vim-hs-module-name')
-      call dein#add('vim-scripts/Superior-Haskell-Interaction-Mode-SHIM', {'on_ft': ['haskell']})
-      call dein#add('Twinside/vim-haskellConceal', {'on_ft': ['haskell']})
-      call dein#add('eagletmt/ghcmod-vim', {'on_ft': ['haskell']})
-      call dein#add('ujihisa/neco-ghc', {'on_ft': ['haskell']})
       " C++
       call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
       if s:is_mac && has('python')
