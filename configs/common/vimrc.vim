@@ -85,9 +85,11 @@ if !g:none
       call dein#add('tpope/vim-sleuth')
       call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons'})
       " OCaml
-      let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-      execute 'set rtp+='.g:opamshare.'/merlin/vim'
-      execute 'helptags '.g:opamshare.'/merlin/vim/doc'
+      if executable('opam')
+        let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+        execute 'set rtp+='.g:opamshare.'/merlin/vim'
+        execute 'helptags '.g:opamshare.'/merlin/vim/doc'
+      endif
       " C++
       call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
       if s:is_mac && has('python')
@@ -312,12 +314,17 @@ if !exists('s:filetypeextras_loaded')
   augroup filetypeextras
     au FileType pandoc,markdown runtime ftplugin/txt.vim
     au FileType c,objc,objcpp runtime ftplugin/cpp.vim
-    au FileType ocaml ++once exec 'source '.g:opamshare.'/ocp-indent/vim/indent/ocaml.vim'
-    au FileType ocaml ++once exec 'set rtp+='.g:opamshare.'/merlin/vim'
     au FileType cs runtime ftplugin/cs.vim
     au FileType perl setlocal smartindent
     au FileType make setlocal noet sw=8 ts=8
     au! FileType python highlight SpellBad term=underline ctermfg=Magenta gui=undercurl guisp=Orange
+  augroup end
+endif
+if executable('opam') && !exists('s:ocamlextras_loaded')
+  let s:ocamlextras_loaded = 1
+  augroup ocamlextras
+    au FileType ocaml ++once exec 'source '.g:opamshare.'/ocp-indent/vim/indent/ocaml.vim'
+    au FileType ocaml ++once exec 'set rtp+='.g:opamshare.'/merlin/vim'
   augroup end
 endif
 
