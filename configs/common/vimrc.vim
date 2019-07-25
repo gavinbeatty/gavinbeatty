@@ -95,6 +95,9 @@ if !g:none
       if s:is_mac && has('python')
         python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
         let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
+      elseif s:is_mac && has('python3')
+        python3 import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+        let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
       else
         let g:macportspy = 'python'
       endif
@@ -107,10 +110,10 @@ if !g:none
       "    \ },
       "    \ }
       "endif
-      if !s:is_cygwin && has('python')
+      if !s:is_cygwin && (has('python') || has('python3'))
         call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
       endif
-      if has('python')
+      if has('python') || has('python3')
         call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp']})
       endif
       let g:clang_format#detect_style_file = 1
