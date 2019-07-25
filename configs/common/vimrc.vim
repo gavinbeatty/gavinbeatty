@@ -62,7 +62,7 @@ if !g:none
       call dein#add('rhysd/committia.vim')
     endif
     " Math
-    call dein#add('vim-scripts/mathematic.vim')
+    call dein#add('gu-fan/mathematic.vim')
     " Programming
     let g:indentLine_char = '│'
     if !g:min
@@ -485,7 +485,7 @@ let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
-nnoremap <leader>ks :sp ~/.vim/dein/github.com/vim-scripts/mathematic.vim/keymap/mathematic.vim<CR>
-nnoremap <leader>kv :vs ~/.vim/dein/github.com/vim-scripts/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>ks :sp ~/.vim/dein/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>kv :vs ~/.vim/dein/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim<CR>
 
 source ~/.vimrc.post.vim
