@@ -54,7 +54,7 @@ install-venv: $(DESTDIR)$(HOME) venv
 	$(INSTALL_DATA) venv $(DESTDIR)$(HOME)/.venv
 .PHONY: install-venv
 
-install-zshrc: $(DESTDIR)$(HOME) zshrc.zsh
+install-zshrc: $(DESTDIR)$(HOME) zshrc.zsh zshrc.pre-oh-my-zsh.zsh p10k.zsh
 	$(INSTALL_DATA) zshrc.zsh $(DESTDIR)$(HOME)/.zshrc
 	$(INSTALL_DATA) zshrc.pre-oh-my-zsh.zsh $(DESTDIR)$(HOME)/.zshrc.pre-oh-my-zsh
 	$(INSTALL_DATA) p10k.zsh $(DESTDIR)$(HOME)/.p10k.zsh

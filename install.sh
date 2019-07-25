@@ -31,10 +31,11 @@ fi
 export PREFIX
 set -x
 cd -- "$dirname"
+$MAKE -C configs/common install
 if test -n "$is_msys2" ; then
+    $MAKE -C configs/common install-vimrc HOME="$(cygpath -u "$HOMEDRIVE")" VIMUNDER=.
+    $MAKE -C configs/common install-vimrc HOME="$(cygpath -u "$HOMEDRIVE")" VIMUNDER=_
     $MAKE -C configs/msys2 install
-else
-    $MAKE -C configs/common install
 fi
 $MAKE -C configs/external install
 case "$HOST" in
