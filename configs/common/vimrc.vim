@@ -3,7 +3,7 @@ let s:is_windows = has('win32') || has('win64')
 let s:is_cygwin = has('win32unix')
 let s:is_mac = !s:is_windows && !s:is_cygwin
       \ && (has('mac') || has('macunix') || has('gui_macvim') ||
-      \   (!executable('xdg-open') && system('uname') =~? '^darwin'))
+      \   (!executable('xdg-open') && executable('uname') && system('uname') =~? '^darwin'))
 let s:is_macvim = has('gui_macvim')
 source ~/.vimrc.pre.vim
 if !exists('g:machine') | let g:machine = 'unknown' | endif
@@ -31,7 +31,7 @@ filetype on
 filetype off
 if s:is_windows | set rtp+=~/.vim | endif
 let g:make = 'gmake'
-if !s:is_windows && system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
+if executable('uname') && system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
 if !g:none
   " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.vim/dein/repos/github.com/Shougo/dein.vim`
   set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
