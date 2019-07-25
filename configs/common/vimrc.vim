@@ -47,7 +47,7 @@ if !g:none
     call dein#add('tpope/vim-repeat')
     " Syntax
     call dein#add('jstrater/mpvim', {'on_ft': ['portfile']})
-    call dein#add('vim-scripts/Boost-Build-v2-BBv2-syntax', {'on_ft': ['bbv2']})
+    call dein#add('grisumbras/vim-b2', {'on_ft': ['bbv2']})
     call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki']})
     call dein#add('tpope/vim-markdown', {'on_ft': ['markdown']})
     call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp']})
