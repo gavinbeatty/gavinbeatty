@@ -20,6 +20,12 @@ TLS_TRUST_FILE ?= tls_trust_file /opt/local/share/curl/curl-ca-bundle.crt
 else
 TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
 endif
+VIMUNDER ?= .
+ifeq ($(LOCALAPPDATA),)
+XDG_CONFIG_HOME ?= $(HOME)/.config
+else
+XDG_CONFIG_HOME ?= $(LOCALAPPDATA)
+endif
 
 DESTDIR ?=
 
@@ -121,8 +127,16 @@ install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
 .PHONY: install-tmux_conf
 
-install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim
-	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/.vimrc
+install-nvim-init: $(DESTDIR)$(HOME) nvim-init.vim
+	@$(INSTALL_DIR) $(DESTDIR)$(XDG_CONFIG_HOME)/nvim
+	$(INSTALL_DATA) nvim-init.vim $(DESTDIR)$(XDG_CONFIG_HOME)/nvim/init.vim
+.PHONY: install-nvim-init
+
+install-vimrc: $(DESTDIR)$(HOME) vimrc.vim
+	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/$(VIMUNDER)vimrc
+.PHONY: install-vimrc
+
+install-vimsupport: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim vim/ftplugin/xml.vim
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim
@@ -132,12 +146,12 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vim/ftplugin/cpp.vim vim/ftplugin/cs.
 	$(INSTALL_DATA) vim/ftplugin/haskell.vim $(DESTDIR)$(HOME)/.vim/ftplugin/haskell.vim
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 	$(INSTALL_DATA) vim/ftplugin/xml.vim $(DESTDIR)$(HOME)/.vim/ftplugin/xml.vim
-.PHONY: install-vimrc
+.PHONY: install-vimsupport
 
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimsupport install-colordiffrc
 .PHONY: install
 

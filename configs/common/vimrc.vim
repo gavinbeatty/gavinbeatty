@@ -1,18 +1,22 @@
+" vi: set fenc=utf-8 sw=2 ts=2:
 set nocompatible
-let s:is_windows = has('win32') || has('win64')
-let s:is_cygwin = has('win32unix')
-let s:is_mac = !s:is_windows && !s:is_cygwin
-      \ && (has('mac') || has('macunix') || has('gui_macvim') ||
-      \   (!executable('xdg-open') && executable('uname') && system('uname') =~? '^darwin'))
+let s:is_windows = has('win32') || has('win64') || has('win32unix')
+let s:is_cygwin = s:is_windows && executable('uname') && system('uname') =~? 'cygwin'
+let s:is_msys = s:is_windows && executable('uname') && system('uname') =~? '^MSYS_NT'
 let s:is_macvim = has('gui_macvim')
+let s:is_mac = s:is_macvim || (has('mac') || has('macunix') || (!executable('xdg-open') && executable('uname') && system('uname') =~? '^darwin'))
 source ~/.vimrc.pre.vim
 if !exists('g:machine') | let g:machine = 'unknown' | endif
 if !exists('g:cpp_expandtab') | let g:cpp_expandtab = 1 | endif
 if !exists('g:cpp_textwidth') | let g:cpp_textwidth = 100 | endif
 if !exists('mapleader') | let mapleader = ',' | endif
 if !exists('g:mapleader') | let g:mapleader = ',' | endif
+" `vim --cmd 'let g:none=1' ...` to disable all plugins at startup, including dein.
 if !exists('g:none') | let g:none = 0 | endif
-if !exists('g:min') | let g:min = 0 | endif
+" `vim --cmd 'let g:min=1' ...` to disable many plugins at startup.
+if !exists('g:min') | let g:min = g:none | endif
+" `vim --cmd 'let g:justdein=1' ...` to disable all plugins at startup, except dein.
+if !exists('g:justdein') | let g:justdein = 0 | endif
 
 let &tags = getcwd().'/tags,'
 set nocscopeverbose
@@ -32,125 +36,127 @@ filetype off
 if s:is_windows | set rtp+=~/.vim | endif
 let g:make = 'gmake'
 if executable('uname') && system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
+let s:dein_loaded = 0
+let s:deinif = 0
+let s:minif = 0
 if !g:none
-  " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.vim/dein/repos/github.com/Shougo/dein.vim`
-  set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
-  if dein#load_state(expand('~/.vim/dein'))
-    call dein#begin(expand('~/.vim/dein'))
+  if has('nvim')
+    " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.nvim/dein/repos/github.com/Shougo/dein.vim`
+    set rtp+=~/.nvim/dein/repos/github.com/Shougo/dein.vim
+    let s:deindir = expand('~/.nvim/dein')
+  else
+    " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.vim/dein/repos/github.com/Shougo/dein.vim`
+    set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
+    let s:deindir = expand('~/.vim/dein')
+  endif
+  if dein#load_state(s:deindir)
+    let s:dein_loaded = 1
+    call dein#begin(s:deindir)
     call dein#add('Shougo/dein.vim')
+    if g:justdein
+      let s:deinif = 0
+      let s:minif = 0
+    elseif g:min
+      let s:deinif = 1
+      let s:minif = 0
+    else
+      let s:deinif = 1
+      let s:minif = 1
+    endif
     " Dependencies
-    if !s:is_cygwin
-      call dein#add('Shougo/vimproc', {'build': g:make})
-      call dein#add('Shougo/vimshell')
+    if !s:is_windows
+      call dein#add('Shougo/vimproc', {'build': g:make, 'if': s:deinif})
+      call dein#add('Shougo/vimshell', {'if': s:deinif})
     endif
-    call dein#add('def-lkb/vimbufsync')
-    call dein#add('tpope/vim-repeat')
+    call dein#add('def-lkb/vimbufsync', {'if': s:deinif})
+    call dein#add('tpope/vim-repeat', {'if': s:deinif})
     " Syntax
-    call dein#add('jstrater/mpvim', {'on_ft': ['portfile']})
-    call dein#add('grisumbras/vim-b2', {'on_ft': ['bbv2']})
-    call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki']})
-    call dein#add('tpope/vim-markdown', {'on_ft': ['markdown']})
-    call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp']})
-    "if !s:is_cygwin
-    "  call dein#add('OmniSharp/omnisharp-vim', {'build': 'sh -c "cd server && xbuild"', 'on_ft': ['cs']})
-    "endif
-    call dein#add('altercation/vim-colors-solarized')
-    " The below allows (via `vim --cmd 'let g:min=1'` etc.) disabling many plugins at startup.
-    if !g:min
-      call dein#add('bling/vim-airline')
-      call dein#add('tpope/vim-git')
-      call dein#add('rhysd/committia.vim')
-    endif
+    call dein#add('jstrater/mpvim', {'on_ft': ['portfile'], 'if': s:deinif})
+    call dein#add('grisumbras/vim-b2', {'on_ft': ['bbv2'], 'if': s:deinif})
+    call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki'], 'if': s:deinif})
+    call dein#add('tpope/vim-markdown', {'on_ft': ['markdown'], 'if': s:deinif})
+    call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp'], 'if': s:deinif})
+    call dein#add('iCyMind/NeoSolarized', {'if': s:deinif})
+    call dein#add('bling/vim-airline', {'if': s:minif})
+    call dein#add('tpope/vim-git', {'if': s:minif})
+    call dein#add('rhysd/committia.vim', {'if': s:minif})
     " Math
-    call dein#add('gu-fan/mathematic.vim')
+    call dein#add('gu-fan/mathematic.vim', {'if': s:deinif})
     " Programming
     let g:indentLine_char = '│'
     if !g:min
       let g:indentLine_color_term = 239
     endif
-    call dein#add('Yggdroot/indentLine')
-    call dein#add('bogado/file-line')
-    call dein#add('vim-scripts/FSwitch')
-    call dein#add('MarcWeber/vim-addon-local-vimrc')
-    if !g:min
-      call dein#add('Shougo/unite.vim')
+    call dein#add('Yggdroot/indentLine', {'if': s:deinif})
+    call dein#add('bogado/file-line', {'if': s:deinif})
+    call dein#add('vim-scripts/FSwitch', {'if': s:deinif})
+    call dein#add('MarcWeber/vim-addon-local-vimrc', {'if': s:deinif})
+    call dein#add('Shougo/denite.nvim', {'if': s:minif})
+    call dein#add('chazy/cscope_maps', {'if': s:deinif})
+    call dein#add('tpope/vim-dispatch', {'if': s:deinif})
+    call dein#add('kana/vim-operator-user', {'if': s:minif})
+    call dein#add('tpope/vim-endwise', {'if': s:minif})
+    call dein#add('scrooloose/syntastic', {'if': s:minif})
+    call dein#add('scrooloose/nerdcommenter', {'if': s:minif})
+    call dein#add('tpope/vim-sleuth', {'if': s:minif})
+    call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons', 'if': s:minif})
+    " OCaml
+    if !g:min && executable('opam')
+      let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+      execute 'set rtp+='.g:opamshare.'/merlin/vim'
+      execute 'helptags '.g:opamshare.'/merlin/vim/doc'
     endif
-    call dein#add('chazy/cscope_maps')
-    call dein#add('tpope/vim-dispatch')
-    if !g:min
-      call dein#add('kana/vim-operator-user')
-      call dein#add('tpope/vim-endwise')
-      call dein#add('scrooloose/syntastic')
-      call dein#add('scrooloose/nerdcommenter')
-      call dein#add('tpope/vim-sleuth')
-      call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons'})
-      " OCaml
-      if executable('opam')
-        let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-        execute 'set rtp+='.g:opamshare.'/merlin/vim'
-        execute 'helptags '.g:opamshare.'/merlin/vim/doc'
-      endif
-      " C++
-      call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
-      if s:is_mac && has('python')
-        python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-        let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
-      elseif s:is_mac && has('python3')
-        python3 import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-        let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
-      else
-        let g:macportspy = 'python'
-      endif
-      "if !s:is_cygwin
-      "  NeoBundle 'Valloric/YouCompleteMe', {
-      "    \ 'vim_version':'7.3.584',
-      "    \ 'build':{
-      "      \ 'mac' : g:macportspy . ' ./install.py --clang-completer',
-      "      \ 'unix': './install.py --clang-completer',
-      "    \ },
-      "    \ }
-      "endif
-      if !s:is_cygwin && (has('python') || has('python3'))
-        call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp']})
-      endif
-      if has('python') || has('python3')
-        call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp']})
-      endif
-      let g:clang_format#detect_style_file = 1
-      call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']]})
-      " Python
-      call dein#add('nvie/vim-flake8', {'on_ft': ['python']})
-      call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python']})
-      " Text
-      call dein#add('elzr/vim-json', {'on_ft': ['json']})
-      call dein#add('kana/vim-fakeclip')
-      call dein#add('godlygeek/tabular')
-      call dein#add('tpope/vim-surround')
-      call dein#add('Lokaltog/vim-easymotion')
-      let wiki = {}
-      let wiki.path = '~/vimwiki/'
-      let wiki.syntax = 'markdown'
-      let wiki.ext = '.mkd'
-      let wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
-      let g:vimwiki_list = [wiki]
-      let g:vimwiki_hl_headers = 1
-      let g:vimwiki_hl_cb_checked = 1
-      call dein#add('vimwiki/vimwiki')
-      " Files
-      call dein#add('mhinz/vim-startify')
-      call dein#add('jamessan/vim-gnupg')
-      call dein#add('gmarik/sudo-gui.vim')
-      call dein#add('regedarek/vim-bufexplorer')
-      " Optional
-      call dein#add('thinca/vim-fontzoom', {
-            \ 'if': has('gui_running'),
-            \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']],
-            \ })
-      call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb']})
-      call dein#add('thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)'})
+    " C++
+    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']], 'if': s:minif})
+    if !g:min && s:is_mac && has('python')
+      python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+      let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
+    elseif !g:min && s:is_mac && has('python3')
+      python3 import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
+      let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
+    elseif !g:min
+      let g:macportspy = 'python'
     endif
+    if !s:is_windows && (has('python') || has('python3'))
+      call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    endif
+    if has('python') || has('python3')
+      call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    endif
+    let g:clang_format#detect_style_file = 1
+    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']], 'if': s:minif})
+    " Python
+    call dein#add('nvie/vim-flake8', {'on_ft': ['python'], 'if': s:minif})
+    call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python'], 'if': s:minif})
+    " Text
+    call dein#add('elzr/vim-json', {'on_ft': ['json'], 'if': s:minif})
+    call dein#add('kana/vim-fakeclip', {'if': s:minif})
+    call dein#add('godlygeek/tabular', {'if': s:minif})
+    call dein#add('tpope/vim-surround', {'if': s:minif})
+    call dein#add('Lokaltog/vim-easymotion', {'if': s:minif})
+    let wiki = {}
+    let wiki.path = '~/vimwiki/'
+    let wiki.syntax = 'markdown'
+    let wiki.ext = '.mkd'
+    let wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
+    let g:vimwiki_list = [wiki]
+    let g:vimwiki_hl_headers = 1
+    let g:vimwiki_hl_cb_checked = 1
+    call dein#add('vimwiki/vimwiki', {'if': s:minif})
+    " Files
+    call dein#add('mhinz/vim-startify', {'if': s:minif})
+    call dein#add('jamessan/vim-gnupg', {'if': s:minif})
+    call dein#add('gmarik/sudo-gui.vim', {'if': s:minif})
+    call dein#add('regedarek/vim-bufexplorer', {'if': s:minif})
+    " Optional
+    call dein#add('thinca/vim-fontzoom', {
+          \ 'if': s:minif && has('gui_running'),
+          \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']],
+          \ })
+    call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb'], 'if': s:minif})
+    call dein#add('thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)', 'if': s:minif})
     call dein#end()
-    call dein#save_state()
+    "call dein#save_state()  " Breaks colorscheme on second run of vim.
     "if dein#check_install()
     "  call dein#install()
     "endif
@@ -163,14 +169,17 @@ syntax enable
 highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
 highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
 highlight DiffChange ctermfg=0 ctermbg=3 guibg='yellow'
-if &term =~ '256' | let g:solarized_termcolors=256 | set t_Co=256 | endif
+if &term =~ '256'
+  let g:solarized_termcolors=256
+  set t_Co=256
+  set termguicolors
+endif
 set background=dark
 " See :h filetype-overview
 filetype plugin indent on
-if !g:none
-  colorscheme solarized
-endif
-if !exists('g:colors_name') || g:colors_name != 'solarized'
+if s:deinif && (s:is_cygwin || s:is_msys || !s:is_windows)
+  colorscheme NeoSolarized
+else
   colorscheme slate
 endif
 set nonumber
@@ -181,8 +190,11 @@ set textwidth=90
 set matchpairs+=<:>
 set noshowmatch
 set completeopt=menuone,longest
-set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
-"set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
+if s:is_windows
+  set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
+else
+  set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
+endif
 
 set nolist
 " Don't automatically format text as it's typed.
@@ -241,7 +253,7 @@ set directory=~/.vim/.cache/swap
 call EnsureDirExists(&undodir)
 call EnsureDirExists(&backupdir)
 call EnsureDirExists(&directory)
-if s:is_windows && !s:is_cygwin | set shell=c:/windows/system32/cmd.exe | endif
+if s:is_windows && !(s:is_cygwin || s:is_msys) | set shell=c:/windows/system32/cmd.exe | endif
 
 if has('multi_byte')
   " Quotation dash.
@@ -426,29 +438,29 @@ nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>
 let g:GPGPreferArmor = 1
 let g:delimitMate_matchpairs = "(:),[:],{:}"
 
-"let g:unite_enable_start_insert = 1
-let g:unite_source_history_yank_enable = 1
-let g:unite_source_rec_max_cache_files = 5000
-let g:unite_data_directory = '~/.vim/.cache/unite'
-call EnsureDirExists(g:unite_data_directory)
-if !g:none && !g:min
-  call unite#custom#profile('files', 'context.smartcase', 1)
+"let g:denite_enable_start_insert = 1
+let g:denite_source_history_yank_enable = 1
+let g:denite_source_rec_max_cache_files = 5000
+let g:denite_data_directory = '~/.vim/.cache/denite'
+call EnsureDirExists(g:denite_data_directory)
+if exists('*denite#custom#profile')
+  call denite#custom#profile('files', 'context.smartcase', 1)
 endif
 if executable('ag')
   set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
   set grepformat=%f:%l:%c:%m
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
-  let g:unite_source_grep_recursive_opt = ''
+  let g:denite_source_grep_command = 'ag'
+  let g:denite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
+  let g:denite_source_grep_recursive_opt = ''
 elseif executable('ack')
   set grepprg=ack\ --noheading\ -H\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
   set grepformat=%f:%l:%c:%m
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
-  let g:unite_source_grep_recursive_opt = ''
+  let g:denite_source_grep_command = 'ack'
+  let g:denite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
+  let g:denite_source_grep_recursive_opt = ''
 endif
-if !g:none && !g:min
-  if s:is_windows || s:is_cygwin
+if !g:min
+  if s:is_windows
     nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec buffer file_mru bookmark<cr><c-u>
     nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
   else
@@ -463,8 +475,8 @@ if !g:none && !g:min
   nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
 endif
 
-if !g:none && !g:min && !s:is_cygwin
-  let g:OmniSharp_selector_ui = 'unite'
+if !g:min && !s:is_windows
+  let g:OmniSharp_selector_ui = 'denite'
 endif
 
 let g:haskell_autotags = 1
@@ -480,8 +492,22 @@ let g:hpaste_author = 'gavinbeatty'
 let g:haddock_browser = 'sensible-browser'
 let g:pandoc_no_folding = 1
 
+if exists(':AirlineTheme')
+  AirlineTheme solarized
+endif
+let g:airline_extensions = []
+let g:airline_solarized_bg = 'dark'
+
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
-let g:startify_bookmarks = ['~/work/gavinbeatty/configs/common/vimrc.vim']
+if s:is_cygwin
+  let g:startify_bookmarks = [{'c': '/cygdrive/c/work/gavinbeatty/configs/common/vimrc.vim'}]
+elseif s:is_msys
+  let g:startify_bookmarks = [{'c': '/c/work/gavinbeatty/configs/common/vimrc.vim'}]
+elseif s:is_windows
+  let g:startify_bookmarks = [{'c': 'c:/work/gavinbeatty/configs/common/vimrc.vim'}]
+elseif
+  let g:startify_bookmarks = [{'c': '~/work/gavinbeatty/configs/common/vimrc.vim'}]
+endif
 
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
@@ -489,7 +515,7 @@ let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
-nnoremap <leader>ks :sp ~/.vim/dein/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim<CR>
-nnoremap <leader>kv :vs ~/.vim/dein/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim<CR>
+nnoremap <leader>ks :exec 'sp '.s:deindir.'/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim'<CR>
+nnoremap <leader>kv :exec 'vs '.s:deindir.'/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim'<CR>
 
 source ~/.vimrc.post.vim
