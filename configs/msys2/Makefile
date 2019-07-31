@@ -13,5 +13,9 @@ install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-colordiffrc
+install-minttyrc: $(DESTDIR)$(HOME) minttyrc
+	$(INSTALL_DATA) minttyrc $(DESTDIR)$(HOME)/.minttyrc
+.PHONY: install-minttyrc
+
+install: install-colordiffrc install-minttyrc
 .PHONY: install
