@@ -77,7 +77,8 @@ if !g:none
     call dein#add('tpope/vim-markdown', {'on_ft': ['markdown'], 'if': s:deinif})
     call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp'], 'if': s:deinif})
     call dein#add('iCyMind/NeoSolarized', {'if': s:deinif})
-    call dein#add('bling/vim-airline', {'if': s:minif})
+    call dein#add('vim-airline/vim-airline', {'if': s:minif})
+    call dein#add('vim-airline/vim-airline-themes', {'if': s:minif})
     call dein#add('tpope/vim-git', {'if': s:minif})
     call dein#add('rhysd/committia.vim', {'if': s:minif})
     " Math
@@ -494,10 +495,8 @@ let g:hpaste_author = 'gavinbeatty'
 let g:haddock_browser = 'sensible-browser'
 let g:pandoc_no_folding = 1
 
-if exists(':AirlineTheme')
-  AirlineTheme solarized
-endif
 let g:airline_extensions = []
+let g:airline_theme = 'solarized'
 let g:airline_solarized_bg = 'dark'
 
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
