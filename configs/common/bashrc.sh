@@ -18,6 +18,12 @@ if test -z "${ismsys:-}" && ismsys ; then ismsys=1 ; else ismsys=0 ; fi
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
 isay ".bashrc"
+
+driveroot_=""
+if test "${iscygwin:-0}" -eq 1 ; then
+    driveroot_="/cygdrive"
+fi
+
 # XXX perhaps use this to add to PATH etc.
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
 regexelem() { say "$2" | "${GREP:-grep}" -q "\\(^$1:\\|:$1:\\|:$1\$\\|^$1\$\\)" ; }
@@ -50,7 +56,8 @@ fi
 ########################################################################
 UNAME="$(uname 2>/dev/null | tr 'A-Z' 'a-z' 2>/dev/null || true)"
 HOST="$(hostname -s 2>/dev/null || true)"
-if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
+test -n "$HOST" || HOST="$(hostname 2>/dev/null || true)"
+test -z "$HOST" || HOST="$(say "$HOST" | tr A-Z a-z)"
 
 HISTSIZE="30" ; export HISTSIZE
 
@@ -123,43 +130,12 @@ if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
 unset n_
-#pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
-#if test -n "$pyver_" ; then
-#    n_="${HOME}/Library/Python/${pyver_}/bin"
-#    if test -d "$n_" ; then
-#        PATH="$n_${PATH:+:$PATH}" ; export PATH
-#    fi
-#fi
-
-# XXX how to detect msys/mingw properly? what's the difference?
-if test x"${MSYSTEM:-}" = x"MINGW32" || test x"${OSTYPE:-}" = x"msys" ; then
-    if test -z "$USER" ; then
-        USER="${USERNAME:-}" ; export USER # export even if empty
-    fi
-    if ! type python >/dev/null 2>&1 ; then
-        python="$(find "/c" -maxdepth 1 -type d \
-            -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        n_="$python"
-        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-            PATH="${PATH:+$PATH:}$n_" ; export PATH
-        fi
-        unset python
-    fi
-    # find the best vim available, even if one is already in PATH
-    if test -d "/c/Program Files/Vim/" ; then
-        vim="$(find "/c/Program Files/Vim" -maxdepth 1 -type d \
-            -iregex '.*/vim[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        n_="$vim"
-        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-            PATH="${PATH:+$PATH:}$n_" ; export PATH
-        fi
-        unset vim
-    fi
-    n_="/c/Program Files/GnuWin32/bin"
-    if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-        PATH="${PATH:+$PATH:}$n_" ; export PATH
-    fi
+n_="${driveroot_}/c/Program Files/TortoiseSVN/bin"
+if ! type svn >/dev/null 2>&1 && test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
+unset n_
+
 
 ########################################################################
 # Set anything depending on PATH etc.
@@ -177,11 +153,7 @@ done
 unset i_
 EDITOR="${VISUAL:-}" ; export EDITOR
 SVN_EDITOR="${VISUAL:-}" ; export SVN_EDITOR
-if type google-chrome >/dev/null 2>&1 ; then
-    BROWSER="google-chrome" ; export BROWSER
-elif type iceweasel >/dev/null 2>&1 ; then
-    BROWSER="iceweasel" ; export BROWSER
-elif type firefox >/dev/null 2>&1 ; then
+if type firefox >/dev/null 2>&1 ; then
     BROWSER="firefox" ; export BROWSER
 fi
 
@@ -314,36 +286,19 @@ if test "$isinteractive" -ne 0 ; then
     unset n_
 
     case "$UNAME" in
-        *mingw*|windows*|cygwin*)
+        *msys*|*mingw*|windows*|cygwin*)
             abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
                     case "$i" in /*|[A-Za-z]:*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
             }
-            winslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do
-                    abspath "$i" | sed -e 's!\\!/!g'
-                done
-            }
-            posixslash() { winslash "$@" ; }
             ;;
         *) abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
                     case "$i" in /*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
-            }
-            winslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do
-                    abspath "$i" | sed -e 's!/!\\!g'
-                done
-            }
-            posixslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do abspath "$i" ; done
             }
             ;;
     esac
@@ -416,6 +371,7 @@ if test "$isinteractive" -ne 0 ; then
     c() { DIFF="$DIFFCOLOR" "$@" ; }
     alt() { c p $DIFF -rN "$@" ; }
 
+    svnpty() { winpty ${SVN_EXE:-svn} "$@" ; }
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svnd() { c svnl "$@" ; }
     svngext() {
