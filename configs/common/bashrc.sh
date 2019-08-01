@@ -59,7 +59,7 @@ HOST="$(hostname -s 2>/dev/null || true)"
 test -n "$HOST" || HOST="$(hostname 2>/dev/null || true)"
 test -z "$HOST" || HOST="$(say "$HOST" | tr A-Z a-z)"
 
-HISTSIZE="30" ; export HISTSIZE
+HISTSIZE="100" ; export HISTSIZE
 
 LESS="${LESS:-}"
 if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
