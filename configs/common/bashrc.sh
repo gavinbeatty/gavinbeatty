@@ -54,6 +54,12 @@ fi
 ########################################################################
 # Set variables that have no dependency on PATH etc.
 ########################################################################
+if test -n "${XDG_CONFIG_HOME:-}" && (test "${ismsys:-0}" = 1 || test "${iscygwin:-0}" = 1) ; then
+    XDG_CONFIG_HOME="${LOCALAPPDATA:-$USERPROFILE/AppData/Local}" ; export XDG_CONFIG_HOME
+else
+    XDG_CONFIG_HOME="$HOME/.config" ; export XDG_CONFIG_HOME
+fi
+
 UNAME="$(uname 2>/dev/null | tr 'A-Z' 'a-z' 2>/dev/null || true)"
 HOST="$(hostname -s 2>/dev/null || true)"
 test -n "$HOST" || HOST="$(hostname 2>/dev/null || true)"
@@ -144,13 +150,17 @@ if type less >/dev/null 2>&1 ; then
     PAGER="less" ; export PAGER
 fi
 
-for i_ in vim vi nano pico ; do
-    if type "$i_" >/dev/null 2>&1 ; then
-        VISUAL="$i_" ; export VISUAL
-        break
-    fi
-done
-unset i_
+if type nvim >/dev/null 2>&1 && test -r "$XDG_CONFIG_HOME/nvim/init.vim" ; then
+    VISUAL="nvim"
+else
+    for i_ in vim vi nano pico ; do
+        if type "$i_" >/dev/null 2>&1 ; then
+            VISUAL="$i_" ; export VISUAL
+            break
+        fi
+    done
+    unset i_
+fi
 EDITOR="${VISUAL:-}" ; export EDITOR
 SVN_EDITOR="${VISUAL:-}" ; export SVN_EDITOR
 if type firefox >/dev/null 2>&1 ; then
