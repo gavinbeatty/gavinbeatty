@@ -179,7 +179,7 @@ if test "$isinteractive" -ne 0 ; then
             fi
         fi
     else
-        . ~/".ssh-agent-$HOST.sh" 2>/dev/null || . ~/.ssh-agent.sh 2>/dev/null || true
+        . ~/".ssh-agent.$HOST.sh" 2>/dev/null || . ~/.ssh-agent.sh 2>/dev/null || true
     fi
     if type tty >/dev/null 2>&1 ; then
         GPG_TTY=$(tty) ; export GPG_TTY
