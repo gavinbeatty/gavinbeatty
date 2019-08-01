@@ -146,6 +146,9 @@ color_section() {
 diff_section() {
     gitconfig diff.colorMoved "default"
     gitconfig diff.colorMovedWS "allow-indentation-change"
+    if type icdiff >/dev/null 2>/dev/null ; then
+        gitconfig diff.icdiff.cmd 'icdiff -H -N -U 10 --strip-trailing-cr $LOCAL $REMOTE | less'
+    fi
     gitconfig diff.renameLimit "1000"
 }
 core_section() {
