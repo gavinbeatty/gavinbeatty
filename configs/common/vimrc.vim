@@ -507,7 +507,7 @@ elseif s:is_msys
   let g:startify_bookmarks = [{'c': '/c/work/gavinbeatty/configs/common/vimrc.vim'}]
 elseif s:is_windows
   let g:startify_bookmarks = [{'c': 'c:/work/gavinbeatty/configs/common/vimrc.vim'}]
-elseif
+else
   let g:startify_bookmarks = [{'c': '~/work/gavinbeatty/configs/common/vimrc.vim'}]
 endif
 
