@@ -48,7 +48,7 @@ umask 0027
 isay "umask $(umask)"
 
 if test -r "${HOME}/.dircolors" ; then
-    eval $(dircolors "${HOME}/.dircolors") >/dev/null
+    eval $(dircolors -b "${HOME}/.dircolors") >/dev/null
 fi
 
 ########################################################################
