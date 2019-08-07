@@ -98,7 +98,7 @@ PATH="${HOME}/bin${PATH:+:$PATH}" ; export PATH
 HOME_PREFIX="${HOME}/.local" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
     for n_ in "${HOME_PREFIX}/"{sbin,bin} ; do
-        if test -d "$n_" ; then
+        if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
             PATH="${n_}${PATH:+:$PATH}" ; export PATH
         fi
     done
