@@ -109,8 +109,8 @@ def GetLinesep(line, fallback=os.linesep):
   return fallback
 
 
-def Main(argv, git, gitoptstr, stdinreader, stdoutwriter, stderrwriter):
-  gitopts = shlex.split(gitoptstr) if gitoptstr else []
+def Main(argv, git, gitoptsstr, stdinreader, stdoutwriter, stderrwriter):
+  gitopts = shlex.split(gitoptsstr) if gitoptsstr else []
   try:
     args, ells = ExtractL(argv[1:])
     # Use --no-ext-diff: if you want to use a different diff tool,
@@ -151,7 +151,7 @@ if __name__ == '__main__':
   if sys.version_info[0] < 3:
     argv = [FromLocale(s) for s in sys.argv]
     git = FromLocale(os.environ.get('GIT_EXE', 'git'))
-    gitoptstr = FromLocale(os.environ.get('GIT_OPTS', ''))
+    gitoptsstr = FromLocale(os.environ.get('GIT_OPTS', ''))
     textreader = codecs.getreader(ENCODING)
     textwriter = codecs.getwriter(ENCODING)
     stdinreader = textreader(sys.stdin)
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     stderrwriter = textwriter(sys.stderr)
   else:
     git = os.environ.get(u'GIT_EXE', u'git')
-    gitoptstr = os.environ.get(u'GIT_OPTS', u'')
+    gitoptsstr = os.environ.get(u'GIT_OPTS', u'')
     stdinreader = sys.stdin
     stdoutwriter = sys.stdout
     stderrwriter = sys.stderr
