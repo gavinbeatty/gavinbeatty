@@ -48,6 +48,12 @@ install-venv: $(DESTDIR)$(HOME) venv
 	$(INSTALL_DATA) venv $(DESTDIR)$(HOME)/.venv
 .PHONY: install-venv
 
+install-zshrc: $(DESTDIR)$(HOME) zshrc.zsh
+	$(INSTALL_DATA) zshrc.zsh $(DESTDIR)$(HOME)/.zshrc
+	$(INSTALL_DATA) zshrc.pre-oh-my-zsh.zsh $(DESTDIR)$(HOME)/.zshrc.pre-oh-my-zsh
+	$(INSTALL_DATA) p10k.zsh $(DESTDIR)$(HOME)/.p10k.zsh
+.PHONY: install-zshrc
+
 install-bashrc: $(DESTDIR)$(HOME) bash_logout.sh bash_profile.sh bashrc.sh
 	$(INSTALL_DATA) bash_logout.sh $(DESTDIR)$(HOME)/.bash_logout
 	$(INSTALL_DATA) bash_profile.sh $(DESTDIR)$(HOME)/.bash_profile
@@ -132,6 +138,6 @@ install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
 .PHONY: install
 
