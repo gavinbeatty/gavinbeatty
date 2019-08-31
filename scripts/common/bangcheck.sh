@@ -5,7 +5,7 @@
 # the given files.
 ###########################################################################
 # Copyright (C) 2007, 2008, 2012 by Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the

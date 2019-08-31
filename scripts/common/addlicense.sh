@@ -1,6 +1,6 @@
 #!/bin/sh
 # vi: set ft=sh et ts=4 sw=4:
-# Copyright (c) 2012 Gavin Beatty <gavinbeatty@gmail.com>
+# Copyright (c) 2012 Gavin Beatty <public@gavinbeatty.com>
 # Licensed under the MIT license: http://www.opensource.org/licenses/MIT
 set -e
 set -u
@@ -52,7 +52,7 @@ no_cleanup="${NO_CLEANUP:-}"
 
 help() {
     cat <<EOF
-Copyright (c) 2012 Gavin Beatty <gavinbeatty@gmail.com>
+Copyright (c) 2012 Gavin Beatty <public@gavinbeatty.com>
 Licensed under the MIT license: http://www.opensource.org/licenses/MIT
 
 Adds license, #! and vi mode settings.

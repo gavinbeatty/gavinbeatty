@@ -6,7 +6,7 @@ from __future__ import print_function
 # By Al Sweigart al@coffeeghost.net
 
 # Taken from http://coffeeghost.net/src/pyperclip.py on 2013-11-24
-# Added __main__ by Gavin Beatty <gavinbeatty@gmail.com> 2013, 2014.
+# Added __main__ by Gavin Beatty <public@gavinbeatty.com> 2013, 2014.
 
 # Copyright (c) 2010, Albert Sweigart
 # All rights reserved.

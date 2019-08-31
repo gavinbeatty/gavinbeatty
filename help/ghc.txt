@@ -1,5 +1,5 @@
 % GHC
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 # Installing GHC >= 7.2 with glibc < 2.7
 

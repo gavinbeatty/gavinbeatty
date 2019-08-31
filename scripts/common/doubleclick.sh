@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (c) 2009, 2011 by Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -53,7 +53,7 @@ usage() {
 }
 help() {
     cat <<EOF
-$(gettext "Copyright (c) 2009, 2011 Gavin Beatty <gavinbeatty@gmail.com>")
+$(gettext "Copyright (c) 2009, 2011 Gavin Beatty <public@gavinbeatty.com>")
 $(gettext "Licensed under the MIT license: http://www.opensource.org/licenses/MIT")
 
 $(gettext "Opens files, directories etc. as though they were \"double clicked\".")

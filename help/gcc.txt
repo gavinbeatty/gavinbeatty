@@ -1,5 +1,5 @@
 % GCC Help
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 # Profiling
 

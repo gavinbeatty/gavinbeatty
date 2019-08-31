@@ -10,16 +10,7 @@ CHMOD ?= chmod
 CHMOD_PRIV ?= $(CHMOD) 0600
 TOUCH ?= touch
 AWK ?= awk
-SED ?= sed
 CAT ?= cat
-UNAME ?= uname
-UNAME_OS ?= $(UNAME) -s
-OS ?= $(shell $(UNAME_OS))
-ifeq ($(OS),Darwin)
-TLS_TRUST_FILE ?= tls_trust_file /opt/local/share/curl/curl-ca-bundle.crt
-else
-TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
-endif
 VIMUNDER ?= .
 ifeq ($(LOCALAPPDATA),)
 XDG_CONFIG_HOME ?= $(HOME)/.config
@@ -30,18 +21,9 @@ endif
 DESTDIR ?=
 
 help:
-	@echo "Targets: help configure confclean clean install"
+	@echo "Targets: help install"
 
-.msmtprc: msmtprc.in
-	$(SED) -e 's#@TLS_TRUST_FILE@#$(TLS_TRUST_FILE)#g' msmtprc.in > .msmtprc
-configure: .msmtprc
-confclean:
-	$(RM) .msmtprc
-clean: confclean
-
-config: configure
-conf: configure
-.PHONY: help configure confclean clean config conf
+.PHONY: help
 
 $(DESTDIR)$(HOME):
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)
@@ -101,11 +83,10 @@ install-msmtprc: $(DESTDIR)$(HOME) .msmtprc
 	$(INSTALL_DATA_PRIV) .msmtprc $(DESTDIR)$(HOME)/.msmtprc
 .PHONY: install-msmtprc
 
-install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark muttrc.gmail
+install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark
 	$(INSTALL_DATA) muttrc $(DESTDIR)$(HOME)/.muttrc
 	$(INSTALL_DATA) muttrc.color $(DESTDIR)$(HOME)/.muttrc.color
 	$(INSTALL_DATA) muttrc.color-dark $(DESTDIR)$(HOME)/.muttrc.color-dark
-	$(INSTALL_DATA_PRIV) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 .PHONY: install-muttrc
 
 install-ocamlinit: $(DESTDIR)$(HOME) ocamlinit

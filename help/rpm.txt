@@ -1,5 +1,5 @@
 % RPM
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 ## Find SPECS etc. in a different location than /usr/src/redhat
 

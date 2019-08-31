@@ -1,5 +1,5 @@
 % Helpful tips for git
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 
 find commits from one branch not in another

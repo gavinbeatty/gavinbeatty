@@ -1,5 +1,5 @@
 % Helpful tips for git
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 # Remove a branch from a shallow project checkout
 

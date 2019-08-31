@@ -3,7 +3,7 @@
 
 ###########################################################################
 # Copyright (c) 2011, 2012 Gavin Beatty                     
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -41,7 +41,7 @@ cleardo="justdo"
 usage() { echo "usage: $prog <session-name>" ; }
 help() {
     cat <<EOF
-Copyright (c) 2011, 2012 Gavin Beatty <gavinbeatty@gmail.com>
+Copyright (c) 2011, 2012 Gavin Beatty <public@gavinbeatty.com>
 Licensed under the MIT license: http://www.opensource.org/licenses/MIT
 
 starts a terminal session using dtach and dvtm.

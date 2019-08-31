@@ -1,5 +1,5 @@
 % Dash
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 # Figure Dash: ‒
 

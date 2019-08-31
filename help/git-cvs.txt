@@ -1,5 +1,5 @@
 % Git <-> CVS Workflow
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 First, we set up a shared git repo that mirrors the CVS repo.
 

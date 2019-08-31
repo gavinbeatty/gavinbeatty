@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (C) 2008, 2012 by Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -31,7 +31,7 @@ have() { type "$@" >/dev/null 2>&1 ; }
 help() {
     cat <<EOF
 Copyright (C) 2008, 2012 by Gavin Beatty
-<gavinbeatty@gmail.com>
+<public@gavinbeatty.com>
 
 Print the command line for a <pid>.
 

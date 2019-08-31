@@ -43,10 +43,10 @@ find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
 git-export.sh \
-git-news \
-git-release \
-git-remotebranch \
-git-thisbranch \
+git-news.sh \
+git-release.sh \
+git-remotebranch.sh \
+git-thisbranch.sh \
 giturl.sh \
 gitwcroot.sh \
 gpg-add.sh \

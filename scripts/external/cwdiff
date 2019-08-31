@@ -1,5 +1,5 @@
 #!/bin/sh
-# Adapted by Gavin Beatty <gavinbeatty@gmail.com> 2016-11-01.
+# Adapted by Gavin Beatty <public@gavinbeatty.com> 2016-11-01.
 
 # Use this instead of diff[1] to get colored[2] word-based diffs.
 # Useful for text documents that have reflowed paragraphs.

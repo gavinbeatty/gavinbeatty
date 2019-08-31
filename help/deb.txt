@@ -1,5 +1,5 @@
 % Debian package format
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 # How to extract a .deb
 

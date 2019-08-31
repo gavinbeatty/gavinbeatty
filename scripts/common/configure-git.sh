@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (c) 2007, 2008, 2009, 2010, 2011, 2012, 2013 by Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -136,7 +136,6 @@ user_section() {
 }
 mail_section() {
 # this so I can submit patches using git send-email
-    gitconfig sendemail.smtpserver smtp.gmail.com
     gitconfig sendemail.aliasesfile ~/.gitaliases
     gitconfig sendemail.aliasfiletype mailrc
 }

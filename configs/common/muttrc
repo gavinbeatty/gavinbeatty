@@ -1,12 +1,4 @@
 
-#account-hook imap://192.168.0.250/ "source ~/.muttrc.work"
-account-hook imaps://imap.gmail.com:993/ "source ~/.muttrc.gmail"
-
-macro index <F11> "cimap://192.168.0.250/<enter>"
-macro index <F12> "cimaps://imap.gmail.com:993/<enter>"
-
-#source "~/.muttrc.gmail"
-
 # use very high $read_inc to speed up reading hcache'd maildirs
 folder-hook . 'set read_inc=1000'
 # use lower value for reading slower remote IMAP folders

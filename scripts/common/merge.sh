@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 #/***************************************************************************
 # *   Copyright (C) 2010 by Gavin Beatty                                    *
-# *   gavinbeatty@gmail.com                                                 *
+# *   public@gavinbeatty.com                                                 *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU General Public License as published by  *
