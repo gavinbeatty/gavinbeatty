@@ -115,11 +115,11 @@ install-nvim-init: $(DESTDIR)$(HOME) nvim-init.vim
 
 install-vimrc: $(DESTDIR)$(HOME) vimrc.vim
 	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/$(VIMUNDER)vimrc
-.PHONY: install-vimrc
-
-install-vimsupport: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim vim/ftplugin/xml.vim
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
+.PHONY: install-vimrc
+
+install-vimftplugin: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim vim/ftplugin/xml.vim
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim/ftplugin
 	$(INSTALL_DATA) vim/ftplugin/cpp.vim $(DESTDIR)$(HOME)/.vim/ftplugin/cpp.vim
@@ -127,12 +127,17 @@ install-vimsupport: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim v
 	$(INSTALL_DATA) vim/ftplugin/haskell.vim $(DESTDIR)$(HOME)/.vim/ftplugin/haskell.vim
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 	$(INSTALL_DATA) vim/ftplugin/xml.vim $(DESTDIR)$(HOME)/.vim/ftplugin/xml.vim
-.PHONY: install-vimsupport
+.PHONY: install-vimftplugin
+
+install-vimspell: $(DESTDIR)$(HOME) vim/spell/en-basic.latin1.spl
+	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim/spell
+	$(INSTALL_DATA) vim/spell/en-basic.latin1.spl $(DESTDIR)$(HOME)/.vim/spell/en-basic.latin1.spl
+.PHONY: install-vimspell
 
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimsupport install-colordiffrc
+install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimftplugin install-vimspell install-colordiffrc
 .PHONY: install
 

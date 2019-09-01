@@ -8,10 +8,12 @@ setlocal omnifunc=OmniSharp#Complete
 setlocal updatetime=500
 setlocal cmdheight=2
 
-augroup cs_fswitch
-  au BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
-  au CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
-augroup end
+if exists(':SyntasticCheck') && exists('*OmniSharp#TypeLookupWithoutDocumentation')
+  augroup cs_fswitch
+    au BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+    au CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+  augroup end
+endif
 
 nnoremap md :OmniSharpGotoDefinition<CR>
 nnoremap <leader>mi :OmniSharpFindImplementations<CR>

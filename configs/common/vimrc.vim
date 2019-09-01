@@ -1,5 +1,6 @@
 " vi: set fenc=utf-8 sw=2 ts=2:
 set nocompatible
+scriptencoding utf-8
 let s:is_windows = has('win32') || has('win64') || has('win32unix')
 let s:is_cygwin = s:is_windows && executable('uname') && system('uname') =~? 'cygwin'
 let s:is_msys = s:is_windows && executable('uname') && system('uname') =~? '^MSYS_NT'
@@ -83,11 +84,10 @@ if !g:none
     call dein#add('rhysd/committia.vim', {'if': s:minif})
     " Math
     call dein#add('gu-fan/mathematic.vim', {'if': s:deinif})
+    call dein#add('gavinbeatty/vmath.vim', {'if': s:deinif})
     " Programming
-    let g:indentLine_char = '│'
-    if !g:min
-      let g:indentLine_color_term = 239
-    endif
+    let g:indentLine_setColors = 0
+    let g:indentLine_char_list = ['|', '¦', '┆', '┊']
     call dein#add('Yggdroot/indentLine', {'if': s:deinif})
     call dein#add('bogado/file-line', {'if': s:deinif})
     call dein#add('vim-scripts/FSwitch', {'if': s:deinif})
@@ -135,6 +135,9 @@ if !g:none
     call dein#add('godlygeek/tabular', {'if': s:minif})
     call dein#add('tpope/vim-surround', {'if': s:minif})
     call dein#add('Lokaltog/vim-easymotion', {'if': s:minif})
+    call dein#add('zirrostig/vim-schlepp', {'if': s:minif})
+    call dein#add('gavinbeatty/hudigraphs_utf8.vim', {'if': s:minif})
+    call dein#add('gavinbeatty/hlnext.vim', {'if': s:minif})
     let wiki = {}
     let wiki.path = '~/vimwiki/'
     let wiki.syntax = 'markdown'
@@ -164,8 +167,6 @@ if !g:none
   endif
 endif
 
-let g:is_posix = 1
-
 syntax enable
 highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
 highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
@@ -180,7 +181,7 @@ endif
 set background=dark
 " See :h filetype-overview
 filetype plugin indent on
-if s:deinif && (s:is_cygwin || s:is_msys || !s:is_windows)
+if s:deinif && (!s:is_windows || s:is_cygwin || s:is_msys)
   colorscheme NeoSolarized
 else
   colorscheme slate
@@ -190,15 +191,11 @@ set expandtab
 set tabstop=4
 set shiftwidth=4
 set textwidth=90
+call matchadd('ColorColumn', '\%' . &textwidth . 'v', 100)
 set matchpairs+=<:>
 set noshowmatch
 set completeopt=menuone,longest
-if s:is_windows
-  set listchars=nbsp:~,tab:>\ ,precedes:<,extends:>
-else
-  set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
-endif
-
+set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
 set nolist
 " Don't automatically format text as it's typed.
 set formatoptions-=t
@@ -268,6 +265,7 @@ if has('multi_byte')
   digraphs s' 347
 endif
 
+set title titlestring=
 set ruler
 set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%)
 " Show number of chars/lines in visual selection.
@@ -312,6 +310,17 @@ if has('gui_running')
   nnoremap <leader>fd :call DecrFontPt()<CR>
 endif
 
+if !exists('s:OneBigAugroup')
+  let s:OneBigAugroup = 1
+  augroup OneBigAugroup
+      au!
+      au SwapExists * let v:swapchoice = 'o'
+      au SwapExists * echomsg ErrorMsg
+      au SwapExists * echo 'Duplicate edit session (readonly)'
+      au SwapExists * echohl None
+      au SwapExists * sleep 2
+  augroup end
+endif
 au BufNew * if &buftype == 'quickfix' | setlocal wrap | endif
 if !exists('s:filetypedetect_loaded')
   let s:filetypedetect_loaded = 1
@@ -405,7 +414,7 @@ nnoremap <leader>rr :redraw!<CR>
 nnoremap <leader>tn :set invnumber number?<CR>
 nnoremap <leader>tp :set invpaste paste?<CR>
 nnoremap <leader>tw :set invwrap wrap?<CR>
-nnoremap <leader>th :set invhls hls?<CR>
+nnoremap <leader>th :call HLNextOff() <Bar> set invhlsearch hlsearch?<CR>
 " Toggle hard line wrapping at textwidth.
 nnoremap <leader>tf :if &fo =~ 't' <Bar> set fo-=t fo? <Bar> else <Bar> set fo+=t fo? <Bar> endif<CR>
 nnoremap <leader>tl :set invlist list?<CR>
