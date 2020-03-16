@@ -108,7 +108,6 @@ if !g:none
       execute 'helptags '.g:opamshare.'/merlin/vim/doc'
     endif
     " C++
-    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']], 'if': s:minif})
     if !g:min && s:is_mac && has('python')
       python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
       let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
