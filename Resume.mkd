@@ -1,1 +1,59 @@
-CV.mkd
+---
+title: CV
+author: Gavin Beatty <gavinbeatty@gmail.com> +1 312 709 1965
+modified: 2018-04-25
+
+---
+
+High performance, low latency, C++, C, C#, linux, windows, networking, software engineer with 10 years of experience in backend and finance roles, responsible for large applications and libraries.
+
+Experience
+----------
+
+2013 to present
+:   **Senior Software Engineer**: Optiver US LLC, Chicago, USA
+
+    I write automated trading applications for options, executing with extremely low latency.
+    I write low response time systems for storing, distributing, and scripting pricing parameters, safely.
+    I lead technical development of our pricing architecture.
+
+2010 to 2013
+:   **Senior Software Engineer**: Optiver Europe, Amsterdam, the Netherlands
+
+    I wrote high performance gateways connecting our auto-traders with multiple exchanges/platforms.
+    This included complex order logic, and extremely high volume multicast traffic.
+    I lead development of our core in-house global library for market connectivity.
+    I also designed and implemented several exchange-specific gateways, and several general-purpose risk and testing components.
+
+2010
+:   **Freelance iOS developer**: Studio Sophisti, Amsterdam, the Netherlands
+
+    I wrote the backend for the popular and extremely well-reviewed Booking.com app.
+    This app streamed verbose XML and joined with a large SQLite dataset for every interaction.
+    I wrote the backend for Flora NL, a categorization app for the flora of the Netherlands.
+    I created in-house libraries to enable efficient work across both of these apps and future apps.
+
+2008 to 2010
+:   **Software Engineer**: Klas Ltd., Dublin, Ireland
+
+    I designed and developed a daemon to implement GRE Keepalives on POSIX-compatible OSes.
+    This involved raw socket programming, state machines, and dynamic IP header modification.
+
+Summer of 2007
+:   **Student Software Engineer**: Google Summer of Code
+
+    I applied for and successfully completed my [Google Summer of Code](http://code.google.com/soc/2007) project entitled "KDEPrint – add support for LinuxPrinting's on-line drivers query."
+    I implemented a very speedy GUI-wizard to query, download and install the correct driver for the user's given printer, written entirely in C++.
+    I used a web query language, streamed XML parsing and the KDE/Qt libraries.
+    This was a Unix-only application by design, at the time there being no printer driver repository for other platforms.
+    It installed packages in the given Linux/Unix distribution's chosen package format, e.g., .deb for Debian/Ubuntu etc.
+
+Education
+---------
+
+2004 to 2008
+:   **BA, Mathematics**: Trinity College, the University of Dublin, Ireland
+
+    Alongside my studies, from 2nd year I ran tutorials in Numerical Analysis in C, LaTeX, and Unix.
+
+<!-- vi: set et sw=2 ts=2 tw=90: -->

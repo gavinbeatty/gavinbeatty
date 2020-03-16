@@ -14,9 +14,8 @@ Experience
 :   **Senior Software Engineer**: Optiver US LLC, Chicago, USA
 
     I write automated trading applications for options, executing with extremely low latency.
-    I write low response time systems for storing and distributing pricing parameters.
+    I write low response time systems for storing, distributing, and scripting pricing parameters, safely.
     I lead technical development of our pricing architecture.
-    I design and implement systems for traders to control trading applications' behavior and pricing in a scriptable and safe way.
 
 2010 to 2013
 :   **Senior Software Engineer**: Optiver Europe, Amsterdam, the Netherlands
