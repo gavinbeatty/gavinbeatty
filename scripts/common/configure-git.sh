@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (c) 2007, 2008, 2009, 2010, 2011, 2012, 2013 by Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -29,8 +29,8 @@ trap "echo Caught SIGINT >&2 ; exit 1 ; " INT
 trap "echo Caught SIGTERM >&2 ; exit 1 ; " TERM
 
 default_name="Gavin Beatty"
-default_email="gavinbeatty@gmail.com"
-default_work_email="gavinbeatty@optiver.com"
+default_email="public@gavinbeatty.com"
+default_work_email="gavinbeatty@optiver.us"
 default_excludesfile="$HOME/.gitignore"
 default_attributesfile="$HOME/.gitattributes"
 
@@ -48,6 +48,9 @@ attributesfile=${CONFIGURE_GIT_ATTRIBUTESFILE:-$default_attributesfile}
 sections=${CONFIGURE_GIT_SECTIONS:-all}
 configfile=${CONFIGURE_GIT_CONFIGFILE:-}
 configtype=${CONFIGURE_GIT_CONFIGTYPE:---global}
+pager="${CONFIGURE_GIT_PAGER:-}"
+test -n "$pager" || pager="${GIT_PAGER:-}"
+test -n "$pager" || pager="${PAGER:-less}"
 git="${CONFIGURE_GIT_GIT:-git}"
 
 prog="configure-git.sh"
@@ -133,12 +136,19 @@ user_section() {
 }
 mail_section() {
 # this so I can submit patches using git send-email
-    gitconfig sendemail.smtpserver smtp.gmail.com
     gitconfig sendemail.aliasesfile ~/.gitaliases
     gitconfig sendemail.aliasfiletype mailrc
 }
 color_section() {
     gitconfig color.ui "auto"
+}
+diff_section() {
+    gitconfig diff.colorMoved "default"
+    gitconfig diff.colorMovedWS "allow-indentation-change"
+    if type icdiff >/dev/null 2>/dev/null ; then
+        gitconfig diff.icdiff.cmd 'icdiff -H -N -U 10 --strip-trailing-cr $LOCAL $REMOTE | less'
+    fi
+    gitconfig diff.renameLimit "1000"
 }
 core_section() {
     ! test -r "$excludesfile" || gitconfig core.excludesfile "$excludesfile"
@@ -147,8 +157,18 @@ core_section() {
     gitconfig merge.defaultToUpstream true
 }
 interactive_section() {
-    ! type diff-highlight >/dev/null 2>/dev/null || gitconfig interactive.diffFilter diff-highlight
     gitconfig grep.lineNumber true
+}
+pager_section() {
+    if type "$pager" >/dev/null 2>/dev/null ; then
+        gitconfig core.pager "$pager"
+        if type diff-highlight >/dev/null 2>/dev/null ; then
+            gitconfig pager.diff "diff-highlight | $pager"
+            gitconfig pager.log "diff-highlight | $pager"
+            gitconfig pager.show "diff-highlight | $pager"
+        fi
+        gitconfig pager.difftool "$pager"
+    fi
 }
 alias_section() {
     gitconfig alias.st "status"
@@ -161,8 +181,10 @@ alias_section() {
     gitconfig alias.prebase "pull --rebase"
     gitconfig alias.rebaseup "rebase -i @{u}"
     gitconfig alias.mergenoff "merge --no-ff"
+    gitconfig alias.noff "merge --no-ff"
     gitconfig alias.ff "merge --ff"
     gitconfig alias.cpick "cherry-pick"
+    gitconfig alias.wk "worktree"
     gitconfig alias.br "branch -v"
     gitconfig alias.thisbr "thisbranch"
     gitconfig alias.rbr "remotebranch"
@@ -171,6 +193,7 @@ alias_section() {
     gitconfig alias.cdiff "diff --cached"
     gitconfig alias.unstage "reset HEAD --"
     gitconfig alias.sm "submodule"
+    gitconfig alias.tags "-p for-each-ref --sort=-creatordate --format=\"%(refname:short) %(creatordate:short) %(subject)\" refs/tags"
     gitconfig alias.r "remote -v"
     gitconfig alias.ll "log -v --stat"
     gitconfig alias.l "log --pretty=format:'%C(auto)%h %cd %s' --date=short --decorate=short"
@@ -269,7 +292,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,color,core,interactive,alias,mail,credential,tag"
+        echo "user,mail,core,interactive,pager,alias,diff,color,credential,tag"
         exit 0
     fi
 
@@ -290,7 +313,9 @@ main() {
         mail) mail_section ;;
         core) core_section ;;
         interactive) interactive_section ;;
+        pager) pager_section ;;
         alias) alias_section ;;
+        diff) diff_section ;;
         color) color_section ;;
         credential) credential_section ;;
         tag) tag_section ;;
@@ -298,7 +323,9 @@ main() {
             mail_section
             core_section
             interactive_section
+            pager_section
             alias_section
+            diff_section
             color_section
             credential_section
             tag_section

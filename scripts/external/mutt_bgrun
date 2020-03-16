@@ -1,7 +1,7 @@
 #!/bin/sh
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 # @(#) mutt_bgrun $Revision: 1.4 $
-# modifed by Gavin Beatty <gavinbeatty@gmail.com> 2012
+# modifed by Gavin Beatty <public@gavinbeatty.com> 2012
 
 #   mutt_bgrun - run an attachment viewer from mutt in the background
 #   Copyright (C) 1999-2002 Gary A. Johnson

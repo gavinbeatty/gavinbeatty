@@ -1,5 +1,5 @@
 % IRC
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 Register nickname
 -----------------

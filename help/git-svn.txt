@@ -1,5 +1,5 @@
 % Git <-> SVN Workflow
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 
 Clone the SVN repo.

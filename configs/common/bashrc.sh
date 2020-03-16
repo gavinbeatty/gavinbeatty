@@ -18,6 +18,12 @@ if test -z "${ismsys:-}" && ismsys ; then ismsys=1 ; else ismsys=0 ; fi
 . ~/.bashrc.pre.sh 2>/dev/null || true
 
 isay ".bashrc"
+
+driveroot_=""
+if test "${iscygwin:-0}" -eq 1 ; then
+    driveroot_="/cygdrive"
+fi
+
 # XXX perhaps use this to add to PATH etc.
 # XXX have a look at pathmunge in /etc/rc.d on arch (at least)
 regexelem() { say "$2" | "${GREP:-grep}" -q "\\(^$1:\\|:$1:\\|:$1\$\\|^$1\$\\)" ; }
@@ -42,17 +48,24 @@ umask 0027
 isay "umask $(umask)"
 
 if test -r "${HOME}/.dircolors" ; then
-    eval $(dircolors "${HOME}/.dircolors") >/dev/null
+    eval $(dircolors -b "${HOME}/.dircolors") >/dev/null
 fi
 
 ########################################################################
 # Set variables that have no dependency on PATH etc.
 ########################################################################
+if test -n "${XDG_CONFIG_HOME:-}" && (test "${ismsys:-0}" = 1 || test "${iscygwin:-0}" = 1) ; then
+    XDG_CONFIG_HOME="${LOCALAPPDATA:-$USERPROFILE/AppData/Local}" ; export XDG_CONFIG_HOME
+else
+    XDG_CONFIG_HOME="$HOME/.config" ; export XDG_CONFIG_HOME
+fi
+
 UNAME="$(uname 2>/dev/null | tr 'A-Z' 'a-z' 2>/dev/null || true)"
 HOST="$(hostname -s 2>/dev/null || true)"
-if test -z "$HOST" ; then HOST="$(hostname 2>/dev/null || true)" ; fi
+test -n "$HOST" || HOST="$(hostname 2>/dev/null || true)"
+test -z "$HOST" || HOST="$(say "$HOST" | tr A-Z a-z)"
 
-HISTSIZE="30" ; export HISTSIZE
+HISTSIZE="100" ; export HISTSIZE
 
 LESS="${LESS:-}"
 if ! say "$LESS" | grep -q '\(^\|[[:space:]]\)-[[:alnum:]]*F' ; then LESS="${LESS} -F" ; fi
@@ -85,7 +98,7 @@ PATH="${HOME}/bin${PATH:+:$PATH}" ; export PATH
 HOME_PREFIX="${HOME}/.local" ; export HOME_PREFIX
 if test -d "${HOME_PREFIX}" ; then
     for n_ in "${HOME_PREFIX}/"{sbin,bin} ; do
-        if test -d "$n_" ; then
+        if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
             PATH="${n_}${PATH:+:$PATH}" ; export PATH
         fi
     done
@@ -101,13 +114,15 @@ fi
 test -n "${bashrc_opam_config_env:-}" || (type opam >/dev/null 2>/dev/null && eval `opam config env` >/dev/null 2>/dev/null) || true
 bashrc_opam_config_env=1
 
+DOTNET_CLI_TELEMETRY_OPTOUT=1 ; export DOTNET_CLI_TELEMETRY_OPTOUT
+
 test "${iscygwin:-0}" -ne 0 || . "$HOME/.rvm/scripts/rvm" >/dev/null 2>&1 || true
 # macports
 if test -d "/opt/local/bin" && ! say "${PATH:-}" | grep -Fq "/opt/local/bin" ; then
-    PATH="${PATH:+$PATH:}/opt/local/bin}" ; export PATH
+    PATH="${PATH:+$PATH:}/opt/local/bin" ; export PATH
 fi
 if test -d "/opt/local/sbin" && ! say "${PATH:-}" | grep -Fq "/opt/local/sbin" ; then
-    PATH="${PATH:+$PATH:}/opt/local/sbin}" ; export PATH
+    PATH="${PATH:+$PATH:}/opt/local/sbin" ; export PATH
 fi
 n_="/Applications/MacVim.app/Contents/MacOS"
 if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
@@ -121,43 +136,12 @@ if test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
     PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
 unset n_
-#pyver_="$(python -V 2>&1 | sed 's/^Python \([0-9]*\.[0-9]*\)\(\.[0-9]*\)/\1/')" || true
-#if test -n "$pyver_" ; then
-#    n_="${HOME}/Library/Python/${pyver_}/bin"
-#    if test -d "$n_" ; then
-#        PATH="$n_${PATH:+:$PATH}" ; export PATH
-#    fi
-#fi
-
-# XXX how to detect msys/mingw properly? what's the difference?
-if test x"${MSYSTEM:-}" = x"MINGW32" || test x"${OSTYPE:-}" = x"msys" ; then
-    if test -z "$USER" ; then
-        USER="${USERNAME:-}" ; export USER # export even if empty
-    fi
-    if ! type python >/dev/null 2>&1 ; then
-        python="$(find "/c" -maxdepth 1 -type d \
-            -iregex '.*/Python2[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        n_="$python"
-        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-            PATH="${PATH:+$PATH:}$n_" ; export PATH
-        fi
-        unset python
-    fi
-    # find the best vim available, even if one is already in PATH
-    if test -d "/c/Program Files/Vim/" ; then
-        vim="$(find "/c/Program Files/Vim" -maxdepth 1 -type d \
-            -iregex '.*/vim[0-9]+$' -print 2>/dev/null | sort -n | tail -n1)"
-        n_="$vim"
-        if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-            PATH="${PATH:+$PATH:}$n_" ; export PATH
-        fi
-        unset vim
-    fi
-    n_="/c/Program Files/GnuWin32/bin"
-    if test -r "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
-        PATH="${PATH:+$PATH:}$n_" ; export PATH
-    fi
+n_="${driveroot_}/c/Program Files/TortoiseSVN/bin"
+if ! type svn >/dev/null 2>&1 && test -d "$n_" && ! say "${PATH:-}" | grep -Fq "$n_" ; then
+    PATH="$n_${PATH:+:$PATH}" ; export PATH
 fi
+unset n_
+
 
 ########################################################################
 # Set anything depending on PATH etc.
@@ -166,20 +150,20 @@ if type less >/dev/null 2>&1 ; then
     PAGER="less" ; export PAGER
 fi
 
-for i_ in vim vi nano pico ; do
-    if type "$i_" >/dev/null 2>&1 ; then
-        VISUAL="$i_" ; export VISUAL
-        break
-    fi
-done
-unset i_
+if type nvim >/dev/null 2>&1 && test -r "$XDG_CONFIG_HOME/nvim/init.vim" ; then
+    VISUAL="nvim"
+else
+    for i_ in vim vi nano pico ; do
+        if type "$i_" >/dev/null 2>&1 ; then
+            VISUAL="$i_" ; export VISUAL
+            break
+        fi
+    done
+    unset i_
+fi
 EDITOR="${VISUAL:-}" ; export EDITOR
 SVN_EDITOR="${VISUAL:-}" ; export SVN_EDITOR
-if type google-chrome >/dev/null 2>&1 ; then
-    BROWSER="google-chrome" ; export BROWSER
-elif type iceweasel >/dev/null 2>&1 ; then
-    BROWSER="iceweasel" ; export BROWSER
-elif type firefox >/dev/null 2>&1 ; then
+if type firefox >/dev/null 2>&1 ; then
     BROWSER="firefox" ; export BROWSER
 fi
 
@@ -194,6 +178,8 @@ if test "$isinteractive" -ne 0 ; then
                 isay "keychain/gavinbeatty-sh-gpg"
             fi
         fi
+    else
+        . ~/".ssh-agent.$HOST.sh" 2>/dev/null || . ~/.ssh-agent.sh 2>/dev/null || true
     fi
     if type tty >/dev/null 2>&1 ; then
         GPG_TTY=$(tty) ; export GPG_TTY
@@ -213,7 +199,7 @@ if test "$isinteractive" -ne 0 ; then
     fi
     svn_ps1_() {
         if local v="$(LC_ALL=C ${SVN_EXE:-svn} info 2>/dev/null)" ; then
-            v="$(say "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|$)/){s!^.*/(trunk|tags|branches)(/*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
+            v="$(say "$v" | perl -ne 'if(/^URL: .*\/(trunk|tags|branches)(\/|\s*$)/){s!^.*/(trunk|tags|branches)(/*\s*$|/*[^/]*).*!$1$2!;s!^trunk/+.*!trunk!;print;exit;}')"
             if test -n "$v" ; then printf "${1:- (%s)}" "$v" && return 0 ; fi
         fi
         return 1
@@ -312,36 +298,19 @@ if test "$isinteractive" -ne 0 ; then
     unset n_
 
     case "$UNAME" in
-        *mingw*|windows*|cygwin*)
+        *msys*|*mingw*|windows*|cygwin*)
             abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
                     case "$i" in /*|[A-Za-z]:*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
             }
-            winslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do
-                    abspath "$i" | sed -e 's!\\!/!g'
-                done
-            }
-            posixslash() { winslash "$@" ; }
             ;;
         *) abspath() {
                 if test $# -eq 0 ; then pwd
                 else local i ; for i in "$@" ; do
                     case "$i" in /*) say "$i" ;; *) say "$(pwd)/$i" ;; esac
                 done ; fi
-            }
-            winslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do
-                    abspath "$i" | sed -e 's!/!\\!g'
-                done
-            }
-            posixslash() {
-                test $# -ne 0 || set -- .
-                local i ; for i in "$@" ; do abspath "$i" ; done
             }
             ;;
     esac
@@ -414,6 +383,7 @@ if test "$isinteractive" -ne 0 ; then
     c() { DIFF="$DIFFCOLOR" "$@" ; }
     alt() { c p $DIFF -rN "$@" ; }
 
+    svnpty() { winpty ${SVN_EXE:-svn} "$@" ; }
     svnl() { p ${SVN_EXE:-svn} "$@" ; }
     svnd() { c svnl "$@" ; }
     svngext() {

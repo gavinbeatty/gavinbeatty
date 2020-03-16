@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 ###########################################################################
 # Copyright (c) 2012 Gavin Beatty
-# <gavinbeatty@gmail.com>
+# <public@gavinbeatty.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -38,7 +38,7 @@ have() { type -- "$@" >/dev/null 2>&1 ; }
 usage() { echo "usage: $prog <arg>..." ; }
 help() {
     cat <<EOF
-Copyright (c) 2012 Gavin Beatty <gavinbeatty@gmail.com>
+Copyright (c) $(date +%Y) Gavin Beatty <public@gavinbeatty.com>
 Licensed under the MIT license: http://www.opensource.org/licenses/MIT
 
 A template for POSIX sh shell scripts.

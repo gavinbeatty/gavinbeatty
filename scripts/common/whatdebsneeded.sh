@@ -2,7 +2,7 @@
 # vi: set ft=sh expandtab tabstop=4 shiftwidth=4:
 # Unknown License - found without attached License information
 # Unknown Author - found without attached Author or Copyright information
-# Modified by Gavin Beatty <gavinbeatty@gmail.com>
+# Modified by Gavin Beatty <public@gavinbeatty.com>
 ## Runs ./configure and calculates dependencies for deb packaging.
 set -e
 set -u

@@ -1,5 +1,5 @@
 % CVS
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 * undo local mods on mod_file
 

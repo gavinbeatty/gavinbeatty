@@ -10,32 +10,20 @@ CHMOD ?= chmod
 CHMOD_PRIV ?= $(CHMOD) 0600
 TOUCH ?= touch
 AWK ?= awk
-SED ?= sed
 CAT ?= cat
-UNAME ?= uname
-UNAME_OS ?= $(UNAME) -s
-OS ?= $(shell $(UNAME_OS))
-ifeq ($(OS),Darwin)
-TLS_TRUST_FILE ?= tls_trust_file /opt/local/share/curl/curl-ca-bundle.crt
+VIMUNDER ?= .
+ifeq ($(LOCALAPPDATA),)
+XDG_CONFIG_HOME ?= $(HOME)/.config
 else
-TLS_TRUST_FILE ?= tls_trust_file /etc/pki/tls/certs/ca-bundle.crt
+XDG_CONFIG_HOME ?= $(LOCALAPPDATA)
 endif
 
 DESTDIR ?=
 
 help:
-	@echo "Targets: help configure confclean clean install"
+	@echo "Targets: help install"
 
-.msmtprc: msmtprc.in
-	$(SED) -e 's#@TLS_TRUST_FILE@#$(TLS_TRUST_FILE)#g' msmtprc.in > .msmtprc
-configure: .msmtprc
-confclean:
-	$(RM) .msmtprc
-clean: confclean
-
-config: configure
-conf: configure
-.PHONY: help configure confclean clean config conf
+.PHONY: help
 
 $(DESTDIR)$(HOME):
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)
@@ -47,6 +35,12 @@ install-ackrc: $(DESTDIR)$(HOME) ackrc
 install-venv: $(DESTDIR)$(HOME) venv
 	$(INSTALL_DATA) venv $(DESTDIR)$(HOME)/.venv
 .PHONY: install-venv
+
+install-zshrc: $(DESTDIR)$(HOME) zshrc.zsh zshrc.pre-oh-my-zsh.zsh p10k.zsh
+	$(INSTALL_DATA) zshrc.zsh $(DESTDIR)$(HOME)/.zshrc
+	$(INSTALL_DATA) zshrc.pre-oh-my-zsh.zsh $(DESTDIR)$(HOME)/.zshrc.pre-oh-my-zsh
+	$(INSTALL_DATA) p10k.zsh $(DESTDIR)$(HOME)/.p10k.zsh
+.PHONY: install-zshrc
 
 install-bashrc: $(DESTDIR)$(HOME) bash_logout.sh bash_profile.sh bashrc.sh
 	$(INSTALL_DATA) bash_logout.sh $(DESTDIR)$(HOME)/.bash_logout
@@ -89,11 +83,10 @@ install-msmtprc: $(DESTDIR)$(HOME) .msmtprc
 	$(INSTALL_DATA_PRIV) .msmtprc $(DESTDIR)$(HOME)/.msmtprc
 .PHONY: install-msmtprc
 
-install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark muttrc.gmail
+install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark
 	$(INSTALL_DATA) muttrc $(DESTDIR)$(HOME)/.muttrc
 	$(INSTALL_DATA) muttrc.color $(DESTDIR)$(HOME)/.muttrc.color
 	$(INSTALL_DATA) muttrc.color-dark $(DESTDIR)$(HOME)/.muttrc.color-dark
-	$(INSTALL_DATA_PRIV) muttrc.gmail $(DESTDIR)$(HOME)/.muttrc.gmail
 .PHONY: install-muttrc
 
 install-ocamlinit: $(DESTDIR)$(HOME) ocamlinit
@@ -115,10 +108,18 @@ install-tmux_conf: $(DESTDIR)$(HOME) tmux.conf
 	$(INSTALL_DATA) tmux.conf $(DESTDIR)$(HOME)/.tmux.conf
 .PHONY: install-tmux_conf
 
-install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim
-	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/.vimrc
+install-nvim-init: $(DESTDIR)$(HOME) nvim-init.vim
+	@$(INSTALL_DIR) $(DESTDIR)$(XDG_CONFIG_HOME)/nvim
+	$(INSTALL_DATA) nvim-init.vim $(DESTDIR)$(XDG_CONFIG_HOME)/nvim/init.vim
+.PHONY: install-nvim-init
+
+install-vimrc: $(DESTDIR)$(HOME) vimrc.vim
+	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/$(VIMUNDER)vimrc
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
 	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
+.PHONY: install-vimrc
+
+install-vimftplugin: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim vim/ftplugin/xml.vim
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim
 	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim/ftplugin
 	$(INSTALL_DATA) vim/ftplugin/cpp.vim $(DESTDIR)$(HOME)/.vim/ftplugin/cpp.vim
@@ -126,12 +127,17 @@ install-vimrc: $(DESTDIR)$(HOME) vimrc.vim vim/ftplugin/cpp.vim vim/ftplugin/cs.
 	$(INSTALL_DATA) vim/ftplugin/haskell.vim $(DESTDIR)$(HOME)/.vim/ftplugin/haskell.vim
 	$(INSTALL_DATA) vim/ftplugin/txt.vim $(DESTDIR)$(HOME)/.vim/ftplugin/txt.vim
 	$(INSTALL_DATA) vim/ftplugin/xml.vim $(DESTDIR)$(HOME)/.vim/ftplugin/xml.vim
-.PHONY: install-vimrc
+.PHONY: install-vimftplugin
+
+install-vimspell: $(DESTDIR)$(HOME) vim/spell/en-basic.latin1.spl
+	@$(INSTALL_DIR) $(DESTDIR)$(HOME)/.vim/spell
+	$(INSTALL_DATA) vim/spell/en-basic.latin1.spl $(DESTDIR)$(HOME)/.vim/spell/en-basic.latin1.spl
+.PHONY: install-vimspell
 
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-vimrc install-colordiffrc
+install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimftplugin install-vimspell install-colordiffrc
 .PHONY: install
 

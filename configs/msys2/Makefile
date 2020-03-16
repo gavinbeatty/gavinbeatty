@@ -9,13 +9,13 @@ DESTDIR ?=
 help:
 	@echo "Targets: help install"
 
-install-bashrc: $(DESTDIR)$(HOME) bashrc.sh
-	$(INSTALL_DATA) bashrc.sh $(DESTDIR)$(HOME)/.bashrc
-.PHONY: install-bashrc
-
 install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-bashrc install-colordiffrc
+install-minttyrc: $(DESTDIR)$(HOME) minttyrc
+	$(INSTALL_DATA) minttyrc $(DESTDIR)$(HOME)/.minttyrc
+.PHONY: install-minttyrc
+
+install: install-colordiffrc install-minttyrc
 .PHONY: install

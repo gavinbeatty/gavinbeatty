@@ -9,7 +9,7 @@ say() { printf %s\\n "$*" ; }
 is_interface_only() {
   local dir="$(dirname "$1")"
   local baseofdir="$(basename "${dir:-.}")"
-  test "$baseofdir" = Interfaces
+  say "$baseofdir" | grep -q 'Interfaces$'
 }
 is_tests() {
   local dir="$(dirname "$1")"

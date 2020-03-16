@@ -1,5 +1,5 @@
 % Terminal 256 colors
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 <!-- vi: set ft=pandoc et shiftwidth=2 tabstop=2: -->
 

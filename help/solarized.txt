@@ -1,5 +1,5 @@
 % Solarized color scheme
-% Gavin Beatty <gavinbeatty@gmail.com>
+% Gavin Beatty <public@gavinbeatty.com>
 
 <!-- vi: set ft=markdown textwidth=79: -->
 

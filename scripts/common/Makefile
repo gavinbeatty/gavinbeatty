@@ -42,10 +42,11 @@ findpid.sh \
 find-src.sh \
 findup.sh \
 git-cvs-mirror.sh \
-git-news \
-git-release \
-git-remotebranch \
-git-thisbranch \
+git-export.sh \
+git-news.sh \
+git-release.sh \
+git-remotebranch.sh \
+git-thisbranch.sh \
 giturl.sh \
 gitwcroot.sh \
 gpg-add.sh \
@@ -77,6 +78,7 @@ runq.sh \
 run.sh \
 shify.sh \
 stats.py \
+strerror.sh \
 stripcolor.sh \
 svnaddcopyright.bash \
 svnblamefirst.sh \

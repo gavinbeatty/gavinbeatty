@@ -5,7 +5,7 @@
 ###########################################################################
 # Author unknown. Found without attached Author or Copyright or Licensing
 # information.
-# Modified by: Gavin Beatty <gavinbeatty@gmail.com> 2012
+# Modified by: Gavin Beatty <public@gavinbeatty.com> 2012
 ###########################################################################
 set -e
 set -u

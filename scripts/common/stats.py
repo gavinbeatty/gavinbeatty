@@ -4,17 +4,11 @@ from __future__ import unicode_literals
 import codecs
 import collections
 import datetime
+import io
 import itertools
 import locale
 import math
 import sys
-
-
-DEFAULT_ENCODING = locale.getdefaultlocale()[1]
-
-
-def from_locale(s):
-    return codecs.decode(s, DEFAULT_ENCODING, 'strict')
 
 
 def identity(x):
@@ -23,19 +17,17 @@ def identity(x):
 
 if sys.version_info[0] < 3:
     unistr = unicode
-    from_stdin = from_locale
+    def unifile(fobj, encoding='utf_8'):
+        return io.open(sys.stdin.fileno(), 'rt', encoding=encoding)
     def viewitems(d, **kwargs):
         return d.viewitems(**kwargs)
-    def get_argv():
-        return [from_locale(s) for s in sys.argv]
 else:
     unistr = str
     long = int
-    from_stdin = identity
+    def unifile(fobj, encoding='utf_8'):
+        return io.TextIOWrapper(sys.stdin.buffer, encoding=encoding)
     def viewitems(d, **kwargs):
         return d.items(**kwargs)
-    def get_argv():
-        return sys.argv[:]
 
 
 def number(s):
@@ -69,18 +61,18 @@ def categorize_kind(s, kinds):
     raise RuntimeError('no kind for {!r}: tried {!r}'.format(s, list(viewitems(kinds))))
 
 
-def main(argv):
+def main():
     kinds = collections.OrderedDict()
     kinds['timestamp'] = (timestamp, datetime.time.isoformat)
     kinds['number'] = (number, unistr)
     kinds['identity'] = (identity, unistr)
     values = []
     count = 0
-    stdiniter = iter(sys.stdin)
+    stdiniter = iter(unifile(sys.stdin))
     line = next(stdiniter, None)
     if line is None:
         return
-    line = from_stdin(line).rstrip()
+    line = line.rstrip()
     split = line.split(',')
     head, tail = split[0], split[1:]
     kind, value = categorize_kind(head, kinds)
@@ -89,7 +81,7 @@ def main(argv):
     count += 1
     print('kind:', kind)
     for line in stdiniter:
-        line = from_stdin(line).rstrip()
+        line = line.rstrip()
         split = line.split(',')
         head, tail = split[0], split[1:]
         value = conv(head)
@@ -104,8 +96,12 @@ def main(argv):
         print('{:.02f}ile: {}'.format(p, ','.join(itertools.chain((fmt(value),), tail))))
     if kind in {'number'}:
         total = math.fsum(x[0] for x in values)
-        print('mean:', fmt(total / count))
+        mean = total / count
+        print('mean:', fmt(mean))
+        if count > 1:
+            stddev = math.sqrt(math.fsum((xi - mean) ** 2 for xi, tail in values) / (count - 1))
+            print('stddev:', fmt(stddev))
 
 
 if __name__ == '__main__':
-    main(get_argv())
+    main()
