@@ -79,10 +79,6 @@ install-mailcap: $(DESTDIR)$(HOME) mailcap
 	$(INSTALL_DATA) mailcap $(DESTDIR)$(HOME)/.mailcap
 .PHONY: install-mailcap
 
-install-msmtprc: $(DESTDIR)$(HOME) .msmtprc
-	$(INSTALL_DATA_PRIV) .msmtprc $(DESTDIR)$(HOME)/.msmtprc
-.PHONY: install-msmtprc
-
 install-muttrc: $(DESTDIR)$(HOME) muttrc muttrc.color muttrc.color-dark
 	$(INSTALL_DATA) muttrc $(DESTDIR)$(HOME)/.muttrc
 	$(INSTALL_DATA) muttrc.color $(DESTDIR)$(HOME)/.muttrc.color
@@ -138,6 +134,6 @@ install-colordiffrc: $(DESTDIR)$(HOME) colordiffrc
 	$(INSTALL_DATA) colordiffrc $(DESTDIR)$(HOME)/.colordiffrc
 .PHONY: install-colordiffrc
 
-install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-msmtprc install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimftplugin install-vimspell install-colordiffrc
+install: install-ackrc install-venv install-zshrc install-bashrc install-clang-format install-devscripts install-gemrc install-ghcconfig install-gitconfig install-hgrc install-mailcap install-muttrc install-ocamlinit install-screenrc install-ssh_config install-tmux_conf install-nvim-init install-vimrc install-vimftplugin install-vimspell install-colordiffrc
 .PHONY: install
 
