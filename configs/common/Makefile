@@ -12,11 +12,7 @@ TOUCH ?= touch
 AWK ?= awk
 CAT ?= cat
 VIMUNDER ?= .
-ifeq ($(LOCALAPPDATA),)
 XDG_CONFIG_HOME ?= $(HOME)/.config
-else
-XDG_CONFIG_HOME ?= $(LOCALAPPDATA)
-endif
 
 DESTDIR ?=
 
@@ -111,8 +107,6 @@ install-nvim-init: $(DESTDIR)$(HOME) nvim-init.vim
 
 install-vimrc: $(DESTDIR)$(HOME) vimrc.vim
 	$(INSTALL_DATA) vimrc.vim $(DESTDIR)$(HOME)/$(VIMUNDER)vimrc
-	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.pre.vim
-	$(TOUCH) $(DESTDIR)$(HOME)/.vimrc.post.vim
 .PHONY: install-vimrc
 
 install-vimftplugin: $(DESTDIR)$(HOME) vim/ftplugin/cpp.vim vim/ftplugin/cs.vim vim/ftplugin/haskell.vim vim/ftplugin/txt.vim vim/ftplugin/xml.vim

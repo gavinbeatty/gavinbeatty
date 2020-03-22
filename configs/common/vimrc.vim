@@ -1,12 +1,29 @@
 " vi: set fenc=utf-8 sw=2 ts=2:
 set nocompatible
+set encoding=utf-8
 scriptencoding utf-8
-let s:is_windows = has('win32') || has('win64') || has('win32unix')
-let s:is_cygwin = s:is_windows && executable('uname') && system('uname') =~? 'cygwin'
-let s:is_msys = s:is_windows && executable('uname') && system('uname') =~? '^MSYS_NT'
-let s:is_macvim = has('gui_macvim')
-let s:is_mac = s:is_macvim || (has('mac') || has('macunix') || (!executable('xdg-open') && executable('uname') && system('uname') =~? '^darwin'))
-source ~/.vimrc.pre.vim
+let s:is_purewin = has('win32') || has('win64')
+let s:is_fakewin = has('win32unix')
+let s:is_windows = s:is_purewin || s:is_fakewin
+if has('nvim')
+  fu! s:StdPath(p)
+    return stdpath(a:p)
+  endf
+else
+  if s:is_purewin
+    let s:vimfiles = expand('~/vimfiles')
+  else
+    let s:vimfiles = expand('~/.vim')
+  endif
+  fu! s:StdPath(p)
+    if a:p == 'config' || a:p == 'data' || a:p == 'cache'
+      return s:vimfiles
+    else
+      throw a:p.' is unsupported in vim emulation of stdpath()'
+    endif
+  endf
+endif
+call execute('source '.fnameescape(s:StdPath('config').'/pre.vim'),'silent!')
 if !exists('g:machine') | let g:machine = 'unknown' | endif
 if !exists('g:cpp_expandtab') | let g:cpp_expandtab = 1 | endif
 if !exists('g:cpp_textwidth') | let g:cpp_textwidth = 100 | endif
@@ -19,41 +36,45 @@ if !exists('g:min') | let g:min = g:none | endif
 " `vim --cmd 'let g:justdein=1' ...` to disable all plugins at startup, except dein.
 if !exists('g:justdein') | let g:justdein = 0 | endif
 
-let &tags = getcwd().'/tags,'
-set nocscopeverbose
-exec 'cscope add '.fnameescape(getcwd().'/cscope.out')
-set cscopeverbose
-for j in ["Jamroot.jam", "Jamroot", "project-root.jam"]
-  if findfile(j, ",") == j
-    set makeprg=bj.bash
-  endif
-endfor
+" Need a ctags rethink.
+"let &tags = getcwd().'/tags,'
+"set nocscopeverbose
+"exec 'cscope add '.fnameescape(getcwd().'/cscope.out')
+"set cscopeverbose
+"for j in ["Jamroot.jam", "Jamroot", "project-root.jam"]
+"  if findfile(j, ",") == j
+"    set makeprg=bj.bash
+"  endif
+"endfor
 
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
 " I leave them here, even though I now use dein.
 filetype on
 filetype off
-if s:is_windows | set rtp+=~/.vim | endif
-let g:make = 'gmake'
-if executable('uname') && system('uname -o') =~ '^GNU/' | let g:make = 'make' | endif
-let s:dein_loaded = 0
+" Find a way to stop using vimproc to get rid of this logic.
+if executable('gmake')
+  let g:make = 'gmake'
+elseif executable('C:/msys64/mingw64/bin/mingw32-make.exe')
+  let g:make = 'C:/msys64/mingw64/bin/mingw32-make.exe'
+elseif executable('C:/msys64/mingw32/bin/mingw32-make.exe')
+  let g:make = 'C:/msys64/mingw32/bin/mingw32-make.exe'
+else
+  let g:make = 'make'
+endif
+let s:deinadding = 0
 let s:deinif = 0
 let s:minif = 0
-if !g:none
-  if has('nvim')
-    " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.nvim/dein/repos/github.com/Shougo/dein.vim`
-    set rtp+=~/.nvim/dein/repos/github.com/Shougo/dein.vim
-    let s:deindir = expand('~/.nvim/dein')
-  else
-    " To install dein, `git clone https://github.com/Shougo/dein.vim ~/.vim/dein/repos/github.com/Shougo/dein.vim`
-    set rtp+=~/.vim/dein/repos/github.com/Shougo/dein.vim
-    let s:deindir = expand('~/.vim/dein')
-  endif
+let s:deindir = s:StdPath('config').'/dein'
+let s:deinrepodir = s:deindir.'/repos/github.com/Shougo/dein.vim'
+if !filereadable(s:deinrepodir.'/autoload/dein.vim')
+  autocmd VimEnter * echomsg 'git clone -b 1.5 --single-branch https://github.com/Shougo/dein.vim '.shellescape(s:deinrepodir).''
+elseif !g:none
+  let &rtp.=','.fnameescape(s:deinrepodir)
   if dein#load_state(s:deindir)
-    let s:dein_loaded = 1
+    let s:deinadding = 1
     call dein#begin(s:deindir)
-    call dein#add('Shougo/dein.vim')
+    call dein#add(s:deinrepodir, {'rev': '1.5'})
     if g:justdein
       let s:deinif = 0
       let s:minif = 0
@@ -77,7 +98,7 @@ if !g:none
     call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki'], 'if': s:deinif})
     call dein#add('tpope/vim-markdown', {'on_ft': ['markdown'], 'if': s:deinif})
     call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp'], 'if': s:deinif})
-    call dein#add('iCyMind/NeoSolarized', {'if': s:deinif})
+    call dein#add('lifepillar/vim-solarized8', {'if': s:deinif})
     call dein#add('vim-airline/vim-airline', {'if': s:minif})
     call dein#add('vim-airline/vim-airline-themes', {'if': s:minif})
     call dein#add('tpope/vim-git', {'if': s:minif})
@@ -102,32 +123,30 @@ if !g:none
     call dein#add('tpope/vim-sleuth', {'if': s:minif})
     call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons', 'if': s:minif})
     " OCaml
-    if !g:min && executable('opam')
-      let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-      execute 'set rtp+='.g:opamshare.'/merlin/vim'
-      execute 'helptags '.g:opamshare.'/merlin/vim/doc'
-    endif
+    "if !g:min && executable('opam')
+    "  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+    "  execute 'set rtp+='.g:opamshare.'/merlin/vim'
+    "  execute 'helptags '.g:opamshare.'/merlin/vim/doc'
+    "endif
     " C++
-    if !g:min && s:is_mac && has('python')
-      python import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-      let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
-    elseif !g:min && s:is_mac && has('python3')
-      python3 import vim ; vim.vars['pyver'] = '.'.join(str(x) for x in sys.version_info[0:2])
-      let g:macportspy = fnameescape('/opt/local/Library/Frameworks/Python.framework/Versions/'.pyver.'/bin/python')
-    elseif !g:min
-      let g:macportspy = 'python'
-    endif
-    if !s:is_windows && (has('python') || has('python3'))
-      call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp'], 'if': s:minif})
-    endif
-    if has('python') || has('python3')
-      call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp'], 'if': s:minif})
-    endif
+    "if !g:min
+    "  if has('python3') && execute(':python3 import vim', 'silent!')
+    "    set pyx=3
+    "  elseif has('python') && execute(':python import vim', 'silent!')
+    "    set pyx=2
+    "  endif
+    "endif
+    "if !s:is_windows && (has('python') || has('python3'))
+    "  call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    "endif
+    "if has('python') || has('python3')
+    "  call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    "endif
     let g:clang_format#detect_style_file = 1
     call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']], 'if': s:minif})
     " Python
     call dein#add('nvie/vim-flake8', {'on_ft': ['python'], 'if': s:minif})
-    call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python'], 'if': s:minif})
+    "call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python'], 'if': s:minif})
     " Text
     call dein#add('elzr/vim-json', {'on_ft': ['json'], 'if': s:minif})
     call dein#add('kana/vim-fakeclip', {'if': s:minif})
@@ -156,13 +175,10 @@ if !g:none
           \ 'if': s:minif && has('gui_running'),
           \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']],
           \ })
-    call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb'], 'if': s:minif})
+    "call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb'], 'if': s:minif})
     call dein#add('thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)', 'if': s:minif})
     call dein#end()
     "call dein#save_state()  " Breaks colorscheme on second run of vim.
-    "if dein#check_install()
-    "  call dein#install()
-    "endif
   endif
 endif
 
@@ -171,7 +187,6 @@ highlight DiffAdd ctermfg=0 ctermbg=2 guibg='green'
 highlight DiffDelete ctermfg=0 ctermbg=1 guibg='red'
 highlight DiffChange ctermfg=0 ctermbg=3 guibg='yellow'
 if &term =~ '256'
-  let g:solarized_termcolors=256
   set t_Co=256
   set termguicolors
   set t_8f=[38;2;%lu;%lu;%lum
@@ -180,10 +195,14 @@ endif
 set background=dark
 " See :h filetype-overview
 filetype plugin indent on
-if s:deinif && (!s:is_windows || s:is_cygwin || s:is_msys)
-  colorscheme NeoSolarized
-else
+if s:is_purewin
   colorscheme slate
+else
+  try
+    silent! colorscheme solarized8_flat
+  catch /.*/
+    colorscheme slate
+  endtry
 endif
 set nonumber
 set expandtab
@@ -195,7 +214,7 @@ set matchpairs+=<:>
 set noshowmatch
 set completeopt=menuone,longest
 set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
-set nolist
+set list
 " Don't automatically format text as it's typed.
 set formatoptions-=t
 if v:version > 703 || v:version == 703 && has("patch541")
@@ -230,10 +249,8 @@ set wildignore+=*/.git*,*/.hg/*,*/.svn/*,*/.bzr/*,*/.idea/*,*/.DS_Store
 set wildmenu
 set printoptions=paper:a4
 set ttyfast
-set novisualbell
-set noerrorbells
-" Workaround to get rid of audible bell, that doesn't actually enable visual bell.
-if s:is_macvim | set visualbell | endif
+" Turn off audio bells (by enabling visual) and disable visual effect.
+set noerrorbells visualbell t_vb=
 " Sync with OS clipboard outside tmux.
 if exists('$TMUX') | set clipboard=
 else | set clipboard=unnamed
@@ -243,16 +260,18 @@ else | au BufEnter * sil! lcd fnameescape(expand('%:p:h'))
 endif
 if s:is_windows && has('+shellslash') | set shellslash | endif
 
-fu! EnsureDirExists(path)
+fu! s:EnsureDirExists(path)
   sil! call mkdir(expand(a:path), 'p')
 endf
-if exists('+undofile') | set undofile | set undodir=~/.vim/.cache/undo | endif
-set backupdir=~/.vim/.cache/backup
-set directory=~/.vim/.cache/swap
-call EnsureDirExists(&undodir)
-call EnsureDirExists(&backupdir)
-call EnsureDirExists(&directory)
-if s:is_windows && !(s:is_cygwin || s:is_msys) | set shell=c:/windows/system32/cmd.exe | endif
+if !has('nvim')
+  if exists('+undofile') | set undofile | let &undodir=s:StdPath('data').'/undo' | endif
+  let &backupdir=s:StdPath('data').'/backup'
+  let &directory=s:StdPath('data').'/swap'
+  call s:EnsureDirExists(&undodir)
+  call s:EnsureDirExists(&backupdir)
+  call s:EnsureDirExists(&directory)
+  if s:is_purewin | let &shell=$SystemRoot.'/system32/cmd.exe' | endif
+endif
 
 if has('multi_byte')
   " Quotation dash.
@@ -291,22 +310,22 @@ if has('gui_running')
   let g:font = 'Bitstream\ Vera\ Sans\ Mono'
   "let g:font = 'Monospace'
   let g:fontpt = 10
-  fu! SetFont()
+  fu! s:SetFont()
     let &guifont=g:font.' '.g:fontpt
   endf
-  fu! IncrFontPt()
+  fu! s:IncrFontPt()
     let g:fontpt = g:fontpt + 1
-    call SetFont()
+    call s:SetFont()
   endf
-  fu! DecrFontPt()
+  fu! s:DecrFontPt()
     let g:fontpt = g:fontpt - 1
-    call SetFont()
+    call s:SetFont()
   endf
-  call SetFont()
+  call s:SetFont()
   " hold right click for the usual kind of menu
   set mousemodel=popup
-  nnoremap <leader>fi :call IncrFontPt()<CR>
-  nnoremap <leader>fd :call DecrFontPt()<CR>
+  nnoremap <leader>fi :call s:IncrFontPt()<CR>
+  nnoremap <leader>fd :call s:DecrFontPt()<CR>
 endif
 
 if !exists('s:OneBigAugroup')
@@ -354,12 +373,12 @@ if executable('opam') && !exists('s:ocamlextras_loaded')
   augroup end
 endif
 
-fu! AutoGitCommit(filename)
+fu! s:AutoGitCommit(filename)
   execute 'sil! !git commit -m autocommit\ '.fnameescape(fnamemodify(a:filename, ':p:t')).' '.fnameescape(a:filename)
 endf
 " Could be used in conjunction with set autowriteall
 command! -nargs=0 -complete=file AutoGitCommitWrites
-      \ au BufWritePost <args> call AutoGitCommit(expand('%:t:p'))
+      \ au BufWritePost <args> call s:AutoGitCommit(expand('%:t:p'))
 command! WUtf8 setlocal fenc=utf-8 nobomb
 command! WUtf16 setlocal fenc=ucs-2le
 command! -bang -complete=file -nargs=? WUnix
@@ -378,17 +397,6 @@ endif
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
 noremap Y y$
-fu! Home()
-  let curcol = wincol()
-  normal 0
-  let newcol = wincol()
-  if newcol == curcol
-    normal ^
-  endif
-endf
-" <HOME> toggles between start of line and start of text
-inoremap <silent> <home> <C-o>:call Home()<CR>
-nnoremap <silent> <home> :call Home()<CR>
 " Scroll left-right.
 nnoremap <C-l> zl
 nnoremap <C-h> zh
@@ -452,8 +460,8 @@ let g:delimitMate_matchpairs = "(:),[:],{:}"
 "let g:denite_enable_start_insert = 1
 let g:denite_source_history_yank_enable = 1
 let g:denite_source_rec_max_cache_files = 5000
-let g:denite_data_directory = '~/.vim/.cache/denite'
-call EnsureDirExists(g:denite_data_directory)
+let g:denite_data_directory = s:StdPath('data').'/denite'
+call s:EnsureDirExists(g:denite_data_directory)
 if exists('*denite#custom#profile')
   call denite#custom#profile('files', 'context.smartcase', 1)
 endif
@@ -508,14 +516,17 @@ let g:airline_theme = 'solarized'
 let g:airline_solarized_bg = 'dark'
 
 let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
-if s:is_cygwin
-  let g:startify_bookmarks = [{'c': '/cygdrive/c/work/gavinbeatty/configs/common/vimrc.vim'}]
-elseif s:is_msys
-  let g:startify_bookmarks = [{'c': '/c/work/gavinbeatty/configs/common/vimrc.vim'}]
-elseif s:is_windows
-  let g:startify_bookmarks = [{'c': 'c:/work/gavinbeatty/configs/common/vimrc.vim'}]
+if s:is_fakewin
+  let s:homedir = system('cygpath -u "$USERPROFILE" | tr -d \\n')
+  let g:startify_bookmarks = [
+    \ {'w': s:homedir.'/work'},
+    \ {'c': s:homedir.'/work/gavinbeatty/configs/common/vimrc.vim'},
+    \ ]
 else
-  let g:startify_bookmarks = [{'c': '~/work/gavinbeatty/configs/common/vimrc.vim'}]
+  let g:startify_bookmarks = [
+    \ {'w': expand('~/work')},
+    \ {'c': expand('~/work/gavinbeatty/configs/common/vimrc.vim')},
+    \ ]
 endif
 
 let g:syntastic_enable_highlighting = 1
@@ -524,7 +535,8 @@ let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
-nnoremap <leader>ks :exec 'sp '.s:deindir.'/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim'<CR>
-nnoremap <leader>kv :exec 'vs '.s:deindir.'/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim'<CR>
+let s:mathematic_vim_dir = fnameescape(s:deindir.'/repos/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim')
+nnoremap <leader>ks :exec 'sp '.s:mathematic_vim_dir<CR>
+nnoremap <leader>kv :exec 'vs '.s:mathematic_vim_dir<CR>
 
-source ~/.vimrc.post.vim
+call execute('source '.fnameescape(s:StdPath('config').'/post.vim'),'silent!')
