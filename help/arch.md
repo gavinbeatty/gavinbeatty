@@ -37,7 +37,8 @@ After installation, install the kernel, headers, and firmware. e.g.,
     timedatectl set-ntp true
     timedatectl set-timezone America/Chicago # list-timezones
     nano /etc/nsswitch.conf # Put "mdns_minimal [NOTFOUND=return]" before "resolve".
-    systemctl enable --now systemd-resolved
+    nano /etc/systemd/resolved.conf # Set DNS, uncomment MulticastDNS=yes, etc.
+    systemctl enable --now systemd-resolved # Do NOT use avahi-daemon.
     nano /etc/systemd/network/eth*.network /etc/systemd/network/wlan0.network # See *.network below.
     mv /boot/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
     chmod 0400 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
@@ -63,6 +64,7 @@ After installation, install the kernel, headers, and firmware. e.g.,
     pacman-key --init
     pacman-key --populate archlinuxarm
     pacman -Syu
+    pacman -S nss-mdns
     pacman -S vi tmux nvim git mosh zsh zsh-doc man sudo wget cmake make rsync
     pacman -S binutils fakeroot patch which # For AUR builds with makepkg.
     su -c 'visudo' # Uncomment the %wheel line to run all commands.
@@ -72,13 +74,29 @@ After installation, install the kernel, headers, and firmware. e.g.,
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     cd ~/.oh-my-zsh/custom/themes && git clone https://github.com/romkatv/powerlevel10k
 
+### DNS over TLS/HTTP
+
+    sudo pacman -S dnscrypt-proxy
+    sudo nvim /etc/dnscrypt-proxy/dnscrypt-proxy.toml # server_names
+    sudo nvim /etc/systemd/network/*.network /etc/systemd/resolved.conf # DNS=127.0.0.1, Cache=no, Fallback=1.1.1.1 8.8.8.8 etc.
+    sudo systemctl enable --now dnscrypt-proxy
+    sudo reboot
+
 ### mirage
 
-    pacman -S opam m4 gcc
+First time:
+
+    sudo pacman -S opam m4 gcc pkgconf
     opam init
+    eval $(opam env)
     opam update
     opam switch install 4.10.0 # Or something.
     opam install mirage
     git clone https://github.com/mirage/mirage-skeleton.git
+
+Subsequently:
+
+    eval $(opam env)
     cd mirage-skeleton/tutorial/hello && mirage configure -t hvt && make depend && make
+    solo5-hvt ./hello.hvt
 
