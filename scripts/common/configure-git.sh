@@ -115,6 +115,8 @@ Options:
                           $default_work_email.
  -E                     use name and email provided from the environment using
                           \$FULLNAME and \$EMAIL.
+ -U                     don't configure any user details
+ -M                     don't configure any mail details
  -g <git>               use the provided <git> instead of "git".
 EOF
 }
@@ -246,9 +248,10 @@ main() {
             getoptlongopts="-l help,verbose,dry-run,list,name:,email:,e-mail:"
             getoptlongopts="${getoptlongopts},work,environment,excludesfile:,sections:"
             getoptlongopts="${getoptlongopts},system,local,configfile:,git:"
+            getoptlongopts="${getoptlongopts},no-user,no-mail"
         fi
         e=0
-        local opts="$($getopt $getoptname -o "hvtLn:e:wEx:S:slf:g:" $getoptlongopts -- "$@")" || e=$?
+        local opts="$($getopt $getoptname -o "hvtLn:e:wEUMx:S:slf:g:" $getoptlongopts -- "$@")" || e=$?
         if test $e -ne 0 ; then exit 1 ; fi
         eval set -- "$opts"
 
@@ -262,6 +265,8 @@ main() {
                 -e|--email) email=$2 ; shift ;;
                 -w|--work) email=$default_work_email ;;
                 -E|--environment) environment=1 ; name="${FULLNAME:-$name}" ; email="${EMAIL:-$email}" ;;
+                -U|--no-user) sections="$(deref_sections "$sections" | grep -v '^user$')" ;;
+                -M|--no-mail) sections="$(deref_sections "$sections" | grep -v '^mail$')" ;;
                 -x|--excludesfile) excludesfile=$2 ; shift ;;
                 -S|--sections) sections=$2 ; shift ;;
                 -s|--system) configtype=--system ;;
@@ -292,7 +297,7 @@ main() {
     if test -n "$help" ; then help ; exit 0 ; fi
 
     if test -n "$list" ; then
-        echo "user,mail,core,interactive,pager,alias,diff,color,credential,tag"
+        all_sections | tr '\n' , | sed -e 's/,$//' ; echo
         exit 0
     fi
 
@@ -306,8 +311,7 @@ main() {
         die "git version ($git_version) >= $git_required_version_str is required"
     fi
 
-    sections=$(echo "$sections" | tr '[:upper:]' '[:lower:]' | sed -e 's/[ 	]*[,+|][ 	]*/ /g')
-    for sec in $sections ; do
+    for sec in $(deref_sections $sections) ; do
         case "$sec" in
         user) user_section ;;
         mail) mail_section ;;
@@ -319,20 +323,18 @@ main() {
         color) color_section ;;
         credential) credential_section ;;
         tag) tag_section ;;
-        all) user_section
-            mail_section
-            core_section
-            interactive_section
-            pager_section
-            alias_section
-            diff_section
-            color_section
-            credential_section
-            tag_section
-            ;;
-        *)
-            die "Unknown section: $sec"
-            ;;
+        *) die "Unknown section: $sec" ;;
+        esac
+    done
+}
+all_sections() {
+    printf %s\\n user mail core interactive pager alias diff color credential tag
+}
+deref_sections() {
+    for sec in $(printf %s\\n "$@" | tr 'A-Z' 'a-z' | sed -e 's/[ 	]*[,+|][ 	]*/ /g') ; do
+        case "$sec" in
+        all) all_sections ;;
+        *) printf %s\\n "$sec" ;;
         esac
     done
 }
