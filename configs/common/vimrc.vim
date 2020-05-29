@@ -5,181 +5,233 @@ scriptencoding utf-8
 let s:is_purewin = has('win32') || has('win64')
 let s:is_fakewin = has('win32unix')
 let s:is_windows = s:is_purewin || s:is_fakewin
-if has('nvim')
-  fu! s:StdPath(p)
-    return stdpath(a:p)
-  endf
+if s:is_purewin
+  let s:vimfiles = expand('~/vimfiles')
+  let s:vimrc = expand('~/_vimrc')
 else
-  if s:is_purewin
-    let s:vimfiles = expand('~/vimfiles')
-  else
-    let s:vimfiles = expand('~/.vim')
-  endif
-  fu! s:StdPath(p)
-    if a:p == 'config' || a:p == 'data' || a:p == 'cache'
-      return s:vimfiles
-    else
-      throw a:p.' is unsupported in vim emulation of stdpath()'
-    endif
-  endf
+  let s:vimfiles = expand('~/.vim')
+  let s:vimrc = expand('~/.vimrc')
 endif
-call execute('source '.fnameescape(s:StdPath('config').'/pre.vim'),'silent!')
+if has('nvim')
+  let s:nativefiles = stdpath('config')
+else
+  let s:nativefiles = s:vimfiles
+endif
+call execute('source '.fnameescape(s:vimfiles.'/pre.vim'),'silent!')
 if !exists('g:machine') | let g:machine = 'unknown' | endif
 if !exists('g:cpp_expandtab') | let g:cpp_expandtab = 1 | endif
 if !exists('g:cpp_textwidth') | let g:cpp_textwidth = 100 | endif
 if !exists('mapleader') | let mapleader = ',' | endif
 if !exists('g:mapleader') | let g:mapleader = ',' | endif
-" `vim --cmd 'let g:none=1' ...` to disable all plugins at startup, including dein.
+" `vim --cmd 'let g:none=1' ...` to disable all plugins at startup, including the plugin manager.
 if !exists('g:none') | let g:none = 0 | endif
 " `vim --cmd 'let g:min=1' ...` to disable many plugins at startup.
-if !exists('g:min') | let g:min = g:none | endif
-" `vim --cmd 'let g:justdein=1' ...` to disable all plugins at startup, except dein.
-if !exists('g:justdein') | let g:justdein = 0 | endif
+if !exists('g:min') | let g:min = 0 | endif
+" `vim --cmd 'let g:justpm=1' ...` to disable all plugins at startup, except the plugin manager.
+if !exists('g:justpm') | let g:justpm = 0 | endif
+" `vim --cmd 'let g:coc=0' ...` to disable just coc.nvim -- also disabled by g:min, etc.
+if !exists('g:coc') | let g:coc = 1 | endif
+" When using ext:asvetliakov.vscode-neovim in Visual Studio Code.
+if exists('g:vscode') | let g:none = 1 | endif
 
-" Need a ctags rethink.
-"let &tags = getcwd().'/tags,'
-"set nocscopeverbose
-"exec 'cscope add '.fnameescape(getcwd().'/cscope.out')
-"set cscopeverbose
-"for j in ["Jamroot.jam", "Jamroot", "project-root.jam"]
-"  if findfile(j, ",") == j
-"    set makeprg=bj.bash
-"  endif
-"endfor
+if g:none || g:justpm
+  let s:plugins_min = 0
+  let s:plugins_max = 0
+elseif g:min
+  let s:plugins_min = 1
+  let s:plugins_max = 0
+else
+  let s:plugins_min = 1
+  let s:plugins_max = 1
+endif
 
 " The below 2 filetype lines fix return code of vim on Mac OS X, when using pathogen.
 " http://andrewho.co.uk/weblog/vim-pathogen-with-mutt-and-git
-" I leave them here, even though I now use dein.
+" I leave them here, even though I now use a different plugin manager.
 filetype on
 filetype off
-" Find a way to stop using vimproc to get rid of this logic.
-if executable('gmake')
-  let g:make = 'gmake'
-elseif executable('C:/msys64/mingw64/bin/mingw32-make.exe')
-  let g:make = 'C:/msys64/mingw64/bin/mingw32-make.exe'
-elseif executable('C:/msys64/mingw32/bin/mingw32-make.exe')
-  let g:make = 'C:/msys64/mingw32/bin/mingw32-make.exe'
-else
-  let g:make = 'make'
-endif
-let s:deinadding = 0
-let s:deinif = 0
-let s:minif = 0
-let s:deindir = s:StdPath('config').'/dein'
-let s:deinrepodir = s:deindir.'/repos/github.com/Shougo/dein.vim'
-if !filereadable(s:deinrepodir.'/autoload/dein.vim')
-  autocmd VimEnter * echomsg 'git clone -b 1.5 --single-branch https://github.com/Shougo/dein.vim '.shellescape(s:deinrepodir).''
-elseif !g:none
-  let &rtp.=','.fnameescape(s:deinrepodir)
-  if dein#load_state(s:deindir)
-    let s:deinadding = 1
-    call dein#begin(s:deindir)
-    call dein#add(s:deinrepodir, {'rev': '1.5'})
-    if g:justdein
-      let s:deinif = 0
-      let s:minif = 0
-    elseif g:min
-      let s:deinif = 1
-      let s:minif = 0
+let s:plugvim = s:nativefiles.'/autoload/plug.vim'
+let s:plugged = s:vimfiles.'/plugged'
+if !g:none
+  if !filereadable(s:plugvim)
+    if s:is_purewin
+      if has('nvim')
+        echomsg 'Auto-downloading junegunn/vim-plug to ~/AppData/Local/nvim/autoload/plug.vim'
+        silent ! powershell -Command "
+          \   New-Item -Path ~\AppData\Local\nvim -Name autoload -Type Directory -Force;
+          \   Invoke-WebRequest
+          \   -Uri 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+          \   -OutFile ~\AppData\Local\nvim\autoload\plug.vim
+          \ "
+      else
+        echomsg 'Auto-downloading junegunn/vim-plug to ~/vimfiles/autoload/plug.vim'
+        silent ! powershell -Command "
+          \   New-Item -Path ~\vimfiles -Name autoload -Type Directory -Force;
+          \   Invoke-WebRequest
+          \   -Uri 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+          \   -OutFile ~\vimfiles\autoload\plug.vim
+          \ "
+      endif
     else
-      let s:deinif = 1
-      let s:minif = 1
+      if has('nvim')
+        echomsg 'Auto-downloading junegunn/vim-plug to ~/.config/nvim/autoload/plug.vim'
+        silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      else
+        echomsg 'Auto-downloading junegunn/vim-plug to ~/.vim/autoload/plug.vim'
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      endif
     endif
-    " Dependencies
-    if !s:is_windows
-      call dein#add('Shougo/vimproc', {'build': g:make, 'if': s:deinif})
-      call dein#add('Shougo/vimshell', {'if': s:deinif})
+    if filereadable(s:plugvim)
+      autocmd VimEnter * PlugInstall --sync | execute 'source' fnameescape(s:vimrc)
+    else
+      echoerr 'Failed to auto-download junegunn/vim-plug'
     endif
-    call dein#add('def-lkb/vimbufsync', {'if': s:deinif})
-    call dein#add('tpope/vim-repeat', {'if': s:deinif})
-    " Syntax
-    call dein#add('jstrater/mpvim', {'on_ft': ['portfile'], 'if': s:deinif})
-    call dein#add('grisumbras/vim-b2', {'on_ft': ['bbv2'], 'if': s:deinif})
-    call dein#add('chikamichi/mediawiki.vim', {'on_ft': ['mediawiki'], 'if': s:deinif})
-    call dein#add('tpope/vim-markdown', {'on_ft': ['markdown'], 'if': s:deinif})
-    call dein#add('vim-jp/cpp-vim', {'on_ft': ['cpp'], 'if': s:deinif})
-    call dein#add('lifepillar/vim-solarized8', {'if': s:deinif})
-    call dein#add('vim-airline/vim-airline', {'if': s:minif})
-    call dein#add('vim-airline/vim-airline-themes', {'if': s:minif})
-    call dein#add('tpope/vim-git', {'if': s:minif})
-    call dein#add('rhysd/committia.vim', {'if': s:minif})
-    " Math
-    call dein#add('gu-fan/mathematic.vim', {'if': s:deinif})
-    call dein#add('gavinbeatty/vmath.vim', {'if': s:deinif})
-    " Programming
+  endif
+  " let g:plug_shallow = 0
+  call plug#begin(s:plugged)
+  if s:plugins_max
+    " Collection of heuristics to help quickly detect modifications in vim buffers.
+    Plug 'def-lkb/vimbufsync'
+    " Enable repeating supported plugin maps with '.'.
+    Plug 'tpope/vim-repeat'
+  " Syntax
+    Plug 'jstrater/mpvim', {'for': ['portfile']}  " MacPorts
+    Plug 'grisumbras/vim-b2', {'for': ['bbv2']}   " Boost.Build
+    Plug 'chikamichi/mediawiki.vim', {'for': ['mediawiki']}
+    Plug 'tpope/vim-markdown', {'for': ['markdown']}
+    Plug 'vim-jp/cpp-vim', {'for': ['cpp']}
+  endif
+  if s:plugins_min
+    Plug 'tpope/vim-git'  " Just syntax, format options, etc.
+  " Pretty
+    " Lean & mean status/tabline for vim that's light as air.
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+  endif
+  if s:plugins_max
+    " Optimized Solarized colorschemes. Best served with true-color terminals!
+    Plug 'lifepillar/vim-solarized8'
+  " Math
+    " Mathematic symbols, e.g., \neq => ≠.
+    Plug 'gu-fan/mathematic.vim'
+    " Math on visual regions (sum, median, etc.).
+    Plug 'EvanQuan/vmath-plus'
+  " Programming
+
+    if g:coc && v:version >= 800
+      " Intellisense engine for Vim8 & Neovim, full language server protocol support as VSCode.
+      "Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    endif
+    " Show git status and diff when editing commit msg
+    Plug 'rhysd/committia.vim'
     let g:indentLine_setColors = 0
     let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-    call dein#add('Yggdroot/indentLine', {'if': s:deinif})
-    call dein#add('bogado/file-line', {'if': s:deinif})
-    call dein#add('vim-scripts/FSwitch', {'if': s:deinif})
-    call dein#add('MarcWeber/vim-addon-local-vimrc', {'if': s:deinif})
-    call dein#add('Shougo/denite.nvim', {'if': s:minif})
-    call dein#add('chazy/cscope_maps', {'if': s:deinif})
-    call dein#add('tpope/vim-dispatch', {'if': s:deinif})
-    call dein#add('kana/vim-operator-user', {'if': s:minif})
-    call dein#add('tpope/vim-endwise', {'if': s:minif})
-    call dein#add('scrooloose/syntastic', {'if': s:minif})
-    call dein#add('scrooloose/nerdcommenter', {'if': s:minif})
-    call dein#add('tpope/vim-sleuth', {'if': s:minif})
-    call dein#add('gavinbeatty/rainbow_parentheses.vim', {'rev': 'bugfix/toggle-all-chevrons', 'if': s:minif})
-    " OCaml
-    "if !g:min && executable('opam')
+    " Display the indention levels with thin vertical lines.
+    Plug 'Yggdroot/indentLine'
+    " Open a file on a given line, e.g., file.txt:20
+    Plug 'bogado/file-line'
+    " Switch between companion source files, e.g., h and cpp.
+    Plug 'derekwyatt/vim-fswitch'
+    " KISS local vimrc with hash protection.
+    Plug 'MarcWeber/vim-addon-local-vimrc'
+    " cscope keyboard mappings.
+    Plug 'chazy/cscope_maps'
+    "Plug 'tpope/vim-dispatch'
+    " Syntax checking hacks for vim.
+    Plug 'vim-syntastic/syntastic'
+  endif
+  if s:plugins_min
+    " Define your own operator easily.
+    Plug 'kana/vim-operator-user'
+    " wisely add 'end' in ruby, endfunction/endif/more in vim script, etc.
+    Plug 'tpope/vim-endwise'
+    " Intensely nerdy commenting powers.
+    Plug 'preservim/nerdcommenter'
+    " Heuristically set buffer options.
+    Plug 'tpope/vim-sleuth'
+    " Better Rainbow Parentheses.
+    Plug 'gavinbeatty/rainbow_parentheses.vim', {'branch': 'bugfix/toggle-all-chevrons'}
+  endif
+  if s:plugins_max
+  " OCaml
+    "if executable('opam')
     "  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
     "  execute 'set rtp+='.g:opamshare.'/merlin/vim'
     "  execute 'helptags '.g:opamshare.'/merlin/vim/doc'
     "endif
-    " C++
-    "if !g:min
-    "  if has('python3') && execute(':python3 import vim', 'silent!')
-    "    set pyx=3
-    "  elseif has('python') && execute(':python import vim', 'silent!')
-    "    set pyx=2
-    "  endif
+  " C++
+    "if has('python3') && execute(':python3 import vim', 'silent!')
+    "  set pyx=3
+    "elseif has('python') && execute(':python import vim', 'silent!')
+    "  set pyx=2
     "endif
     "if !s:is_windows && (has('python') || has('python3'))
-    "  call dein#add('lyuts/vim-rtags', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    "  Plug 'lyuts/vim-rtags', {'for': ['c', 'cpp']}
     "endif
     "if has('python') || has('python3')
-    "  call dein#add('bbchung/clighter8', {'on_ft': ['c', 'cpp'], 'if': s:minif})
+    "  Plug 'bbchung/clighter8', {'for': ['c', 'cpp']}
     "endif
+  endif
+  if s:plugins_min
     let g:clang_format#detect_style_file = 1
-    call dein#add('rhysd/vim-clang-format', {'on_ft': ['c', 'cpp'], 'on_map': [['n', '<Plug>(operator-clang-format)']], 'if': s:minif})
-    " Python
-    call dein#add('nvie/vim-flake8', {'on_ft': ['python'], 'if': s:minif})
-    "call dein#add('ehamberg/vim-cute-python', {'on_ft': ['python'], 'if': s:minif})
-    " Text
-    call dein#add('elzr/vim-json', {'on_ft': ['json'], 'if': s:minif})
-    call dein#add('kana/vim-fakeclip', {'if': s:minif})
-    call dein#add('godlygeek/tabular', {'if': s:minif})
-    call dein#add('tpope/vim-surround', {'if': s:minif})
-    call dein#add('Lokaltog/vim-easymotion', {'if': s:minif})
-    call dein#add('zirrostig/vim-schlepp', {'if': s:minif})
-    call dein#add('gavinbeatty/hudigraphs_utf8.vim', {'if': s:minif})
-    call dein#add('gavinbeatty/hlnext.vim', {'if': s:minif})
-    let wiki = {}
-    let wiki.path = '~/vimwiki/'
-    let wiki.syntax = 'markdown'
-    let wiki.ext = '.mkd'
-    let wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
-    let g:vimwiki_list = [wiki]
+    Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp'], 'on': ['<Plug>(operator-clang-format)']}
+  " Python
+    "Plug 'ehamberg/vim-cute-python', {'for': ['python']}  " A bit too cute
+  " Text
+    Plug 'elzr/vim-json', {'for': ['json']}
+    "Plug 'kana/vim-fakeclip'  " Don't see the point
+    Plug 'godlygeek/tabular'
+    " quoting/parenthesizing made simple.
+    Plug 'tpope/vim-surround'
+    Plug 'Lokaltog/vim-easymotion'
+    Plug 'zirrostig/vim-schlepp'
+    Plug 'gavinbeatty/hudigraphs_utf8.vim'
+    Plug 'gavinbeatty/hlnext.vim'
+    let s:wiki = {}
+    if s:is_fakewin
+      let s:homedir = system('cygpath -u "$USERPROFILE" | tr -d \\n')
+      let s:wiki.path = s:homedir.'/work/gavinbeatty/wiki/'
+    else
+      let s:wiki.path = expand('~/work/gavinbeatty/wiki/')
+    endif
+    let s:wiki.syntax = 'markdown'
+    let s:wiki.ext = '.mkd'
+    let s:wiki.nested_syntaxes = {'python': 'python', 'cpp': 'cpp', 'csharp': 'cs'}
+    let g:vimwiki_list = [s:wiki]
     let g:vimwiki_hl_headers = 1
     let g:vimwiki_hl_cb_checked = 1
-    call dein#add('vimwiki/vimwiki', {'if': s:minif})
-    " Files
-    call dein#add('mhinz/vim-startify', {'if': s:minif})
-    call dein#add('jamessan/vim-gnupg', {'if': s:minif})
-    call dein#add('gmarik/sudo-gui.vim', {'if': s:minif})
-    call dein#add('regedarek/vim-bufexplorer', {'if': s:minif})
-    " Optional
-    call dein#add('thinca/vim-fontzoom', {
-          \ 'if': s:minif && has('gui_running'),
-          \ 'on_map': [['n', '<Plug>(fontzoom-larger)'], ['n', '<Plug>(fontzoom-smaller)']],
-          \ })
-    "call dein#add('vim-scripts/Conque-GDB', {'on_cmd': ['ConqueTerm', 'ConqueGdb'], 'if': s:minif})
-    call dein#add('thinca/vim-quickrun', {'on_map': '<Plug>(quickrun)', 'if': s:minif})
-    call dein#end()
-    "call dein#save_state()  " Breaks colorscheme on second run of vim.
+    Plug 'vimwiki/vimwiki'
+  " Files
+    let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
+    if s:is_fakewin
+      let s:homedir = system('cygpath -u "$USERPROFILE" | tr -d \\n')
+      let g:startify_bookmarks = [
+        \ {'w': s:homedir.'/work'},
+        \ {'c': s:homedir.'/work/gavinbeatty/configs/common/vimrc.vim'},
+        \ ]
+    else
+      let g:startify_bookmarks = [
+        \ {'w': expand('~/work')},
+        \ {'c': expand('~/work/gavinbeatty/configs/common/vimrc.vim')},
+        \ ]
+    endif
   endif
+  if s:plugins_max
+    Plug 'mhinz/vim-startify'
+  endif
+  if s:plugins_min
+    "let g:GPGPreferArmor = 1
+    "Plug 'jamessan/vim-gnupg'  " Useful?
+    " Quickly and easily switch between buffers (\be, etc.).
+    Plug 'jlanzarotta/bufexplorer'
+    if has('gui_running')
+      " The fontsize controller in gVim (+, <C-ScrollWheelUp>, etc.).
+      Plug 'thinca/vim-fontzoom', {'on': ['<Plug>(fontzoom-larger)', '<Plug>(fontzoom-smaller)']}
+    endif
+  endif
+  call plug#end()
 endif
 
 syntax enable
@@ -217,7 +269,7 @@ set listchars=nbsp:~,tab:»\ ,precedes:←,extends:→,trail:·
 set list
 " Don't automatically format text as it's typed.
 set formatoptions-=t
-if v:version > 703 || v:version == 703 && has("patch541")
+if v:version > 703 || (v:version == 703 && has('patch541'))
   " Delete comment character when joining commented lines
   set formatoptions+=j
 endif
@@ -264,14 +316,28 @@ fu! s:EnsureDirExists(path)
   sil! call mkdir(expand(a:path), 'p')
 endf
 if !has('nvim')
-  if exists('+undofile') | set undofile | let &undodir=s:StdPath('data').'/undo' | endif
-  let &backupdir=s:StdPath('data').'/backup'
-  let &directory=s:StdPath('data').'/swap'
+  if exists('+undofile') | set undofile | let &undodir=s:vimfiles.'/undo' | endif
+  let &backupdir=s:vimfiles.'/backup'
+  let &directory=s:vimfiles.'/swap'
   call s:EnsureDirExists(&undodir)
   call s:EnsureDirExists(&backupdir)
   call s:EnsureDirExists(&directory)
-  if s:is_purewin | let &shell=$SystemRoot.'/system32/cmd.exe' | endif
 endif
+
+"if s:is_purewin
+"  let s:pwshexe = ''
+"  if executable('pwsh.exe')
+"    let s:pwshexe = 'pwsh.exe'
+"  elseif executable('powershell.exe')
+"    let s:pwshexe = 'powershell.exe'
+"  endif
+"  if !empty(s:pwshexe)
+"    let &shell=s:pwshexe
+"    set shellquote=( shellpipe=\| shellxquote=
+"    set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
+"    set shellredir=\|\ Out-File\ -Encoding\ UTF8
+"  endif
+"endif
 
 if has('multi_byte')
   " Quotation dash.
@@ -300,6 +366,148 @@ set statusline+=\ [%{getcwd()}]          " current dir
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
 " My original: set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
 set shortmess+=r
+
+if exists('*coc#refresh')
+  set hidden
+  set nobackup
+  set nowritebackup
+  set cmdheight=2
+  set updatetime=300
+  set shortmess+=c
+  set signcolumn=yes
+
+  " Use tab for trigger completion with characters ahead and navigate.
+  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+  " other plugin before putting this into your config.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? '\<C-n>' :
+        \ <SID>check_back_space() ? '\<TAB>' :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> pumvisible() ? '\<C-p>' : '\<C-h>'
+
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  " Use <c-space> to trigger completion.
+  inoremap <silent><expr> <c-space> coc#refresh()
+
+  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+  " position. Coc only does snippet and additional edit on confirm.
+  if has('patch8.1.1068')
+    " Use `complete_info` if your (Neo)Vim version supports it.
+    inoremap <expr> <cr> complete_info()['selected'] != '-1' ? '\<C-y>' : '\<C-g>u\<CR>'
+  else
+    imap <expr> <cr> pumvisible() ? '\<C-y>' : '\<C-g>u\<CR>'
+  endif
+
+  " Use `[g` and `]g` to navigate diagnostics
+  nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+  " GoTo code navigation.
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+
+  " Use K to show documentation in preview window.
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    else
+      call CocAction('doHover')
+    endif
+  endfunction
+
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+
+  " Symbol renaming.
+  nmap <leader>rn <Plug>(coc-rename)
+
+  " Formatting selected code.
+  xmap <leader>f  <Plug>(coc-format-selected)
+  nmap <leader>f  <Plug>(coc-format-selected)
+
+  augroup mygroup
+    autocmd!
+    " Setup formatexpr specified filetype(s).
+    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+    " Update signature help on jump placeholder.
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  augroup end
+
+  " Applying codeAction to the selected region.
+  " Example: `<leader>aap` for current paragraph
+  xmap <leader>a  <Plug>(coc-codeaction-selected)
+  nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+  " Remap keys for applying codeAction to the current line.
+  nmap <leader>ac  <Plug>(coc-codeaction)
+  " Apply AutoFix to problem on the current line.
+  nmap <leader>qf  <Plug>(coc-fix-current)
+
+  " Introduce function text object
+  " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+  xmap if <Plug>(coc-funcobj-i)
+  xmap af <Plug>(coc-funcobj-a)
+  omap if <Plug>(coc-funcobj-i)
+  omap af <Plug>(coc-funcobj-a)
+
+  " Use <TAB> for selections ranges.
+  " NOTE: Requires 'textDocument/selectionRange' support from the language server.
+  " coc-tsserver, coc-python are the examples of servers that support it.
+  nmap <silent> <TAB> <Plug>(coc-range-select)
+  xmap <silent> <TAB> <Plug>(coc-range-select)
+
+  " Add `:Format` command to format current buffer.
+  command! -nargs=0 Format :call CocAction('format')
+
+  " Add `:Fold` command to fold current buffer.
+  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+  " Add `:OR` command for organize imports of the current buffer.
+  command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+  " Add (Neo)Vim's native statusline support.
+  " NOTE: Please see `:h coc-status` for integrations with external plugins that
+  " provide custom statusline: lightline.vim, vim-airline.
+  set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+  " Mappings using CoCList:
+  " Show all diagnostics.
+  nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+  " Manage extensions.
+  nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+  " Show commands.
+  nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+  " Find symbol of current document.
+  nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+  " Search workspace symbols.
+  nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+  " Do default action for next item.
+  nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+  " Do default action for previous item.
+  nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+  " Resume latest coc list.
+  nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+endif
+
+if exists('*vmath_plus#report')
+  " Analyze
+  nmap <leader>ma <Plug>(vmath_plus#normal_analyze)
+  nmap <leader>mba <Plug>(vmath_plus#normal_analyze_buffer)
+  xmap <leader>ma <Plug>(vmath_plus#visual_analyze)
+  xmap <leader>mba <Plug>(vmath_plus#visual_analyze_buffer)
+  " Report
+  nmap <leader>mr <Plug>(vmath_plus#report)
+  nmap <leader>mbr <Plug>(vmath_plus#report_buffer)
+endif
+
 if has('gui_running')
   " remove toolbar
   set guioptions-=T
@@ -388,7 +596,7 @@ command! -bang -complete=file -nargs=? WDos
 command! -bang -complete=file -nargs=? WMac
       \ write<bang> ++fileformat=mac <args> | edit <args>
 " DiffOrig makes a diff with swap file and current version
-if !exists(":DiffOrig")
+if !exists(':DiffOrig')
   command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 endif
 
@@ -400,15 +608,20 @@ noremap Y y$
 " Scroll left-right.
 nnoremap <C-l> zl
 nnoremap <C-h> zh
-" Change cursor position in insert mode.
-inoremap <C-h> <left>
-inoremap <C-l> <right>
+if !has('nvim')
+  " At least in nvim on windows this breaks backspace in insert mode.
+  " The functionality already works without it, so ignore on nvim.
+  " Change cursor position in insert mode.
+  inoremap <C-h> <left>
+  inoremap <C-l> <right>
+endif
 " Remap arrow keys.
 nnoremap <down> :bprev<CR>
 nnoremap <up> :bnext<CR>
 nnoremap <left> :tabnext<CR>
 nnoremap <right> :tabprev<CR>
 
+" godlygeek/tabular
 nnoremap <leader>a= :Tabularize /=<CR>
 vnoremap <leader>a= :Tabularize /=<CR>
 nnoremap <leader>a: :Tabularize /:<CR>
@@ -440,63 +653,21 @@ nnoremap <leader>bi :copen<CR>
 
 nnoremap <leader>st :Startify<cr>
 
-" ("diff no") turn off diff mode and report the change
+" (diff no) turn off diff mode and report the change
 nnoremap <leader>dn :if &diff <Bar> diffoff <Bar> echo 'diffoff' <Bar> else <Bar> echo 'not in diff mode' <Bar> endif<CR>
-" ("diff obtain") do :diffget on range and report the change:
-" use "diff obtain" as that's what Vim itself uses for the non-range command: do
+" (diff obtain) do :diffget on range and report the change:
+" use diff obtain as that's what Vim itself uses for the non-range command: do
 vnoremap <leader>do :diffget <Bar> echo 'Left >>> Right'<CR>
-" ("diff put") do :diffput on range and report the change:
+" (diff put) do :diffput on range and report the change:
 vnoremap <leader>dp :diffput <Bar> echo 'Left <<< Right'<CR>
 
 nnoremap <leader>fs :FSHere<CR>
 nnoremap <leader>fv :FSSplitRight<CR>
 nnoremap <leader>fh :FSSplitAbove<CR>
-nnoremap <silent> <leader>vn :call Svndiff("next")<CR>
-nnoremap <silent> <leader>vp :call Svndiff("prev")<CR>
-nnoremap <silent> <leader>vc :call Svndiff("clear")<CR>
-let g:GPGPreferArmor = 1
-let g:delimitMate_matchpairs = "(:),[:],{:}"
-
-"let g:denite_enable_start_insert = 1
-let g:denite_source_history_yank_enable = 1
-let g:denite_source_rec_max_cache_files = 5000
-let g:denite_data_directory = s:StdPath('data').'/denite'
-call s:EnsureDirExists(g:denite_data_directory)
-if exists('*denite#custom#profile')
-  call denite#custom#profile('files', 'context.smartcase', 1)
-endif
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
-  set grepformat=%f:%l:%c:%m
-  let g:denite_source_grep_command = 'ag'
-  let g:denite_source_grep_default_opts = '--nogroup --column --smart-case --nocolor --follow -C4'
-  let g:denite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  set grepprg=ack\ --noheading\ -H\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
-  set grepformat=%f:%l:%c:%m
-  let g:denite_source_grep_command = 'ack'
-  let g:denite_source_grep_default_opts = '--noheading -H --nogroup --column --smart-case --nocolor --follow -a -C4'
-  let g:denite_source_grep_recursive_opt = ''
-endif
-if !g:min
-  if s:is_windows
-    nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec buffer file_mru bookmark<cr><c-u>
-    nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec<cr><c-u>
-  else
-    nnoremap <silent> <leader><space> :<C-u>Unite -toggle -auto-resize -buffer-name=mixed file_rec/async buffer file_mru bookmark<cr><c-u>
-    nnoremap <silent> <leader>uf :<C-u>Unite -toggle -auto-resize -buffer-name=files file_rec/async<cr><c-u>
-  endif
-  nnoremap <silent> <leader>uy :<C-u>Unite -buffer-name=yanks history/yank<cr>
-  nnoremap <silent> <leader>ul :<C-u>Unite -auto-resize -buffer-name=line line<cr>
-  nnoremap <silent> <leader>ub :<C-u>Unite -auto-resize -buffer-name=buffers buffer<cr>
-  nnoremap <silent> <leader>u/ :<C-u>Unite -no-quit -buffer-name=search grep:.<cr>
-  nnoremap <silent> <leader>um :<C-u>Unite -auto-resize -buffer-name=mappings mapping<cr>
-  nnoremap <silent> <leader>us :<C-u>Unite -quick-match buffer<cr>
-endif
-
-if !g:min && !s:is_windows
-  let g:OmniSharp_selector_ui = 'denite'
-endif
+nnoremap <silent> <leader>vn :call Svndiff('next')<CR>
+nnoremap <silent> <leader>vp :call Svndiff('prev')<CR>
+nnoremap <silent> <leader>vc :call Svndiff('clear')<CR>
+let g:delimitMate_matchpairs = '(:),[:],{:}'
 
 let g:haskell_autotags = 1
 let g:haskell_tabular = 1
@@ -515,28 +686,14 @@ let g:airline_extensions = []
 let g:airline_theme = 'solarized'
 let g:airline_solarized_bg = 'dark'
 
-let g:startify_list_order = ['bookmarks', 'files', 'dir', 'sessions']
-if s:is_fakewin
-  let s:homedir = system('cygpath -u "$USERPROFILE" | tr -d \\n')
-  let g:startify_bookmarks = [
-    \ {'w': s:homedir.'/work'},
-    \ {'c': s:homedir.'/work/gavinbeatty/configs/common/vimrc.vim'},
-    \ ]
-else
-  let g:startify_bookmarks = [
-    \ {'w': expand('~/work')},
-    \ {'c': expand('~/work/gavinbeatty/configs/common/vimrc.vim')},
-    \ ]
-endif
-
 let g:syntastic_enable_highlighting = 1
 "let g:syntastic_ignore_files = ['^/usr/include/', '/x_boost.*/', '^/opt/rh/devtoolset[^/]*/']
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 nnoremap <leader>km :set keymap=mathematic<CR>
 nnoremap <leader>kn :set keymap=<CR>
-let s:mathematic_vim_dir = fnameescape(s:deindir.'/repos/github.com/gu-fan/mathematic.vim/keymap/mathematic.vim')
+let s:mathematic_vim_dir = fnameescape(s:plugged.'/mathematic.vim/keymap/mathematic.vim')
 nnoremap <leader>ks :exec 'sp '.s:mathematic_vim_dir<CR>
 nnoremap <leader>kv :exec 'vs '.s:mathematic_vim_dir<CR>
 
-call execute('source '.fnameescape(s:StdPath('config').'/post.vim'),'silent!')
+call execute('source '.fnameescape(s:vimfiles.'/post.vim'),'silent!')
