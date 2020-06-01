@@ -36,9 +36,11 @@ After installation, install the kernel, headers, and firmware. e.g.,
     localectl # Should look good.
     timedatectl set-ntp true
     timedatectl set-timezone America/Chicago # list-timezones
+    nano /etc/sysctl.d/02-ipv6-disable.conf # ipv6.disable=1
     nano /etc/nsswitch.conf # Put "mdns_minimal [NOTFOUND=return]" before "resolve".
-    nano /etc/systemd/resolved.conf # Set DNS, uncomment MulticastDNS=yes, etc.
+    nano /etc/systemd/resolved.conf # Set DNS=1.1.1.1#1dot1dot1dot1.cloudflare-dns.com, DNSOverTLS=opportunistic, MulticastDNS=yes, etc.
     systemctl enable --now systemd-resolved # Do NOT use avahi-daemon.
+    nano /etc/systemd/networkd.conf # [Network] LinkLocalAddressing=ipv4 IPv6AcceptRA=false, [DHCP] UseDNS=false [IPv6AcceptRA] UseDNS=false
     nano /etc/systemd/network/eth*.network /etc/systemd/network/wlan0.network # See *.network below.
     mv /boot/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
     chmod 0400 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
@@ -51,13 +53,13 @@ After installation, install the kernel, headers, and firmware. e.g.,
     
     [Network]
     DHCP=ipv4
-    MulticastDNS=true
-    DNS=1.1.1.1
-    DNS=1.0.0.1
-    DNSSEC=no
+    IPv6AcceptRA=false
     
     [DHCP]
-    UseDNS=no
+    UseDNS=false
+    
+    [IPv6AcceptRA]
+    UseDNS=false
 
 ### pacman
 
@@ -73,14 +75,6 @@ After installation, install the kernel, headers, and firmware. e.g.,
     configure-git.sh -v # But edit ~/.gitconfig to remove all user & mail settings.
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     cd ~/.oh-my-zsh/custom/themes && git clone https://github.com/romkatv/powerlevel10k
-
-### DNS over TLS/HTTP
-
-    sudo pacman -S dnscrypt-proxy
-    sudo nvim /etc/dnscrypt-proxy/dnscrypt-proxy.toml # server_names
-    sudo nvim /etc/systemd/network/*.network /etc/systemd/resolved.conf # DNS=127.0.0.1, Cache=no, Fallback=1.1.1.1 8.8.8.8 etc.
-    sudo systemctl enable --now dnscrypt-proxy
-    sudo reboot
 
 ### mirage
 
