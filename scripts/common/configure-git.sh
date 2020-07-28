@@ -248,8 +248,7 @@ main() {
             getoptlongopts="${getoptlongopts},system,local,configfile:,git:"
         fi
         e=0
-        local opts="$($getopt $getoptname -o "hvtLn:e:wEx:S:slf:g:" $getoptlongopts -- "$@")" || e=$?
-        if test $e -ne 0 ; then exit 1 ; fi
+        opts="$($getopt $getoptname -o "hvtLn:e:wEx:S:slf:g:" $getoptlongopts -- "$@")" || exit 1
         eval set -- "$opts"
 
         while test $# -gt 0 ; do
