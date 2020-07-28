@@ -49,8 +49,6 @@ sections=${CONFIGURE_GIT_SECTIONS:-all}
 configfile=${CONFIGURE_GIT_CONFIGFILE:-}
 configtype=${CONFIGURE_GIT_CONFIGTYPE:---global}
 pager="${CONFIGURE_GIT_PAGER:-}"
-test -n "$pager" || pager="${GIT_PAGER:-}"
-test -n "$pager" || pager="${PAGER:-less}"
 git="${CONFIGURE_GIT_GIT:-git}"
 
 prog="configure-git.sh"
@@ -150,7 +148,7 @@ color_section() {
 diff_section() {
     gitconfig diff.colorMoved "default"
     gitconfig diff.colorMovedWS "allow-indentation-change"
-    if type icdiff >/dev/null 2>/dev/null ; then
+    if have icdiff ; then
         gitconfig diff.icdiff.cmd 'icdiff -H -N -U 10 --strip-trailing-cr $LOCAL $REMOTE | less'
     fi
     gitconfig diff.renameLimit "1000"
@@ -165,14 +163,21 @@ interactive_section() {
     gitconfig grep.lineNumber true
 }
 pager_section() {
-    if type "$pager" >/dev/null 2>/dev/null ; then
-        gitconfig core.pager "$pager"
-        if type diff-highlight >/dev/null 2>/dev/null ; then
-            gitconfig pager.diff "diff-highlight | $pager"
-            gitconfig pager.log "diff-highlight | $pager"
-            gitconfig pager.show "diff-highlight | $pager"
+    if test "${pager:-${GIT_PAGER:-delta}}" && have delta ; then
+        gitconfig core.pager delta
+        gitconfig delta.syntax-theme "Solarized (dark)"
+        gitconfig interactive.diffFilter "delta --color-only"
+    else
+        pager="${pager:-${GIT_PAGER:-less}}"
+        if have "$pager" ; then
+            gitconfig core.pager "$pager"
+            if have diff-highlight ; then
+                gitconfig pager.diff "diff-highlight | $pager"
+                gitconfig pager.log "diff-highlight | $pager"
+                gitconfig pager.show "diff-highlight | $pager"
+            fi
+            gitconfig pager.difftool "$pager"
         fi
-        gitconfig pager.difftool "$pager"
     fi
 }
 alias_section() {
