@@ -82,13 +82,9 @@ fi
 
 # User configuration
 
-# export MANPATH="/usr/local/man:$MANPATH"
 if test -d /opt/local ; then
     if ! printf %s\\n "${PATH:-}" | grep -Fq /opt/local/bin ; then
         export PATH="${PATH:+$PATH:}/opt/local/bin"
-    fi
-    if ! printf %s\\n "${PATH:-}" | grep -Fq /opt/local/man ; then
-        export MANPATH="${MANPATH:+$MANPATH:}/opt/local/man"
     fi
 fi
 
