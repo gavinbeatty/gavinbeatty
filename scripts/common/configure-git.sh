@@ -57,10 +57,15 @@ prog="configure-git.sh"
 
 say() { printf "%s\n" "$*" ; }
 die() { printf "error: %s\n" "$*" >&2 ; exit 1 ; }
+if test "$(printf %q\\n "1 2" 2>/dev/null || true)" = "1\\ 2" ; then
+    vsay() { say "verbose:$(printf \ %q "$@")" ; }
+else
+    vsay() { say "verbose: $*" ; }
+fi
 verbose() {
     if test "$verbose" -ge "$1" ; then
         shift
-        say "verbose: $*" >&2
+        vsay "$@" >&2
     fi
 }
 go() { test -n "$dryrun" || "$@" ; }
