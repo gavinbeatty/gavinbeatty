@@ -36,6 +36,7 @@ If there are errors regarding missing signatures, change `RemoveFileSigLevel = O
     timedatectl set-ntp true
     timedatectl set-timezone America/Chicago # list-timezones
     nano /etc/sysctl.d/02-ipv6-disable.conf # ipv6.disable=1
+    # Make sure system clock is synchronized if DNSSEC=true (i.e., if it's mandatory).
     nano /etc/systemd/resolved.conf # Set DNS=1.1.1.1#1dot1dot1dot1.cloudflare-dns.com, DNSSEC=allow-downgrade, DNSOverTLS=opportunistic, MulticastDNS=true, etc.
     systemctl enable --now systemd-resolved # Do NOT use avahi-daemon.
     nano /etc/nsswitch.conf # hosts: files mymachines resolve [!UNAVAIL=return] myhostname dns
