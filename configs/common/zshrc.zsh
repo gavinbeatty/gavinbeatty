@@ -82,7 +82,13 @@ fi
 
 # User configuration
 
-if test -d /opt/local ; then
+if test -d ~/.local/bin ; then
+    if ! printf %s\\n "${PATH:-}" | grep -Fq "$HOME/.local/bin" ; then
+        export PATH="$HOME/.local/bin${PATH:+:$PATH}"
+    fi
+fi
+
+if test -d /opt/local/bin ; then
     if ! printf %s\\n "${PATH:-}" | grep -Fq /opt/local/bin ; then
         export PATH="${PATH:+$PATH:}/opt/local/bin"
     fi
