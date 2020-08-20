@@ -159,7 +159,9 @@ core_section() {
     ! test -r "$excludesfile" || gitconfig core.excludesfile "$excludesfile"
     ! test -r "$attributesfile" || gitconfig core.attributesfile "$attributesfile"
     gitconfig push.default simple
+    gitconfig pull.rebase false
     gitconfig merge.defaultToUpstream true
+    gitconfig init.defaultBranch main
 }
 interactive_section() {
     gitconfig grep.lineNumber true
