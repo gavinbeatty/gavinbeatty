@@ -33,6 +33,8 @@ If there are errors regarding missing signatures, change `RemoveFileSigLevel = O
     nano /etc/locale.gen # Uncomment "en_US.UTF-8 UTF-8".
     locale-gen
     localectl # Should look good.
+    nano /etc/systemd/journald.conf # Set Storage=volatile, if /var/log/journal is an SD card.
+    systemctl force-reload systemd-journald
     timedatectl set-ntp true
     timedatectl set-timezone America/Chicago # list-timezones
     nano /etc/sysctl.d/02-ipv6-disable.conf # ipv6.disable=1
