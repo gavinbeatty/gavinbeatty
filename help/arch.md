@@ -41,6 +41,8 @@ If there are errors regarding missing signatures, change `RemoveFileSigLevel = O
     # Make sure system clock is synchronized if DNSSEC=true (i.e., if it's mandatory).
     nano /etc/systemd/resolved.conf # Set DNS=1.1.1.1#1dot1dot1dot1.cloudflare-dns.com, DNSSEC=allow-downgrade, DNSOverTLS=opportunistic, MulticastDNS=true, etc.
     systemctl enable --now systemd-resolved # Do NOT use avahi-daemon.
+    # On Manjaro where NetworkManager is used, disable per-connection DNS settings (from DHCP, etc.)
+    nano /etc/NetworkManager/NetworkManager.conf  # [main] dns=none, systemd-resolved=false
     nano /etc/nsswitch.conf # hosts: files mymachines resolve [!UNAVAIL=return] myhostname dns
     nano /etc/systemd/networkd.conf # [Network] LinkLocalAddressing=ipv4 IPv6AcceptRA=false, [DHCP] UseDNS=false [IPv6AcceptRA] UseDNS=false
     nano /etc/systemd/network/eth*.network /etc/systemd/network/wlan*.network # See *.network below.
@@ -94,9 +96,10 @@ the relevant `/etc/systemd/network/*.network` files.
 ### makepkg
 
     sudo nano /etc/makepkg.conf
-      CFLAGS="-march=armv8-a+crc+simd ..." # Raspbery Pi 4, 32-bit only
-      CFLAGS="-march=armv8.1-a+crc+simd ..." # Raspbery Pi 4, 64-bit only
-      MAKEFLAGS="-j3"
+      CFLAGS="-march=armv8-a+crc+simd ..." # Raspberry Pi 4, 32-bit only
+      CFLAGS="-march=armv8.1-a+crc+simd ..." # Raspberry Pi 4, 64-bit only
+      CFLAGS="-march=native ..." # Standard x86_64
+      MAKEFLAGS="-j3" # Or -j$(($(nproc)+1))
       BUILDDIR=/tmp/makepkg
       COMPRESSXZ=(... --threads=0)
       COMPRESSZST=(... --threads=0)
