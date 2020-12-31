@@ -1,0 +1,40 @@
+[Unit]
+Description=zpool import by name
+After=multi-user.target
+ConditionPathIsDirectory=/sys/module/zfs
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+SyslogIdentifier=zpool-import
+ExecStart=/usr/bin/zpool import -R /media -d /dev/disk/by-id %i
+ExecStop=/usr/bin/zpool export %i
+StandardOutput=journal
+StandardError=journal
+
+# Sandbox
+UMask=077
+NoNewPrivileges=true
+#ProtectSystem=full
+#ProtectHome=read-only
+#ProtectKernelTunables=true
+#ProtectKernelModules=true
+#PrivateTmp=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+#DeviceAllow=char-pts
+#DevicePolicy=closed
+KeyringMode=private
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+SystemCallArchitectures=native
+#SystemCallFilter=@system-service
+#SystemCallFilter=~@aio @io-event @keyring @memlock @network-io @privileged @resources @setuid personality brk setsid setpgid setfsgid32 setfsgid setfsuid32 setfsuid splice userfa→
+#SystemCallErrorNumber=EPERM
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
