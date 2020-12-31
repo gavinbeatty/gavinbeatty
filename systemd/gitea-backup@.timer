@@ -1,0 +1,11 @@
+[Unit]
+Description=Gitea Backup timer
+
+[Timer]
+Unit=gitea-backup@%i.service
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
