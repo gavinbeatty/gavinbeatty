@@ -85,7 +85,7 @@ the relevant `/etc/systemd/network/*.network` files.
     pacman -S nss-mdns
     pacman -S vi tmux nvim git mosh zsh zsh-doc man sudo wget cmake make rsync
     pacman -S binutils fakeroot patch which autoconf automake # For AUR builds with makepkg.
-    visudo # Uncomment the %wheel line to run all commands.
+    visudo # Uncomment the %wheel line to run all commands. Add `Defaults env_keep += "EDITOR"` e.g., for systemctl edit.
     exit # Back to alarm user
     git clone https://github.com/gavinbeatty/gavinbeatty.git
     cd gavinbeatty && ./install.sh # But edit ~/.tmux.conf back down to ~nothing.
