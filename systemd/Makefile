@@ -13,7 +13,6 @@ run-gitea-backup:
 install-gitea-backup:
 	sudo env SYSTEMD_EDITOR="cp $$(pwd)/gitea-backup@.service" systemctl edit --full --force gitea-backup@.service
 	sudo env SYSTEMD_EDITOR="cp $$(pwd)/gitea-backup@.timer" systemctl edit --full --force gitea-backup@.timer
-	sudo systemctl daemon-reload
 .PHONY: install-gitea-backup
 
 enable-gitea-backup:
@@ -26,7 +25,6 @@ run-zpool-import:
 
 install-zpool-import:
 	sudo env SYSTEMD_EDITOR="cp $$(pwd)/zpool-import@.service" systemctl edit --full --force zpool-import@.service
-	sudo systemctl daemon-reload
 .PHONY: install-zpool-import
 
 enable-zpool-import:
