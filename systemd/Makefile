@@ -2,7 +2,7 @@ FS?=lock
 
 help:
 	@echo "targets: install-$$, enable-$$, start-$$, stop-$$"
-	@echo "units: gitea-backup, zpool-import"
+	@echo "units: gitea-backup, zpool-import, zpool-scrub"
 	@echo "variables: FS=$(FS)"
 .PHONY: help
 
@@ -38,3 +38,20 @@ start-zpool-import:
 stop-zpool-import:
 	sudo systemctl stop zpool-import@$(FS).service
 .PHONY: stop-zpool-import
+
+install-zpool-scrub:
+	sudo env SYSTEMD_EDITOR="cp $$(pwd)/zpool-scrub@.service" systemctl edit --full --force zpool-scrub@.service
+	sudo env SYSTEMD_EDITOR="cp $$(pwd)/zpool-scrub@.timer" systemctl edit --full --force zpool-scrub@.timer
+.PHONY: install-zpool-scrub
+
+enable-zpool-scrub:
+	sudo systemctl enable zpool-scrub@$(FS).timer
+.PHONY: enable-zpool-scrub
+
+start-zpool-scrub:
+	sudo systemctl start zpool-scrub@$(FS).service
+.PHONY: start-zpool-scrub
+
+stop-zpool-scrub:
+	sudo systemctl stop zpool-scrub@$(FS).service
+.PHONY: stop-zpool-scrub
